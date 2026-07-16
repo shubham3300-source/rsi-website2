@@ -70,5 +70,14 @@
     "entryRSI": "50.9",
     "entryDate": "2026-07-16T04:00:42.319Z",
     "status": "open"
+  },
+  {
+    "id": "1784174445064-JSFB",
+    "symbol": "JSFB",
+    "qty": 39,
+    "entryPrice": 503.15,
+    "entryRSI": "66.8",
+    "entryDate": "2026-07-16T04:00:45.064Z",
+    "status": "open"
   }
 ]
