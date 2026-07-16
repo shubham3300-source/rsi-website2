@@ -43,5 +43,14 @@
     "entryRSI": "54.5",
     "entryDate": "2026-07-16T03:43:33.822Z",
     "status": "open"
+  },
+  {
+    "id": "1784174332124-SPMLINFRA",
+    "symbol": "SPMLINFRA",
+    "qty": 95,
+    "entryPrice": 208.98,
+    "entryRSI": "27.0",
+    "entryDate": "2026-07-16T03:58:52.124Z",
+    "status": "open"
   }
 ]
