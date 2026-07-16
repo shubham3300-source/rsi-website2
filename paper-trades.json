@@ -16,5 +16,14 @@
     "entryRSI": "69.3",
     "entryDate": "2026-07-16T02:54:23.358Z",
     "status": "open"
+  },
+  {
+    "id": "1784173384044-ALKEM",
+    "symbol": "ALKEM",
+    "qty": 8,
+    "entryPrice": 5664,
+    "entryRSI": "63.0",
+    "entryDate": "2026-07-16T03:43:04.044Z",
+    "status": "open"
   }
 ]
