@@ -52,5 +52,14 @@
     "entryRSI": "27.0",
     "entryDate": "2026-07-16T03:58:52.124Z",
     "status": "open"
+  },
+  {
+    "id": "1784174428747-EMMVEE",
+    "symbol": "EMMVEE",
+    "qty": 55,
+    "entryPrice": 360,
+    "entryRSI": "47.6",
+    "entryDate": "2026-07-16T04:00:28.747Z",
+    "status": "open"
   }
 ]
