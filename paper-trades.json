@@ -88,5 +88,14 @@
     "entryRSI": "27.7",
     "entryDate": "2026-07-16T04:00:50.060Z",
     "status": "open"
+  },
+  {
+    "id": "1784193400262-TIINDIA",
+    "symbol": "TIINDIA",
+    "qty": 10,
+    "entryPrice": 2922.4,
+    "entryRSI": "36.9",
+    "entryDate": "2026-07-16T09:16:40.262Z",
+    "status": "open"
   }
 ]
