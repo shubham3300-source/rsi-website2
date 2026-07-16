@@ -79,5 +79,14 @@
     "entryRSI": "66.8",
     "entryDate": "2026-07-16T04:00:45.064Z",
     "status": "open"
+  },
+  {
+    "id": "1784174450060-TEJASNET",
+    "symbol": "TEJASNET",
+    "qty": 35,
+    "entryPrice": 564.65,
+    "entryRSI": "27.7",
+    "entryDate": "2026-07-16T04:00:50.060Z",
+    "status": "open"
   }
 ]
