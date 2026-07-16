@@ -70,7 +70,9 @@
     border-radius:6px; padding:8px 10px; font-family:var(--font-body); font-size:13px;
   }
   input[type=text]{width:180px;}
-  input[type=number]{width:64px;}
+  input[type=number]{width:90px;}
+  #tradeSize{width:110px;}
+  .hl{background:rgba(61,220,132,.15); color:var(--green); font-weight:700; border-radius:4px; padding:2px 7px;}
   label.mini{font-size:11px; color:var(--muted); display:flex; align-items:center; gap:6px;}
   button{
     background:var(--panel-2); border:1px solid var(--border); color:var(--text);
@@ -413,9 +415,13 @@ function renderBody(){
 
 function renderSector(){
   const rows = [...sectorRows].sort((a,b) => parseFloat(b[2]) - parseFloat(a[2]));
-  $('sectorBody').innerHTML = rows.map(r =>
-    '<tr><td class="sym">' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td><td>' + r[4] + '</td></tr>'
-  ).join('');
+  $('sectorBody').innerHTML = rows.map(r => {
+    const avgRsi = parseFloat(r[2]);
+    const rsiGe60Pct = parseFloat((r[3]+'').replace('%',''));
+    const avgRsiCell = avgRsi > 55 ? '<span class="hl">' + r[2] + '</span>' : r[2];
+    const rsiGe60Cell = rsiGe60Pct > 60 ? '<span class="hl">' + r[3] + '</span>' : r[3];
+    return '<tr><td class="sym">' + r[0] + '</td><td>' + r[1] + '</td><td>' + avgRsiCell + '</td><td>' + rsiGe60Cell + '</td><td>' + r[4] + '</td></tr>';
+  }).join('');
 }
 
 // ---------------- Generic tab viewer (Final List / RSI Analysis) ----------------
