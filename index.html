@@ -16,16 +16,20 @@
     theme: {
       extend: {
         colors: {
-          bg: '#080A0D',
-          panel: '#0E1318',
-          panelDark: '#0B0E11',
-          panelLight: '#151C24',
-          border: '#202936',
-          borderLight: '#2C3A4E',
+          bg: 'var(--bg)',
+          panel: 'var(--panel)',
+          panelDark: 'var(--panel-dark)',
+          panelLight: 'var(--panel-light)',
+          border: 'var(--border)',
+          borderLight: 'var(--border-light)',
+          textMain: 'var(--text-main)',
+          textMuted: 'var(--text-muted)',
           accentGreen: '#10B981',
           accentRed: '#EF4444',
           accentAmber: '#F59E0B',
           accentBlue: '#3B82F6',
+          accentPurple: '#8B5CF6',
+          accentRose: '#F43F5E',
         },
         fontFamily: {
           display: ['"Space Grotesk"', 'sans-serif'],
@@ -38,19 +42,49 @@
 </script>
 
 <style>
+  :root {
+    /* Dark Mode Defaults */
+    --bg: #080A0D;
+    --panel: #0E1318;
+    --panel-dark: #0B0E11;
+    --panel-light: #151C24;
+    --border: #202936;
+    --border-light: #2C3A4E;
+    --text-main: #F3F4F6;
+    --text-muted: #9CA3AF;
+  }
+
+  html.light {
+    /* Light Mode Switch */
+    --bg: #F3F4F6;
+    --panel: #FFFFFF;
+    --panel-dark: #E5E7EB;
+    --panel-light: #F9FAFB;
+    --border: #D1D5DB;
+    --border-light: #E5E7EB;
+    --text-main: #111827;
+    --text-muted: #4B5563;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text-main);
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #080A0D;
+    background: var(--bg);
   }
   ::-webkit-scrollbar-thumb {
-    background: #202936;
+    background: var(--border);
     border-radius: 4px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #2C3A4E;
+    background: var(--border-light);
   }
   @keyframes marquee {
     0% { transform: translateX(0%); }
@@ -65,100 +99,140 @@
   .glow-green {
     box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
   }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 </style>
 </head>
-<body class="bg-bg text-gray-100 font-body min-h-screen flex flex-col antialiased selection:bg-accentGreen/30 selection:text-white">
+<body class="bg-bg text-textMain font-body min-h-screen flex flex-col antialiased selection:bg-accentGreen/30 selection:text-white">
 
-<header class="border-b border-border bg-panel/80 backdrop-blur-md sticky top-0 z-30 px-4 py-3 lg:px-6">
+<header class="border-b border-border bg-panel/80 backdrop-blur-md sticky top-0 z-30 px-4 py-3 lg:px-6 transition-all duration-200">
   <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
     <div class="flex items-center gap-3">
-      <div class="relative flex items-center justify-center">
-        <span class="absolute inline-flex h-3 w-3 rounded-full bg-accentGreen opacity-75 animate-ping"></span>
-        <span class="relative inline-flex rounded-full h-3 w-3 bg-accentGreen"></span>
+      <!-- High-Quality SVG Logo representing Candlesticks, Trends & Shield -->
+      <div class="w-10 h-10 flex-shrink-0 bg-panelLight border border-border rounded-xl flex items-center justify-center transition-all duration-200">
+        <svg class="w-7 h-7" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14 42V22M32 48V16M50 36V26" stroke="url(#logoGrad)" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M14 32H20M32 26H38M50 31H54" stroke="var(--text-muted)" stroke-width="2"/>
+          <path d="M8 46L26 22L44 40L56 12" stroke="var(--accentBlue)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="56" cy="12" r="3.5" fill="var(--accentRose)"/>
+          <defs>
+            <linearGradient id="logoGrad" x1="14" y1="16" x2="50" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="var(--accentGreen)" />
+              <stop offset="100%" stop-color="var(--accentBlue)" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <span class="font-mono text-xs tracking-widest text-accentGreen uppercase font-bold">Live Market Terminal</span>
+          <span class="font-mono text-[10px] tracking-widest text-accentGreen uppercase font-bold px-1.5 py-0.5 bg-accentGreen/10 border border-accentGreen/20 rounded">Live Terminal</span>
+          <span class="text-[10px] bg-panelLight border border-border px-1.5 py-0.5 rounded text-textMuted font-mono font-bold transition-all duration-200">SECURE SHEETS</span>
         </div>
-        <h1 class="font-display font-bold text-xl lg:text-2xl tracking-tight text-white mt-0.5">
-          Smallcap RSI Screener <span class="text-gray-500 font-medium">/ Sector Rotation Terminal</span>
+        <h1 class="font-display font-bold text-xl lg:text-2xl tracking-tight text-textMain mt-0.5 transition-all duration-200">
+          Smallcap RSI <span class="text-textMuted font-medium">Screener Suite</span>
         </h1>
       </div>
     </div>
     
     <div class="flex flex-wrap items-center gap-2">
-      <button id="refreshBtn" class="bg-panelLight border border-border hover:border-accentGreen hover:text-accentGreen text-gray-200 px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all duration-200">
-        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh Terminal
+      <!-- Light / Dark Mode Toggle Button -->
+      <button id="themeToggleBtn" class="bg-panelLight border border-border hover:border-accentBlue text-textMain p-2 rounded-lg text-xs font-semibold flex items-center justify-center transition-all duration-200" title="Switch Theme">
+        <i id="themeToggleIcon" data-lucide="sun" class="w-4 h-4"></i>
       </button>
-      <div class="bg-panelDark border border-border rounded-lg px-3 py-1.5 flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-accentGreen"></span>
-        <span id="globalStatus" class="font-mono text-[10px] text-gray-400">connecting...</span>
+
+      <button id="refreshBtn" class="bg-panelLight border border-border hover:border-accentGreen hover:text-accentGreen text-textMain px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all duration-200">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh
+      </button>
+      
+      <div class="bg-panelDark border border-border rounded-lg px-3 py-1.5 flex items-center gap-2 transition-all duration-200">
+        <span class="w-2 h-2 rounded-full bg-accentGreen animate-pulse"></span>
+        <span id="globalStatus" class="font-mono text-[10px] text-textMuted">connecting...</span>
       </div>
     </div>
   </div>
 </header>
 
-<div class="border-b border-border bg-panelDark overflow-hidden py-2 select-none">
+<div class="border-b border-border bg-panelDark overflow-hidden py-2 select-none transition-all duration-200">
   <div class="whitespace-nowrap flex" id="tickerContainer">
     <div class="inline-block animate-marquee" id="ticker">
-      <span class="text-gray-500 text-xs px-4">Initializing live movers...</span>
+      <span class="text-textMuted text-xs px-4">Initializing live movers...</span>
     </div>
   </div>
 </div>
 
 <main class="flex-grow max-w-7xl w-full mx-auto p-4 lg:p-6 flex flex-col gap-6">
   
-  <div class="flex border-b border-border overflow-x-auto gap-1 no-scrollbar bg-panel/30 p-1 rounded-xl">
-    <button class="tab-btn active px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all" data-tab="fulllist">
+  <!-- Navigation bar with interactive colored tabs -->
+  <div class="flex border-b border-border overflow-x-auto gap-1.5 no-scrollbar bg-panel/30 p-1 rounded-xl transition-all duration-200">
+    <button class="tab-btn active px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all duration-200 border border-transparent text-emerald-500 bg-emerald-500/10 border-emerald-500/30" data-tab="fulllist" data-color="emerald">
       <i data-lucide="list-filter" class="w-4 h-4"></i> Full Screener
     </button>
-    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all text-gray-400 hover:text-white" data-tab="sector">
+    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all duration-200 border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="sector" data-color="blue">
       <i data-lucide="pie-chart" class="w-4 h-4"></i> Sector Summary
     </button>
-    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all text-gray-400 hover:text-white" data-tab="paper">
+    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all duration-200 border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="paper" data-color="purple">
       <i data-lucide="wallet" class="w-4 h-4"></i> Paper Trading Terminal
     </button>
-    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all text-gray-400 hover:text-white" data-tab="finallist">
+    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all duration-200 border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="finallist" data-color="rose">
       <i data-lucide="bookmark-check" class="w-4 h-4"></i> Final List
     </button>
-    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all text-gray-400 hover:text-white" data-tab="rsianalysis">
+    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all duration-200 border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="rsianalysis" data-color="amber">
       <i data-lucide="trending-up" class="w-4 h-4"></i> RSI Analysis
     </button>
   </div>
 
   <!-- ===================== PANEL: FULL LIST ===================== -->
   <div class="tab-panel active space-y-4" id="panel-fulllist">
-    <div class="bg-panel border border-border rounded-xl p-4 flex flex-wrap gap-3 items-center justify-between">
+    
+    <!-- Tab Introduction Card -->
+    <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4 flex gap-3 items-start transition-all">
+      <div class="bg-emerald-500/15 p-2 rounded-lg text-emerald-500">
+        <i data-lucide="info" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold text-emerald-500 uppercase tracking-wider">Full Screener Panel</h4>
+        <p class="text-xs text-textMuted mt-1 leading-relaxed">
+          Monitor your raw index of tracked smallcap candidates. Apply dynamic sector, signal outputs, and customized RSI filters below. Click any <strong>"View Chart"</strong> link to instantly verify breakout patterns directly on TradingView.
+        </p>
+      </div>
+    </div>
+
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-wrap gap-3 items-center justify-between transition-all duration-200">
       <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
         <div class="relative w-full sm:w-60">
-          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-500"></i>
-          <input type="text" id="search" placeholder="Filter symbol, sector..." class="w-full bg-panelDark border border-border rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all">
+          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-textMuted"></i>
+          <input type="text" id="search" placeholder="Filter symbol, sector..." class="w-full bg-panelDark border border-border text-textMain rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all duration-200">
         </div>
-        <select id="sector" class="bg-panelDark border border-border text-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen">
+        <select id="sector" class="bg-panelDark border border-border text-textMain rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all duration-200">
           <option value="">All Sectors</option>
         </select>
-        <select id="output" class="bg-panelDark border border-border text-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen">
+        <select id="output" class="bg-panelDark border border-border text-textMain rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all duration-200">
           <option value="">All Signals</option>
         </select>
       </div>
 
-      <div class="flex items-center gap-4 bg-panelDark/50 px-3 py-1.5 rounded-lg border border-border/60 text-xs text-gray-400 w-full lg:w-auto justify-between lg:justify-start">
+      <div class="flex items-center gap-4 bg-panelDark/50 px-3 py-1.5 rounded-lg border border-border/60 text-xs text-textMuted w-full lg:w-auto justify-between lg:justify-start">
         <div class="flex items-center gap-2">
-          <span>RSI:</span>
-          <input type="number" id="rsiMin" value="0" min="0" max="100" class="w-12 bg-panelDark border border-border text-center rounded py-1 text-[11px] focus:outline-none focus:border-accentGreen font-mono">
-          <span class="text-gray-600">to</span>
-          <input type="number" id="rsiMax" value="100" min="0" max="100" class="w-12 bg-panelDark border border-border text-center rounded py-1 text-[11px] focus:outline-none focus:border-accentGreen font-mono">
+          <span>RSI Limits:</span>
+          <input type="number" id="rsiMin" value="0" min="0" max="100" class="w-12 bg-panelDark border border-border text-textMain text-center rounded py-1 text-[11px] focus:outline-none focus:border-accentGreen font-mono transition-all duration-200">
+          <span class="text-textMuted/60">to</span>
+          <input type="number" id="rsiMax" value="100" min="0" max="100" class="w-12 bg-panelDark border border-border text-textMain text-center rounded py-1 text-[11px] focus:outline-none focus:border-accentGreen font-mono transition-all duration-200">
         </div>
       </div>
     </div>
 
     <div id="fullListErr" class="hidden bg-accentRed/10 border border-accentRed/30 text-accentRed rounded-xl p-4 text-xs font-mono"></div>
 
-    <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl">
+    <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl transition-all duration-200">
       <div class="overflow-x-auto">
         <table id="mainTable" class="w-full text-left border-collapse">
           <thead>
-            <tr id="headRow" class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+            <tr id="headRow" class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono transition-all duration-200">
               <!-- Dynamic headers -->
             </tr>
           </thead>
@@ -172,24 +246,38 @@
 
   <!-- ===================== PANEL: SECTOR SUMMARY ===================== -->
   <div class="tab-panel hidden space-y-6" id="panel-sector">
+    
+    <!-- Tab Introduction Card -->
+    <div class="bg-accentBlue/5 border border-accentBlue/20 rounded-xl p-4 flex gap-3 items-start transition-all">
+      <div class="bg-accentBlue/15 p-2 rounded-lg text-accentBlue">
+        <i data-lucide="pie-chart" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold text-accentBlue uppercase tracking-wider">Sector Summary & Strength Metrics</h4>
+        <p class="text-xs text-textMuted mt-1 leading-relaxed">
+          Analyze institutional capital rotations by comparing industry breadth. Review average RSI ratings, volumetric activity levels, and sector-wide breakout stats. Visualized charts render real-time sector indices to target macro strength shifts.
+        </p>
+      </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       
-      <div class="lg:col-span-2 bg-panel border border-border rounded-xl p-5 flex flex-col">
+      <div class="lg:col-span-2 bg-panel border border-border rounded-xl p-5 flex flex-col transition-all duration-200">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="font-display font-bold text-base text-white">Sector RSI Distribution & Strength Map</h3>
-            <p class="text-xs text-gray-400">Comparing average industry RSI versus historical volume multiples.</p>
+            <h3 class="font-display font-bold text-base text-textMain">Sector RSI Distribution & Strength Map</h3>
+            <p class="text-xs text-textMuted">Comparing average industry RSI versus historical volume multiples.</p>
           </div>
           <span class="text-[10px] text-accentGreen bg-accentGreen/15 border border-accentGreen/20 px-2 py-0.5 rounded-full font-mono">Live Visualizer</span>
         </div>
-        <div class="bg-panelDark border border-border rounded-lg p-3 flex-grow min-h-[280px] flex items-center justify-center">
+        <div class="bg-panelDark border border-border rounded-lg p-3 flex-grow min-h-[280px] flex items-center justify-center transition-all duration-200">
           <canvas id="sectorVisualizerCanvas" class="w-full h-full max-h-[350px]"></canvas>
         </div>
       </div>
 
-      <div class="bg-panel border border-border rounded-xl p-5 flex flex-col font-body">
-        <h3 class="font-display font-bold text-base text-white mb-1">Key Sector Insights</h3>
-        <p class="text-xs text-gray-400 mb-4">Actionable industry rotation signals.</p>
+      <div class="bg-panel border border-border rounded-xl p-5 flex flex-col font-body transition-all duration-200">
+        <h3 class="font-display font-bold text-base text-textMain mb-1">Key Sector Insights</h3>
+        <p class="text-xs text-textMuted mb-4">Actionable industry rotation signals.</p>
         <div class="space-y-3 flex-grow overflow-y-auto max-h-[280px]" id="sectorInsightsContainer">
           <!-- Populated by JS -->
         </div>
@@ -197,17 +285,17 @@
 
     </div>
 
-    <div class="bg-panel border border-border rounded-xl overflow-hidden">
-      <div class="px-5 py-4 border-b border-border flex items-center justify-between">
+    <div class="bg-panel border border-border rounded-xl overflow-hidden transition-all duration-200">
+      <div class="px-5 py-4 border-b border-border flex items-center justify-between transition-all duration-200">
         <div>
-          <h3 class="font-display font-bold text-base text-white">Detailed Industry Matrix</h3>
-          <p class="text-xs text-gray-400">Total stocks monitored, average relative strength index, and breadth statistics.</p>
+          <h3 class="font-display font-bold text-base text-textMain">Detailed Industry Matrix</h3>
+          <p class="text-xs text-textMuted">Total stocks monitored, average relative strength index, and breadth statistics.</p>
         </div>
       </div>
       <div class="overflow-x-auto">
         <table id="sectorTable" class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+            <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono transition-all duration-200">
               <th class="p-3">Industry</th>
               <th class="p-3 text-center">Stocks Count</th>
               <th class="p-3 text-center">Avg RSI</th>
@@ -225,18 +313,32 @@
 
   <!-- ===================== PANEL: PAPER TRADING ===================== -->
   <div class="tab-panel hidden space-y-6" id="panel-paper">
-    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-panel border border-border rounded-xl p-5">
+    
+    <!-- Tab Introduction Card -->
+    <div class="bg-accentPurple/5 border border-accentPurple/20 rounded-xl p-4 flex gap-3 items-start transition-all">
+      <div class="bg-accentPurple/15 p-2 rounded-lg text-accentPurple">
+        <i data-lucide="wallet" class="w-5 h-5"></i>
+      </div>
       <div>
-        <h2 class="font-display font-bold text-lg text-white">Virtual Paper Trading Terminal</h2>
-        <p class="text-xs text-gray-400">Simulate market entries without risk. Live rates automatically track current Google sheets feed.</p>
+        <h4 class="text-xs font-bold text-accentPurple uppercase tracking-wider">Virtual Paper Trading Terminal</h4>
+        <p class="text-xs text-textMuted mt-1 leading-relaxed">
+          Practice your trading methodology with live quotes risk-free. Adjust virtual allocation sizes, enable automated trade executions on breakout "Buy" ratings, and sync configuration files directly with your secure GitHub repository.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-panel border border-border rounded-xl p-5 transition-all duration-200">
+      <div>
+        <h2 class="font-display font-bold text-lg text-textMain">Virtual Paper Trading Terminal</h2>
+        <p class="text-xs text-textMuted">Simulate market entries without risk. Live rates automatically track current Google sheets feed.</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
-        <div class="flex items-center gap-2 bg-panelDark border border-border rounded-lg px-3 py-1.5 text-xs text-gray-300">
+        <div class="flex items-center gap-2 bg-panelDark border border-border rounded-lg px-3 py-1.5 text-xs text-textMain transition-all duration-200">
           <span>Allocation Size:</span>
-          <span class="text-gray-500 font-bold">₹</span>
-          <input type="number" id="tradeSize" value="20000" min="500" step="500" class="w-20 bg-transparent focus:outline-none font-mono text-white text-right font-bold">
+          <span class="text-textMuted font-bold">₹</span>
+          <input type="number" id="tradeSize" value="20000" min="500" step="500" class="w-20 bg-transparent focus:outline-none font-mono text-textMain text-right font-bold">
         </div>
-        <label class="flex items-center gap-2 cursor-pointer bg-panelDark border border-border rounded-lg px-3 py-1.5 text-xs text-gray-300">
+        <label class="flex items-center gap-2 cursor-pointer bg-panelDark border border-border rounded-lg px-3 py-1.5 text-xs text-textMain transition-all duration-200">
           <input type="checkbox" id="autoTrade" class="rounded border-border text-accentGreen focus:ring-0 focus:ring-offset-0 bg-panel">
           <span>Auto-Trade on BUY signal</span>
         </label>
@@ -250,32 +352,32 @@
       <!-- Generated by JS -->
     </div>
 
-    <details class="group bg-panel border border-border rounded-xl overflow-hidden">
-      <summary class="flex items-center justify-between p-4 cursor-pointer text-xs font-semibold text-gray-300 select-none hover:bg-panelLight/30 transition-all">
-        <span class="flex items-center gap-2 text-gray-100">
+    <details class="group bg-panel border border-border rounded-xl overflow-hidden transition-all duration-200">
+      <summary class="flex items-center justify-between p-4 cursor-pointer text-xs font-semibold text-textMain select-none hover:bg-panelLight/30 transition-all">
+        <span class="flex items-center gap-2 text-textMain">
           <i data-lucide="github" class="w-4 h-4 text-accentBlue"></i> 
-          Cloud Synchronization System (Optional Cloud Backup)
+          GitHub Synchronization System (Optional Cloud Backup)
         </span>
-        <span class="text-[10px] text-gray-500 group-open:rotate-180 transition-transform duration-200">▼</span>
+        <span class="text-[10px] text-textMuted group-open:rotate-180 transition-transform duration-200">▼</span>
       </summary>
-      <div class="p-4 border-t border-border bg-panelDark/40 space-y-4">
-        <p class="text-[11px] text-gray-400">Synchronize trade ledgers via private repository files. Perfect for persistent tracking across browser instances.</p>
+      <div class="p-4 border-t border-border bg-panelDark/40 space-y-4 transition-all duration-200">
+        <p class="text-[11px] text-textMuted">Synchronize trade ledgers via private repository files. Perfect for persistent tracking across browser instances.</p>
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
           <div class="space-y-1">
-            <label class="text-[10px] text-gray-500 font-mono">Owner (Username)</label>
-            <input type="text" id="ghOwner" placeholder="Octocat" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-gray-100 focus:outline-none focus:border-accentBlue">
+            <label class="text-[10px] text-textMuted font-mono">Owner (Username)</label>
+            <input type="text" id="ghOwner" placeholder="Octocat" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-textMain focus:outline-none focus:border-accentBlue transition-all duration-200">
           </div>
           <div class="space-y-1">
-            <label class="text-[10px] text-gray-500 font-mono">Repo Name</label>
-            <input type="text" id="ghRepo" placeholder="trading-ledger" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-gray-100 focus:outline-none focus:border-accentBlue">
+            <label class="text-[10px] text-textMuted font-mono">Repo Name</label>
+            <input type="text" id="ghRepo" placeholder="trading-ledger" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-textMain focus:outline-none focus:border-accentBlue transition-all duration-200">
           </div>
           <div class="space-y-1">
-            <label class="text-[10px] text-gray-500 font-mono">File Path</label>
-            <input type="text" id="ghPath" placeholder="paper-trades.json" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-gray-100 focus:outline-none focus:border-accentBlue">
+            <label class="text-[10px] text-textMuted font-mono">File Path</label>
+            <input type="text" id="ghPath" placeholder="paper-trades.json" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-textMain focus:outline-none focus:border-accentBlue transition-all duration-200">
           </div>
           <div class="space-y-1">
-            <label class="text-[10px] text-gray-500 font-mono">Personal Access Token</label>
-            <input type="password" id="ghToken" placeholder="ghp_..." class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-gray-100 focus:outline-none focus:border-accentBlue">
+            <label class="text-[10px] text-textMuted font-mono">Personal Access Token</label>
+            <input type="password" id="ghToken" placeholder="ghp_..." class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-textMain focus:outline-none focus:border-accentBlue transition-all duration-200">
           </div>
         </div>
         <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
@@ -283,19 +385,19 @@
             <button id="ghSave" class="bg-accentBlue text-white hover:bg-accentBlue/90 px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
               <i data-lucide="save" class="w-3.5 h-3.5"></i> Save Settings
             </button>
-            <button id="ghPush" class="border border-border text-gray-300 hover:text-white hover:border-accentBlue px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
+            <button id="ghPush" class="border border-border text-textMain hover:text-white hover:border-accentBlue px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
               <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i> Backup (Push)
             </button>
-            <button id="ghPull" class="border border-border text-gray-300 hover:text-white hover:border-accentBlue px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
+            <button id="ghPull" class="border border-border text-textMain hover:text-white hover:border-accentBlue px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
               <i data-lucide="cloud-download" class="w-3.5 h-3.5"></i> Retrieve (Pull)
             </button>
           </div>
           <div class="flex items-center gap-4">
-            <label class="flex items-center gap-1.5 text-xs text-gray-400 cursor-pointer">
+            <label class="flex items-center gap-1.5 text-xs text-textMuted cursor-pointer">
               <input type="checkbox" id="ghAuto" class="rounded border-border text-accentBlue focus:ring-0 bg-panel">
               <span>Auto-Push after action</span>
             </label>
-            <div class="text-[11px] font-mono text-gray-500 flex items-center gap-1">
+            <div class="text-[11px] font-mono text-textMuted flex items-center gap-1">
               <span class="w-2 h-2 rounded-full bg-gray-600" id="ghStatusDot"></span>
               <span id="ghStatus">not configured</span>
             </div>
@@ -304,15 +406,15 @@
       </div>
     </details>
 
-    <div class="bg-panel border border-border rounded-xl overflow-hidden">
-      <div class="px-5 py-3 border-b border-border bg-panelLight/20 flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-accentGreen glow-green"></span>
-        <h3 class="font-display font-bold text-sm text-white">Active Virtual Holdings</h3>
+    <div class="bg-panel border border-border rounded-xl overflow-hidden transition-all duration-200">
+      <div class="px-5 py-3 border-b border-border bg-panelLight/20 flex items-center gap-2 transition-all duration-200">
+        <span class="w-2 h-2 rounded-full bg-accentGreen glow-green animate-pulse"></span>
+        <h3 class="font-display font-bold text-sm text-textMain">Active Virtual Holdings</h3>
       </div>
       <div class="overflow-x-auto">
         <table id="openTable" class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+            <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono transition-all duration-200">
               <th class="p-3">Symbol</th>
               <th class="p-3">Qty</th>
               <th class="p-3">Entry Rate</th>
@@ -331,15 +433,15 @@
       </div>
     </div>
 
-    <div class="bg-panel border border-border rounded-xl overflow-hidden">
-      <div class="px-5 py-3 border-b border-border bg-panelLight/20 flex items-center gap-2">
+    <div class="bg-panel border border-border rounded-xl overflow-hidden transition-all duration-200">
+      <div class="px-5 py-3 border-b border-border bg-panelLight/20 flex items-center gap-2 transition-all duration-200">
         <span class="w-2 h-2 rounded-full bg-gray-500"></span>
-        <h3 class="font-display font-bold text-sm text-white">Realized Trading History</h3>
+        <h3 class="font-display font-bold text-sm text-textMain">Realized Trading History</h3>
       </div>
       <div class="overflow-x-auto">
         <table id="closedTable" class="w-full text-left border-collapse">
           <thead>
-            <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+            <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono transition-all duration-200">
               <th class="p-3">Symbol</th>
               <th class="p-3">Qty</th>
               <th class="p-3">Entry Rate</th>
@@ -362,17 +464,30 @@
   <!-- ===================== PANEL: FINAL LIST (Sourced from GID 123456789) ===================== -->
   <div class="tab-panel hidden space-y-6" id="panel-finallist">
     
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-panel border border-border rounded-xl p-5">
+    <!-- Tab Introduction Card -->
+    <div class="bg-accentRose/5 border border-accentRose/20 rounded-xl p-4 flex gap-3 items-start transition-all">
+      <div class="bg-accentRose/15 p-2 rounded-lg text-accentRose">
+        <i data-lucide="bookmark-check" class="w-5 h-5"></i>
+      </div>
       <div>
-        <h2 class="font-display font-bold text-lg text-white">Final List Watch Structures</h2>
-        <p class="text-xs text-gray-400">High-conviction watch lists cleaned and mapped dynamically from your private Google Sheet segments.</p>
+        <h4 class="text-xs font-bold text-accentRose uppercase tracking-wider">Final High-Conviction List</h4>
+        <p class="text-xs text-textMuted mt-1 leading-relaxed">
+          Access high-probability trading configurations cleanly mapped from GID <code>123456789</code> on your Google Sheets. Displays both <strong>"Filtered Stocks for Reversal"</strong> and <strong>"Oversold Stocks to Watch"</strong> with collateral DMA checks.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-panel border border-border rounded-xl p-5 transition-all duration-200">
+      <div>
+        <h2 class="font-display font-bold text-lg text-textMain">Final List Watch Structures</h2>
+        <p class="text-xs text-textMuted">High-conviction watch lists cleaned and mapped dynamically from your private Google Sheet segments.</p>
       </div>
       <div class="flex items-center gap-3">
         <div class="relative w-full sm:w-60">
-          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-500"></i>
-          <input type="text" id="finalSearch" placeholder="Filter finalized symbols..." class="w-full bg-panelDark border border-border rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all">
+          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-textMuted"></i>
+          <input type="text" id="finalSearch" placeholder="Filter finalized symbols..." class="w-full bg-panelDark border border-border text-textMain rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all duration-200">
         </div>
-        <span id="finalStatus" class="font-mono text-[10px] bg-panelDark border border-border px-3 py-2 rounded-lg text-gray-400">connecting...</span>
+        <span id="finalStatus" class="font-mono text-[10px] bg-panelDark border border-border px-3 py-2 rounded-lg text-textMuted transition-all duration-200">connecting...</span>
       </div>
     </div>
     
@@ -381,21 +496,21 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       
       <!-- Table 1: Filtered Stocks for Reversal (COLLAPSIBLE) -->
-      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl">
-        <div class="px-5 py-3.5 border-b border-border bg-gradient-to-r from-accentRed/25 to-transparent flex items-center justify-between cursor-pointer select-none" onclick="toggleCollapse('finalLeftWrapper', 'finalLeftChevron')">
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl transition-all duration-200">
+        <div class="px-5 py-3.5 border-b border-border bg-gradient-to-r from-accentRed/15 to-transparent flex items-center justify-between cursor-pointer select-none transition-all duration-200" onclick="toggleCollapse('finalLeftWrapper', 'finalLeftChevron')">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-accentRed animate-pulse"></span>
-            <h3 class="font-display font-bold text-sm text-white">Filtered Stocks for Reversal</h3>
+            <h3 class="font-display font-bold text-sm text-textMain">Filtered Stocks for Reversal</h3>
           </div>
           <div class="flex items-center gap-2.5">
             <span class="text-[10px] bg-accentRed/10 text-accentRed border border-accentRed/25 px-2 py-0.5 rounded font-mono font-bold">REVERSAL SIGNALS</span>
-            <i id="finalLeftChevron" data-lucide="chevron-up" class="w-4 h-4 text-gray-400 transition-transform duration-200"></i>
+            <i id="finalLeftChevron" data-lucide="chevron-up" class="w-4 h-4 text-textMuted transition-transform duration-200"></i>
           </div>
         </div>
         <div id="finalLeftWrapper" class="overflow-x-auto transition-all duration-300">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono transition-all duration-200">
                 <th class="p-3">Symbol</th>
                 <th class="p-3">Price</th>
                 <th class="p-3">Volume</th>
@@ -414,21 +529,21 @@
       </div>
 
       <!-- Table 2: Oversold Stocks to Watch (COLLAPSIBLE) -->
-      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl">
-        <div class="px-5 py-3.5 border-b border-border bg-gradient-to-r from-accentAmber/25 to-transparent flex items-center justify-between cursor-pointer select-none" onclick="toggleCollapse('finalRightWrapper', 'finalRightChevron')">
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl transition-all duration-200">
+        <div class="px-5 py-3.5 border-b border-border bg-gradient-to-r from-accentAmber/15 to-transparent flex items-center justify-between cursor-pointer select-none transition-all duration-200" onclick="toggleCollapse('finalRightWrapper', 'finalRightChevron')">
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-accentAmber animate-pulse"></span>
-            <h3 class="font-display font-bold text-sm text-white">Oversold Stocks to Watch</h3>
+            <h3 class="font-display font-bold text-sm text-textMain">Oversold Stocks to Watch</h3>
           </div>
           <div class="flex items-center gap-2.5">
             <span class="text-[10px] bg-accentAmber/10 text-accentAmber border border-accentAmber/25 px-2 py-0.5 rounded font-mono font-bold">OVERSOLD WATCH</span>
-            <i id="finalRightChevron" data-lucide="chevron-up" class="w-4 h-4 text-gray-400 transition-transform duration-200"></i>
+            <i id="finalRightChevron" data-lucide="chevron-up" class="w-4 h-4 text-textMuted transition-transform duration-200"></i>
           </div>
         </div>
         <div id="finalRightWrapper" class="overflow-x-auto transition-all duration-300">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono transition-all duration-200">
                 <th class="p-3">Symbol</th>
                 <th class="p-3">Price</th>
                 <th class="p-3">Volume</th>
@@ -452,17 +567,30 @@
   <!-- ===================== PANEL: RSI ANALYSIS (Sourced from GID 1583281498) ===================== -->
   <div class="tab-panel hidden space-y-6" id="panel-rsianalysis">
     
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-panel border border-border rounded-xl p-5">
+    <!-- Tab Introduction Card -->
+    <div class="bg-accentAmber/5 border border-accentAmber/20 rounded-xl p-4 flex gap-3 items-start transition-all">
+      <div class="bg-accentAmber/15 p-2 rounded-lg text-accentAmber">
+        <i data-lucide="trending-up" class="w-5 h-5"></i>
+      </div>
       <div>
-        <h2 class="font-display font-bold text-lg text-white">Oscillator Strength Analysis Dashboard</h2>
-        <p class="text-xs text-gray-400">Comparing relative strength clusters, oversold thresholds, and industry support layers side-by-side.</p>
+        <h4 class="text-xs font-bold text-accentAmber uppercase tracking-wider">RSI oscillator analysis matrix</h4>
+        <p class="text-xs text-textMuted mt-1 leading-relaxed">
+          Deep-dive structural oscillator monitoring loaded directly from GID <code>1583281498</code>. Track multi-stage relative momentum (Overbought, Support, Oversold regimes) grouped vertically for effortless trend reversal tracking.
+        </p>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-panel border border-border rounded-xl p-5 transition-all duration-200">
+      <div>
+        <h2 class="font-display font-bold text-lg text-textMain">Oscillator Strength Analysis Dashboard</h2>
+        <p class="text-xs text-textMuted">Comparing relative strength clusters, oversold thresholds, and industry support layers side-by-side.</p>
       </div>
       <div class="flex items-center gap-3">
         <div class="relative w-full sm:w-60">
-          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-500"></i>
-          <input type="text" id="rsiAnalysisSearch" placeholder="Search matrix symbols..." class="w-full bg-panelDark border border-border rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all">
+          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-textMuted"></i>
+          <input type="text" id="rsiAnalysisSearch" placeholder="Search matrix symbols..." class="w-full bg-panelDark border border-border text-textMain rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all duration-200">
         </div>
-        <span id="rsiAnalysisStatus" class="font-mono text-[10px] bg-panelDark border border-border px-3 py-2 rounded-lg text-gray-400">connecting...</span>
+        <span id="rsiAnalysisStatus" class="font-mono text-[10px] bg-panelDark border border-border px-3 py-2 rounded-lg text-textMuted transition-all duration-200">connecting...</span>
       </div>
     </div>
 
@@ -472,18 +600,18 @@
     <div class="flex flex-col gap-6">
       
       <!-- Segment 1: Master RSI Status List (COLLAPSIBLE) -->
-      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col w-full">
-        <div class="px-4 py-3.5 border-b border-border bg-gradient-to-r from-accentBlue/15 to-transparent flex items-center justify-between cursor-pointer select-none" onclick="toggleCollapse('rsi1Wrapper', 'rsi1Chevron')">
-          <span class="text-xs font-bold uppercase tracking-wider text-gray-300">RSI Status Registry</span>
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col w-full transition-all duration-200">
+        <div class="px-4 py-3.5 border-b border-border bg-gradient-to-r from-accentBlue/15 to-transparent flex items-center justify-between cursor-pointer select-none transition-all duration-200" onclick="toggleCollapse('rsi1Wrapper', 'rsi1Chevron')">
+          <span class="text-xs font-bold uppercase tracking-wider text-textMain">RSI Status Registry</span>
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-accentBlue"></span>
-            <i id="rsi1Chevron" data-lucide="chevron-up" class="w-4 h-4 text-gray-400 transition-transform duration-200"></i>
+            <i id="rsi1Chevron" data-lucide="chevron-up" class="w-4 h-4 text-textMuted transition-transform duration-200"></i>
           </div>
         </div>
         <div id="rsi1Wrapper" class="overflow-x-auto flex-grow max-h-[500px] overflow-y-auto transition-all duration-300">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono sticky top-0 z-10">
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono sticky top-0 z-10">
                 <th class="p-3 bg-panelLight/95">Symbol</th>
                 <th class="p-3 bg-panelLight/95">Industry</th>
                 <th class="p-3 bg-panelLight/95">RSI</th>
@@ -499,18 +627,18 @@
       </div>
 
       <!-- Segment 2: Over Sold Stocks (COLLAPSIBLE) -->
-      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col w-full">
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col w-full transition-all duration-200">
         <div class="px-4 py-3.5 border-b border-border bg-gradient-to-r from-accentGreen/15 to-transparent flex items-center justify-between cursor-pointer select-none" onclick="toggleCollapse('rsi2Wrapper', 'rsi2Chevron')">
-          <span class="text-xs font-bold uppercase tracking-wider text-gray-300">Oversold Stocks</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-textMain">Oversold Stocks</span>
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-accentGreen"></span>
-            <i id="rsi2Chevron" data-lucide="chevron-up" class="w-4 h-4 text-gray-400 transition-transform duration-200"></i>
+            <i id="rsi2Chevron" data-lucide="chevron-up" class="w-4 h-4 text-textMuted transition-transform duration-200"></i>
           </div>
         </div>
         <div id="rsi2Wrapper" class="overflow-x-auto flex-grow max-h-[500px] overflow-y-auto transition-all duration-300">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono sticky top-0 z-10">
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono sticky top-0 z-10">
                 <th class="p-3 bg-panelLight/95">Symbol</th>
                 <th class="p-3 bg-panelLight/95">Industry</th>
                 <th class="p-3 bg-panelLight/95">RSI</th>
@@ -525,18 +653,18 @@
       </div>
 
       <!-- Segment 3: Support Range Stocks (COLLAPSIBLE) -->
-      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col w-full">
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col w-full transition-all duration-200">
         <div class="px-4 py-3.5 border-b border-border bg-gradient-to-r from-accentAmber/15 to-transparent flex items-center justify-between cursor-pointer select-none" onclick="toggleCollapse('rsi3Wrapper', 'rsi3Chevron')">
-          <span class="text-xs font-bold uppercase tracking-wider text-gray-300">Support Range</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-textMain">Support Range</span>
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-accentAmber"></span>
-            <i id="rsi3Chevron" data-lucide="chevron-up" class="w-4 h-4 text-gray-400 transition-transform duration-200"></i>
+            <i id="rsi3Chevron" data-lucide="chevron-up" class="w-4 h-4 text-textMuted transition-transform duration-200"></i>
           </div>
         </div>
         <div id="rsi3Wrapper" class="overflow-x-auto flex-grow max-h-[500px] overflow-y-auto transition-all duration-300">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono sticky top-0 z-10">
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono sticky top-0 z-10">
                 <th class="p-3 bg-panelLight/95">Symbol</th>
                 <th class="p-3 bg-panelLight/95">Industry</th>
                 <th class="p-3 bg-panelLight/95">RSI</th>
@@ -551,18 +679,18 @@
       </div>
 
       <!-- Segment 4: Over Bought Stocks (COLLAPSIBLE) -->
-      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col w-full">
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col w-full transition-all duration-200">
         <div class="px-4 py-3.5 border-b border-border bg-gradient-to-r from-accentRed/15 to-transparent flex items-center justify-between cursor-pointer select-none" onclick="toggleCollapse('rsi4Wrapper', 'rsi4Chevron')">
-          <span class="text-xs font-bold uppercase tracking-wider text-gray-300">Overbought Stocks</span>
+          <span class="text-xs font-bold uppercase tracking-wider text-textMain">Overbought Stocks</span>
           <div class="flex items-center gap-2">
             <span class="w-2.5 h-2.5 rounded-full bg-accentRed"></span>
-            <i id="rsi4Chevron" data-lucide="chevron-up" class="w-4 h-4 text-gray-400 transition-transform duration-200"></i>
+            <i id="rsi4Chevron" data-lucide="chevron-up" class="w-4 h-4 text-textMuted transition-transform duration-200"></i>
           </div>
         </div>
         <div id="rsi4Wrapper" class="overflow-x-auto flex-grow max-h-[500px] overflow-y-auto transition-all duration-300">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono sticky top-0 z-10">
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono sticky top-0 z-10">
                 <th class="p-3 bg-panelLight/95">Symbol</th>
                 <th class="p-3 bg-panelLight/95">Industry</th>
                 <th class="p-3 bg-panelLight/95">RSI</th>
@@ -581,10 +709,10 @@
 
 </main>
 
-<footer class="border-t border-border bg-panel/30 py-6 px-4 lg:px-6 text-center text-xs text-gray-500">
+<footer class="border-t border-border bg-panel/30 py-6 px-4 lg:px-6 text-center text-xs text-textMuted transition-all duration-200">
   <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-    <p>Quotes sourced from corresponding indices. Handcrafted by Shubham Shrivastava. </p>
-    <p class="font-mono text-[10px] text-gray-600">&copy; 2026 RSI Screener.  Strictly for simulator usage only.</p>
+    <p>Quotes sourced from corresponding indices. Handcrafted by Shubham Shrivastava.</p>
+    <p class="font-mono text-[10px] text-textMuted/60">&copy; 2026 RSI Screener. Strictly for simulator usage only.</p>
   </div>
 </footer>
 
@@ -595,41 +723,41 @@
     <div class="px-5 py-4 border-b border-border bg-panelLight/30 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <i data-lucide="plus-circle" class="w-5 h-5 text-accentGreen"></i>
-        <h4 class="font-display font-bold text-white">Execute Virtual Purchase</h4>
+        <h4 class="font-display font-bold text-textMain">Execute Virtual Purchase</h4>
       </div>
-      <button class="modal-close text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <button class="modal-close text-textMuted hover:text-textMain"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <div class="p-5 space-y-4">
       <div class="flex items-center justify-between">
-        <span class="text-sm text-gray-400">Asset Symbol:</span>
-        <span id="buySymbol" class="font-display font-bold text-base text-white tracking-wider">MOCKSYM</span>
+        <span class="text-sm text-textMuted">Asset Symbol:</span>
+        <span id="buySymbol" class="font-display font-bold text-base text-textMain tracking-wider">MOCKSYM</span>
       </div>
       <div class="flex items-center justify-between">
-        <span class="text-sm text-gray-400">Current Market Rate (LTP):</span>
+        <span class="text-sm text-textMuted">Current Market Rate (LTP):</span>
         <span id="buyPrice" class="font-mono text-sm text-accentGreen font-semibold">₹0.00</span>
       </div>
       <div class="h-px bg-border"></div>
       
       <div class="grid grid-cols-2 gap-3">
         <div class="space-y-1">
-          <label class="text-[11px] text-gray-400">Execution Quantity</label>
-          <input type="number" id="buyQtyInput" min="1" class="w-full bg-panelDark border border-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-accentGreen font-mono">
+          <label class="text-[11px] text-textMuted">Execution Quantity</label>
+          <input type="number" id="buyQtyInput" min="1" class="w-full bg-panelDark border border-border rounded-lg p-2.5 text-xs text-textMain focus:outline-none focus:border-accentGreen font-mono">
         </div>
         <div class="space-y-1">
-          <label class="text-[11px] text-gray-400">Suggested Max Allocation</label>
-          <div class="w-full bg-panelDark border border-border rounded-lg p-2.5 text-xs text-gray-400 font-mono flex items-center justify-between">
+          <label class="text-[11px] text-textMuted">Suggested Max Allocation</label>
+          <div class="w-full bg-panelDark border border-border rounded-lg p-2.5 text-xs text-textMuted font-mono flex items-center justify-between">
             <span>₹</span><span id="buySuggestedAlloc">20,000</span>
           </div>
         </div>
       </div>
       
       <div class="bg-panelDark/60 p-3 rounded-lg border border-border flex items-center justify-between">
-        <span class="text-xs text-gray-400">Estimated Total Capital:</span>
-        <span id="buyTotalCapital" class="font-mono text-sm text-white font-bold">₹0.00</span>
+        <span class="text-xs text-textMuted">Estimated Total Capital:</span>
+        <span id="buyTotalCapital" class="font-mono text-sm text-textMain font-bold">₹0.00</span>
       </div>
     </div>
     <div class="px-5 py-3 border-t border-border bg-panelLight/10 flex justify-end gap-2.5">
-      <button class="modal-close border border-border text-gray-300 hover:text-white px-4 py-2 rounded-lg text-xs transition-all">Cancel</button>
+      <button class="modal-close border border-border text-textMuted hover:text-textMain px-4 py-2 rounded-lg text-xs transition-all">Cancel</button>
       <button id="confirmBuySubmit" class="bg-accentGreen hover:bg-accentGreen/90 text-white font-semibold px-5 py-2 rounded-lg text-xs transition-all">Confirm Acquisition</button>
     </div>
   </div>
@@ -639,28 +767,28 @@
     <div class="px-5 py-4 border-b border-border bg-panelLight/30 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <i data-lucide="minus-circle" class="w-5 h-5 text-accentRed"></i>
-        <h4 class="font-display font-bold text-white">Liquidate Asset Position</h4>
+        <h4 class="font-display font-bold text-textMain">Liquidate Asset Position</h4>
       </div>
-      <button class="modal-close text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <button class="modal-close text-textMuted hover:text-textMain"><i data-lucide="x" class="w-5 h-5"></i></button>
     </div>
     <div class="p-5 space-y-4">
       <div class="flex items-center justify-between">
-        <span class="text-sm text-gray-400">Position Target:</span>
-        <span id="closeSymbol" class="font-display font-bold text-base text-white tracking-wider">MOCKSYM</span>
+        <span class="text-sm text-textMuted">Position Target:</span>
+        <span id="closeSymbol" class="font-display font-bold text-base text-textMain tracking-wider">MOCKSYM</span>
       </div>
       <div class="flex items-center justify-between">
-        <span class="text-sm text-gray-400">Initial Acquired Qty:</span>
-        <span id="closeQty" class="font-mono text-sm text-white font-semibold">0</span>
+        <span class="text-sm text-textMuted">Initial Acquired Qty:</span>
+        <span id="closeQty" class="font-mono text-sm text-textMain font-semibold">0</span>
       </div>
       <div class="h-px bg-border"></div>
       
       <div class="space-y-1">
-        <label class="text-[11px] text-gray-400">Market Exit Price (₹)</label>
-        <input type="number" id="closePriceInput" step="0.01" class="w-full bg-panelDark border border-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-accentRed font-mono">
+        <label class="text-[11px] text-textMuted">Market Exit Price (₹)</label>
+        <input type="number" id="closePriceInput" step="0.01" class="w-full bg-panelDark border border-border rounded-lg p-2.5 text-xs text-textMain focus:outline-none focus:border-accentRed font-mono">
       </div>
     </div>
     <div class="px-5 py-3 border-t border-border bg-panelLight/10 flex justify-end gap-2.5">
-      <button class="modal-close border border-border text-gray-300 hover:text-white px-4 py-2 rounded-lg text-xs transition-all">Cancel</button>
+      <button class="modal-close border border-border text-textMuted hover:text-textMain px-4 py-2 rounded-lg text-xs transition-all">Cancel</button>
       <button id="confirmCloseSubmit" class="bg-accentRed hover:bg-accentRed/90 text-white font-semibold px-5 py-2 rounded-lg text-xs transition-all">Close Position</button>
     </div>
   </div>
@@ -671,11 +799,11 @@
       <div class="w-12 h-12 bg-accentRed/10 text-accentRed rounded-full flex items-center justify-center mx-auto mb-2">
         <i data-lucide="alert-triangle" class="w-6 h-6"></i>
       </div>
-      <h4 class="font-display font-bold text-white text-base" id="confirmTitle">Are you sure?</h4>
-      <p class="text-xs text-gray-400 font-body" id="confirmDesc">This action is irreversible. All cached ledger records will be lost.</p>
+      <h4 class="font-display font-bold text-textMain text-base" id="confirmTitle">Are you sure?</h4>
+      <p class="text-xs text-textMuted font-body" id="confirmDesc">This action is irreversible. All cached ledger records will be lost.</p>
     </div>
     <div class="px-5 py-3 border-t border-border bg-panelLight/10 flex justify-center gap-2">
-      <button id="confirmCancelBtn" class="border border-border text-gray-300 hover:text-white px-4 py-2 rounded-lg text-xs transition-all">Cancel</button>
+      <button id="confirmCancelBtn" class="border border-border text-textMuted hover:text-textMain px-4 py-2 rounded-lg text-xs transition-all">Cancel</button>
       <button id="confirmActionBtn" class="bg-accentRed hover:bg-accentRed/90 text-white font-semibold px-5 py-2 rounded-lg text-xs transition-all">Confirm Execution</button>
     </div>
   </div>
@@ -711,6 +839,47 @@ let rsiList4 = [];
 
 const $ = (id) => document.getElementById(id);
 
+const themeToggleBtn = $('themeToggleBtn');
+const themeToggleIcon = $('themeToggleIcon');
+
+function loadTheme() {
+  const currentTheme = localStorage.getItem('rsiScreener_theme') || 'dark';
+  if (currentTheme === 'light') {
+    document.documentElement.classList.add('light');
+    document.documentElement.classList.remove('dark');
+    themeToggleIcon.setAttribute('data-lucide', 'moon');
+  } else {
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+    themeToggleIcon.setAttribute('data-lucide', 'sun');
+  }
+  refreshIcons();
+}
+
+themeToggleBtn.addEventListener('click', () => {
+  const isLight = document.documentElement.classList.contains('light');
+  if (isLight) {
+    document.documentElement.classList.remove('light');
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('rsiScreener_theme', 'dark');
+    themeToggleIcon.setAttribute('data-lucide', 'sun');
+    showToast('Switched to Dark Mode', 'info');
+  } else {
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+    localStorage.setItem('rsiScreener_theme', 'light');
+    themeToggleIcon.setAttribute('data-lucide', 'moon');
+    showToast('Switched to Light Mode', 'info');
+  }
+  refreshIcons();
+  // Redraw canvas with adjusted theme colors
+  setTimeout(() => {
+    if (!document.getElementById('panel-sector').classList.contains('hidden')) {
+      renderSector();
+    }
+  }, 100);
+});
+
 function refreshIcons() {
   if (window.lucide) {
     lucide.createIcons();
@@ -731,7 +900,7 @@ function toggleCollapse(wrapperId, chevronId) {
 function showToast(message, type = 'info') {
   const container = $('toastContainer');
   const toast = document.createElement('div');
-  toast.className = `p-3.5 rounded-xl border flex items-center gap-2.5 shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto bg-panel/95 backdrop-blur-md`;
+  toast.className = `p-3.5 rounded-xl border flex items-center gap-2.5 shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto bg-panel/95 backdrop-blur-md border-border text-textMain`;
   
   let icon = 'info';
   if (type === 'success') {
@@ -740,8 +909,6 @@ function showToast(message, type = 'info') {
   } else if (type === 'error') {
     toast.className += ' border-accentRed/30 text-accentRed';
     icon = 'alert-octagon';
-  } else {
-    toast.className += ' border-border text-gray-300';
   }
   
   toast.innerHTML = `
@@ -775,7 +942,6 @@ async function fetchGvizJson(gid){
   return JSON.parse(jsonStr);
 }
 
-// Helper to pull safe cell indices dynamically
 function getVal(row, index) {
   if (!row || !row.c || index >= row.c.length) return '';
   const cell = row.c[index];
@@ -822,8 +988,8 @@ function renderTicker(){
     const sign = chg >= 0 ? '▲' : '▼';
     const tvLink = getCleanTVLink(r[0]);
     return `<span class="t-item inline-flex items-center gap-1.5 mr-10 cursor-default text-xs">
-      <a href="${tvLink}" target="_blank" class="text-white hover:text-accentGreen font-mono font-bold transition-colors">${r[0]}</a> 
-      <span class="text-gray-400 font-mono">RSI ${r[1]}</span> 
+      <a href="${tvLink}" target="_blank" class="text-textMain hover:text-accentGreen font-mono font-bold transition-colors">${r[0]}</a> 
+      <span class="text-textMuted font-mono">RSI ${r[1]}</span> 
       <span class="${cls} font-mono font-bold">${sign} ${r[7]}</span>
     </span>`;
   }).join('');
@@ -834,13 +1000,13 @@ function badge(value){
   const v = (value||'').trim();
   const map = {
     'Buy/Average Out': 'bg-accentGreen/10 text-accentGreen border-accentGreen/30',
-    'Avoid/Hold': 'bg-gray-500/10 text-gray-400 border-border',
+    'Avoid/Hold': 'bg-gray-500/10 text-textMuted border-border',
     'Unconfirmed': 'bg-accentAmber/10 text-accentAmber border-accentAmber/30',
     'In Bull Run': 'bg-accentGreen/15 text-accentGreen border-accentGreen/45',
     'In Bear Run': 'bg-accentRed/10 text-accentRed border-accentRed/30',
     'Short History': 'bg-accentBlue/10 text-accentBlue border-accentBlue/30'
   };
-  const cls = map[v] || 'bg-gray-500/10 text-gray-400 border-border';
+  const cls = map[v] || 'bg-gray-500/10 text-textMuted border-border';
   return `<span class="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border ${cls}">${v || '—'}</span>`;
 }
 
@@ -848,7 +1014,7 @@ function renderHead(){
   $('headRow').innerHTML = MAIN_COLS.map((c,i) => {
     const isSorted = sortState.col === i;
     const arrow = isSorted ? (sortState.dir === 1 ? ' ▲' : ' ▼') : '';
-    return `<th data-k="${i}" class="p-3 cursor-pointer hover:bg-panelLight/40 hover:text-white transition-all ${isSorted ? 'text-accentGreen bg-panelLight/20 font-bold' : ''}">
+    return `<th data-k="${i}" class="p-3 cursor-pointer hover:bg-panelLight/40 hover:text-textMain transition-all ${isSorted ? 'text-accentGreen bg-panelLight/20 font-bold' : ''}">
       <span class="flex items-center gap-1">${c}${arrow}</span>
     </th>`;
   }).join('') + '<th class="p-3 text-right">Actions</th>';
@@ -891,11 +1057,10 @@ function renderBody(){
 
   $('body').innerHTML = rows.map(r => {
     const symb = r[0];
-    const cleanSym = symb.replace('.NS', '').replace('.BO', '');
     const tvLink = getCleanTVLink(symb);
     return `
       <tr class="hover:bg-panelLight/30 transition-all">
-        <td class="p-3 font-semibold text-white tracking-wide font-display">
+        <td class="p-3 font-semibold text-textMain tracking-wide font-display">
           <div class="flex items-center gap-2">
             <span>${symb}</span>
             <a href="${tvLink}" target="_blank" class="text-accentBlue hover:text-blue-400 hover:underline transition-colors text-[10px] uppercase font-bold tracking-wider ml-2">
@@ -905,25 +1070,25 @@ function renderBody(){
         </td>
         <td class="p-3 font-mono font-semibold">${r[1]}</td>
         <td class="p-3 font-mono">${r[2]}</td>
-        <td class="p-3 font-mono text-gray-300">₹${r[3]}</td>
-        <td class="p-3 font-mono text-gray-400">${r[4]}</td>
-        <td class="p-3 font-mono text-gray-400">${r[5]}</td>
-        <td class="p-3 text-gray-400 text-xs">${r[6]}</td>
+        <td class="p-3 font-mono text-textMuted">₹${r[3]}</td>
+        <td class="p-3 font-mono text-textMuted/80">${r[4]}</td>
+        <td class="p-3 font-mono text-textMuted/80">${r[5]}</td>
+        <td class="p-3 text-textMuted text-xs">${r[6]}</td>
         <td class="p-3 font-mono ${parseFloat(r[7])>=0?'text-accentGreen':'text-accentRed'}">${r[7]}</td>
-        <td class="p-3 font-mono text-gray-400">${r[8]}</td>
-        <td class="p-3 font-mono text-gray-400">${r[9]}</td>
-        <td class="p-3 font-mono text-gray-400">${r[10]}</td>
+        <td class="p-3 font-mono text-textMuted/80">${r[8]}</td>
+        <td class="p-3 font-mono text-textMuted/80">${r[9]}</td>
+        <td class="p-3 font-mono text-textMuted/80">${r[10]}</td>
         <td class="p-3">${badge(r[11])}</td>
         <td class="p-3 font-mono ${parseFloat(r[12])>=0?'text-accentGreen':'text-accentRed'}">${r[12]}</td>
         <td class="p-3 font-mono">${r[13]}</td>
         <td class="p-3 text-right">
-          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-white hover:text-black font-semibold text-[11px] px-3.5 py-1.5 rounded-lg transition-all" onclick="triggerBuy('${symb}')">
+          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-textMain hover:text-white font-semibold text-[11px] px-3.5 py-1.5 rounded-lg transition-all" onclick="triggerBuy('${symb}')">
             Buy
           </button>
         </td>
       </tr>
     `;
-  }).join('') || `<tr><td colspan="${MAIN_COLS.length+1}" class="text-center text-gray-500 py-12">No active records match the current screen filters.</td></tr>`;
+  }).join('') || `<tr><td colspan="${MAIN_COLS.length+1}" class="text-center text-textMuted py-12">No active records match the current screen filters.</td></tr>`;
   
   refreshIcons();
 }
@@ -962,11 +1127,11 @@ function renderSector(){
     const rsiGe60Cell = rsiGe60Pct > 60 ? `<span class="bg-accentGreen/15 text-accentGreen px-2.5 py-1 rounded font-bold">${r[3]}</span>` : r[3];
     return `
       <tr class="hover:bg-panelLight/30 transition-all">
-        <td class="p-3 font-semibold text-white tracking-wide font-display">${r[0]}</td>
-        <td class="p-3 text-center font-mono text-gray-300">${r[1]}</td>
+        <td class="p-3 font-semibold text-textMain tracking-wide font-display">${r[0]}</td>
+        <td class="p-3 text-center font-mono text-textMuted">${r[1]}</td>
         <td class="p-3 text-center font-mono">${avgRsiCell}</td>
         <td class="p-3 text-center font-mono">${rsiGe60Cell}</td>
-        <td class="p-3 text-center font-mono text-gray-400">${r[4]}</td>
+        <td class="p-3 text-center font-mono text-textMuted">${r[4]}</td>
       </tr>
     `;
   }).join('');
@@ -978,7 +1143,7 @@ function renderSector(){
 function generateSectorInsights(sectors) {
   const container = $('sectorInsightsContainer');
   if(!sectors.length) {
-    container.innerHTML = '<p class="text-xs text-gray-500">No rotation data mapped.</p>';
+    container.innerHTML = '<p class="text-xs text-textMuted">No rotation data mapped.</p>';
     return;
   }
 
@@ -991,7 +1156,7 @@ function generateSectorInsights(sectors) {
         <div class="flex items-center gap-1.5 text-accentGreen font-bold text-xs font-display">
           <i data-lucide="flame" class="w-4 h-4"></i> HOT ROTATION ACTIVE
         </div>
-        <p class="text-[11px] text-gray-300 mt-1">Sectors like <strong>${hotSectors.map(s => s[0]).join(', ')}</strong> are demonstrating extreme relative strength (RSI &ge; 60). Consider momentum trend strategies.</p>
+        <p class="text-[11px] text-textMuted mt-1">Sectors like <strong>${hotSectors.map(s => s[0]).join(', ')}</strong> are demonstrating extreme relative strength (RSI &ge; 60). Consider momentum trend strategies.</p>
       </div>
     `;
   } else {
@@ -1000,7 +1165,7 @@ function generateSectorInsights(sectors) {
         <div class="flex items-center gap-1.5 text-accentAmber font-bold text-xs font-display">
           <i data-lucide="shield-alert" class="w-4 h-4"></i> ACCUMULATION PHASE
         </div>
-        <p class="text-[11px] text-gray-300 mt-1">No major sector resides in a hot overbought matrix. Perfect environment for defensive scaling of oversold value gems.</p>
+        <p class="text-[11px] text-textMuted mt-1">No major sector resides in a hot overbought matrix. Perfect environment for defensive scaling of oversold value gems.</p>
       </div>
     `;
   }
@@ -1012,7 +1177,7 @@ function generateSectorInsights(sectors) {
         <div class="flex items-center gap-1.5 text-accentBlue font-bold text-xs font-display">
           <i data-lucide="activity" class="w-4 h-4"></i> VOLUMETRIC SURGE
         </div>
-        <p class="text-[11px] text-gray-300 mt-1"><strong>${volMover[0]}</strong> industry is experiencing unusual trade volumes (Avg Multiple: ${volMover[4]}x). High institutional interest flagged.</p>
+        <p class="text-[11px] text-textMuted mt-1"><strong>${volMover[0]}</strong> industry is experiencing unusual trade volumes (Avg Multiple: ${volMover[4]}x). High institutional interest flagged.</p>
       </div>
     `;
   }
@@ -1036,9 +1201,11 @@ function drawSectorChart(sectors) {
 
   ctx.clearRect(0, 0, width, height);
 
-  ctx.strokeStyle = '#202936';
+  // Dynamic axis and line colors based on theme class
+  const isLightMode = document.documentElement.classList.contains('light');
+  ctx.strokeStyle = isLightMode ? '#D1D5DB' : '#202936';
   ctx.lineWidth = 1;
-  ctx.fillStyle = '#6b7280';
+  ctx.fillStyle = isLightMode ? '#4B5563' : '#9CA3AF';
   ctx.font = '10px JetBrains Mono';
 
   const sectorsToDraw = sectors.slice(0, 8); 
@@ -1084,14 +1251,14 @@ function drawSectorChart(sectors) {
     ctx.save();
     ctx.translate(x + barWidth / 2, height - padding + 12);
     ctx.rotate(-Math.PI / 8);
-    ctx.fillStyle = '#9ca3af';
+    ctx.fillStyle = isLightMode ? '#4B5563' : '#9ca3af';
     ctx.font = '8px Inter';
     ctx.textAlign = 'right';
     const cleanLabel = sec[0].length > 12 ? sec[0].substring(0, 10) + '..' : sec[0];
     ctx.fillText(cleanLabel, 0, 0);
     ctx.restore();
 
-    ctx.fillStyle = '#ffffff';
+    ctx.fillStyle = isLightMode ? '#111827' : '#ffffff';
     ctx.font = 'bold 9px JetBrains Mono';
     ctx.textAlign = 'center';
     ctx.fillText(rsiVal, x + barWidth / 2, y - 5);
@@ -1116,7 +1283,6 @@ async function loadFinalList() {
     let symbolIndices = [];
     let targetRowIndex = 0;
 
-    // Scan top rows for "Symbol" key indices to split left/right tables dynamically
     for (let rIdx = 0; rIdx < Math.min(4, rows.length); rIdx++) {
       const checkRow = rows[rIdx];
       if (checkRow && checkRow.c) {
@@ -1186,7 +1352,7 @@ function renderFinalListTables() {
     const tvLink = getCleanTVLink(r.symbol);
     return `
       <tr class="hover:bg-panelLight/30 transition-all">
-        <td class="p-3 font-semibold text-white tracking-wide font-display">
+        <td class="p-3 font-semibold text-textMain tracking-wide font-display">
           <div class="flex items-center gap-2">
             <span>${r.symbol}</span>
             <a href="${tvLink}" target="_blank" class="text-accentBlue hover:text-blue-400 hover:underline transition-colors text-[10px] uppercase font-bold tracking-wider ml-2">
@@ -1194,20 +1360,20 @@ function renderFinalListTables() {
             </a>
           </div>
         </td>
-        <td class="p-3 font-mono text-gray-300">₹${r.price}</td>
-        <td class="p-3 font-mono text-gray-400">${r.volume}</td>
+        <td class="p-3 font-mono text-textMuted">₹${r.price}</td>
+        <td class="p-3 font-mono text-textMuted/80">${r.volume}</td>
         <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
-        <td class="p-3 font-mono text-gray-400">${r.volMultiplier}</td>
-        <td class="p-3 text-gray-400 text-[11px]">${r.industry}</td>
+        <td class="p-3 font-mono text-textMuted/80">${r.volMultiplier}</td>
+        <td class="p-3 text-textMuted text-[11px]">${r.industry}</td>
         <td class="p-3">${badge(r.dmaFilter)}</td>
         <td class="p-3 text-right">
-          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-white hover:text-black font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">
+          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-textMain hover:text-black font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">
             Buy
           </button>
         </td>
       </tr>
     `;
-  }).join('') || `<tr><td colspan="8" class="text-center text-gray-500 py-6">No matching reversal stocks.</td></tr>`;
+  }).join('') || `<tr><td colspan="8" class="text-center text-textMuted py-6">No matching reversal stocks.</td></tr>`;
 
   let filteredRight = [...finalListRight];
   if (query) {
@@ -1218,7 +1384,7 @@ function renderFinalListTables() {
     const tvLink = getCleanTVLink(r.symbol);
     return `
       <tr class="hover:bg-panelLight/30 transition-all">
-        <td class="p-3 font-semibold text-white tracking-wide font-display">
+        <td class="p-3 font-semibold text-textMain tracking-wide font-display">
           <div class="flex items-center gap-2">
             <span>${r.symbol}</span>
             <a href="${tvLink}" target="_blank" class="text-accentBlue hover:text-blue-400 hover:underline transition-colors text-[10px] uppercase font-bold tracking-wider ml-2">
@@ -1226,20 +1392,20 @@ function renderFinalListTables() {
             </a>
           </div>
         </td>
-        <td class="p-3 font-mono text-gray-300">₹${r.price}</td>
-        <td class="p-3 font-mono text-gray-400">${r.volume}</td>
+        <td class="p-3 font-mono text-textMuted">₹${r.price}</td>
+        <td class="p-3 font-mono text-textMuted/80">${r.volume}</td>
         <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
-        <td class="p-3 font-mono text-gray-400">${r.volMultiplier}</td>
-        <td class="p-3 text-gray-400 text-[11px]">${r.industry}</td>
+        <td class="p-3 font-mono text-textMuted/80">${r.volMultiplier}</td>
+        <td class="p-3 text-textMuted text-[11px]">${r.industry}</td>
         <td class="p-3">${badge(r.output)}</td>
         <td class="p-3 text-right">
-          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-white hover:text-black font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">
+          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-textMain hover:text-black font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">
             Buy
           </button>
         </td>
       </tr>
     `;
-  }).join('') || `<tr><td colspan="8" class="text-center text-gray-500 py-6">No matching oversold watchstocks.</td></tr>`;
+  }).join('') || `<tr><td colspan="8" class="text-center text-textMuted py-6">No matching oversold watchstocks.</td></tr>`;
 
   refreshIcons();
 }
@@ -1247,7 +1413,7 @@ function renderFinalListTables() {
 function rsiColorValue(rsiVal) {
   const val = parseFloat(rsiVal);
   if (isNaN(val)) return rsiVal;
-  let statusColor = 'text-gray-300';
+  let statusColor = 'text-textMuted';
   if (val >= 70) statusColor = 'text-accentRed bg-accentRed/10 border border-accentRed/25 px-1.5 py-0.5 rounded font-bold';
   if (val <= 30) statusColor = 'text-accentGreen bg-accentGreen/10 border border-accentGreen/25 px-1.5 py-0.5 rounded font-bold';
   return `<span class="${statusColor}">${rsiVal}</span>`;
@@ -1273,7 +1439,6 @@ async function loadRsiAnalysis() {
     let symbolIndices = [];
     let targetRowIndex = 0;
 
-    // Scan top rows for side-by-side matrices
     for (let rIdx = 0; rIdx < Math.min(4, rows.length); rIdx++) {
       const checkRow = rows[rIdx];
       if (checkRow && checkRow.c) {
@@ -1361,7 +1526,7 @@ function renderRsiAnalysisTables() {
     const tvLink = getCleanTVLink(r.symbol);
     return `
       <tr class="hover:bg-panelLight/20 transition-all">
-        <td class="p-3 font-semibold text-white tracking-wide font-display">
+        <td class="p-3 font-semibold text-textMain tracking-wide font-display">
           <div class="flex items-center gap-2">
             <span>${r.symbol}</span>
             <a href="${tvLink}" target="_blank" class="text-accentBlue hover:text-blue-400 hover:underline transition-colors text-[10px] uppercase font-bold tracking-wider ml-2">
@@ -1369,10 +1534,10 @@ function renderRsiAnalysisTables() {
             </a>
           </div>
         </td>
-        <td class="p-3 text-gray-400 text-[11px] font-body">${r.industry}</td>
+        <td class="p-3 text-textMuted text-[11px] font-body">${r.industry}</td>
         <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
         <td class="p-3 font-mono ${changeCls}">${r.change}</td>
-        <td class="p-3 text-[11px] font-semibold text-gray-400 font-body">${rsiBadgeFormat(r.status)}</td>
+        <td class="p-3 text-[11px] font-semibold text-textMuted font-body">${rsiBadgeFormat(r.status)}</td>
       </tr>
     `;
   }).join('') || `<tr><td colspan="5" class="text-center text-gray-500 py-6">No matches found.</td></tr>`;
@@ -1387,7 +1552,7 @@ function renderRsiAnalysisTables() {
     const tvLink = getCleanTVLink(r.symbol);
     return `
       <tr class="hover:bg-panelLight/20 transition-all">
-        <td class="p-3 font-semibold text-white tracking-wide font-display">
+        <td class="p-3 font-semibold text-textMain tracking-wide font-display">
           <div class="flex items-center gap-2">
             <span>${r.symbol}</span>
             <a href="${tvLink}" target="_blank" class="text-accentBlue hover:text-blue-400 hover:underline transition-colors text-[10px] uppercase font-bold tracking-wider ml-2">
@@ -1395,7 +1560,7 @@ function renderRsiAnalysisTables() {
             </a>
           </div>
         </td>
-        <td class="p-3 text-gray-400 text-[11px] font-body">${r.industry}</td>
+        <td class="p-3 text-textMuted text-[11px] font-body">${r.industry}</td>
         <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
         <td class="p-3 font-mono ${changeCls}">${r.change}</td>
       </tr>
@@ -1412,7 +1577,7 @@ function renderRsiAnalysisTables() {
     const tvLink = getCleanTVLink(r.symbol);
     return `
       <tr class="hover:bg-panelLight/20 transition-all">
-        <td class="p-3 font-semibold text-white tracking-wide font-display">
+        <td class="p-3 font-semibold text-textMain tracking-wide font-display">
           <div class="flex items-center gap-2">
             <span>${r.symbol}</span>
             <a href="${tvLink}" target="_blank" class="text-accentBlue hover:text-blue-400 hover:underline transition-colors text-[10px] uppercase font-bold tracking-wider ml-2">
@@ -1420,7 +1585,7 @@ function renderRsiAnalysisTables() {
             </a>
           </div>
         </td>
-        <td class="p-3 text-gray-400 text-[11px] font-body">${r.industry}</td>
+        <td class="p-3 text-textMuted text-[11px] font-body">${r.industry}</td>
         <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
         <td class="p-3 font-mono ${changeCls}">${r.change}</td>
       </tr>
@@ -1437,7 +1602,7 @@ function renderRsiAnalysisTables() {
     const tvLink = getCleanTVLink(r.symbol);
     return `
       <tr class="hover:bg-panelLight/20 transition-all">
-        <td class="p-3 font-semibold text-white tracking-wide font-display">
+        <td class="p-3 font-semibold text-textMain tracking-wide font-display">
           <div class="flex items-center gap-2">
             <span>${r.symbol}</span>
             <a href="${tvLink}" target="_blank" class="text-accentBlue hover:text-blue-400 hover:underline transition-colors text-[10px] uppercase font-bold tracking-wider ml-2">
@@ -1445,7 +1610,7 @@ function renderRsiAnalysisTables() {
             </a>
           </div>
         </td>
-        <td class="p-3 text-gray-400 text-[11px] font-body">${r.industry}</td>
+        <td class="p-3 text-textMuted text-[11px] font-body">${r.industry}</td>
         <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
         <td class="p-3 font-mono ${changeCls}">${r.change}</td>
       </tr>
@@ -1585,7 +1750,7 @@ function renderPortfolio(){
     const tvLink = getCleanTVLink(t.symbol);
     return `
       <tr class="hover:bg-panelLight/20 transition-all font-mono">
-        <td class="p-3 font-semibold text-white font-display">
+        <td class="p-3 font-semibold text-textMain font-display">
           <div class="flex items-center gap-2">
             <span>${t.symbol}</span>
             <a href="${tvLink}" target="_blank" class="text-accentBlue hover:text-blue-400 hover:underline transition-colors text-[10px] uppercase font-bold tracking-wider ml-2">
@@ -1594,23 +1759,23 @@ function renderPortfolio(){
             ${t.auto ? '<span class="text-[9px] bg-accentAmber/10 border border-accentAmber/35 px-1 rounded text-accentAmber ml-1">AUTO</span>' : ''}
           </div>
         </td>
-        <td class="p-3 text-gray-300">${t.qty}</td>
-        <td class="p-3 text-gray-400 font-bold">₹${t.entryPrice.toFixed(2)}</td>
-        <td class="p-3 text-gray-500">${t.entryRSI}</td>
-        <td class="p-3 text-gray-500">${new Date(t.entryDate).toLocaleDateString('en-IN')}</td>
-        <td class="p-3 text-white">₹${ltp.toFixed(2)}</td>
+        <td class="p-3 text-textMain">${t.qty}</td>
+        <td class="p-3 text-textMuted font-bold">₹${t.entryPrice.toFixed(2)}</td>
+        <td class="p-3 text-textMuted/80">${t.entryRSI}</td>
+        <td class="p-3 text-textMuted/80">${new Date(t.entryDate).toLocaleDateString('en-IN')}</td>
+        <td class="p-3 text-textMain">₹${ltp.toFixed(2)}</td>
         <td class="p-3 font-bold ${pnl>=0?'text-accentGreen':'text-accentRed'}">${pnl>=0?'+':''}${fmtMoney(pnl)}</td>
         <td class="p-3 font-bold ${pnl>=0?'text-accentGreen':'text-accentRed'}">${pnl>=0?'+':''}${pnlPct.toFixed(2)}%</td>
         <td class="p-3 text-right">
           <div class="inline-flex gap-1.5">
             <button class="bg-accentRed/10 border border-accentRed/20 hover:border-accentRed hover:bg-accentRed hover:text-white text-xs px-3 py-1 rounded-lg transition-all font-semibold select-none" onclick="closePosition('${t.id}')">Close</button>
-            <button class="border border-border text-gray-500 hover:text-white hover:border-gray-500 text-xs px-2 py-1 rounded-lg transition-all select-none" onclick="deleteTrade('${t.id}')"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+            <button class="border border-border text-textMuted hover:text-white hover:border-gray-500 text-xs px-2 py-1 rounded-lg transition-all select-none" onclick="deleteTrade('${t.id}')"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
           </div>
         </td>
       </tr>
     `;
   });
-  $('openBody').innerHTML = openRows.join('') || '<tr><td colspan="9" class="text-center text-gray-500 py-12">No active assets in simulated simulator ledger. Click "Buy" next to screener lists.</td></tr>';
+  $('openBody').innerHTML = openRows.join('') || '<tr><td colspan="9" class="text-center text-textMuted py-12">No active assets in simulated simulator ledger. Click "Buy" next to screener lists.</td></tr>';
 
   let realizedPnl = 0, wins = 0;
   const closedRows = closed.map(t => {
@@ -1621,7 +1786,7 @@ function renderPortfolio(){
     const tvLink = getCleanTVLink(t.symbol);
     return `
       <tr class="hover:bg-panelLight/20 transition-all font-mono">
-        <td class="p-3 font-semibold text-white font-display">
+        <td class="p-3 font-semibold text-textMain font-display">
           <div class="flex items-center gap-2">
             <span>${t.symbol}</span>
             <a href="${tvLink}" target="_blank" class="text-accentBlue hover:text-blue-400 hover:underline transition-colors text-[10px] uppercase font-bold tracking-wider ml-2">
@@ -1629,58 +1794,48 @@ function renderPortfolio(){
             </a>
           </div>
         </td>
-        <td class="p-3 text-gray-400">${t.qty}</td>
-        <td class="p-3 text-gray-500">₹${t.entryPrice.toFixed(2)}</td>
-        <td class="p-3 text-gray-300">₹${t.exitPrice.toFixed(2)}</td>
-        <td class="p-3 text-gray-500">${new Date(t.entryDate).toLocaleDateString('en-IN')}</td>
-        <td class="p-3 text-gray-500">${new Date(t.exitDate).toLocaleDateString('en-IN')}</td>
+        <td class="p-3 text-textMuted">${t.qty}</td>
+        <td class="p-3 text-textMuted/60">₹${t.entryPrice.toFixed(2)}</td>
+        <td class="p-3 text-textMain">₹${t.exitPrice.toFixed(2)}</td>
+        <td class="p-3 text-textMuted/60">${new Date(t.entryDate).toLocaleDateString('en-IN')}</td>
+        <td class="p-3 text-textMuted/60">${new Date(t.exitDate).toLocaleDateString('en-IN')}</td>
         <td class="p-3 font-bold ${pnl>=0?'text-accentGreen':'text-accentRed'}">${pnl>=0?'+':''}${fmtMoney(pnl)}</td>
         <td class="p-3 font-bold ${pnl>=0?'text-accentGreen':'text-accentRed'}">${pnl>=0?'+':''}${pnlPct.toFixed(2)}%</td>
         <td class="p-3 text-right">
-          <button class="border border-border text-gray-500 hover:text-white hover:border-gray-500 text-xs px-2 py-1 rounded-lg transition-all" onclick="deleteTrade('${t.id}')"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          <button class="border border-border text-textMuted hover:text-white hover:border-gray-500 text-xs px-2 py-1 rounded-lg transition-all" onclick="deleteTrade('${t.id}')"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
         </td>
       </tr>
     `;
   }).reverse();
-  $('closedBody').innerHTML = closedRows.join('') || '<tr><td colspan="9" class="text-center text-gray-500 py-12">No liquidated trades in recent session.</td></tr>';
+  $('closedBody').innerHTML = closedRows.join('') || '<tr><td colspan="9" class="text-center text-textMuted py-12">No liquidated trades yet.</td></tr>';
 
   const unrealized = currentValue - invested;
   const winRate = closed.length ? ((wins/closed.length)*100).toFixed(1) : '—';
   
   $('portfolioStats').innerHTML = `
-    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between">
-      <span class="text-[10px] uppercase font-semibold text-gray-400 font-mono tracking-wider">Invested (Open)</span>
-      <span class="text-lg lg:text-xl font-bold font-mono text-white mt-1.5">${fmtMoney(invested)}</span>
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between transition-all duration-200">
+      <span class="text-[10px] uppercase font-semibold text-textMuted font-mono tracking-wider">Invested (Open)</span>
+      <span class="text-lg lg:text-xl font-bold font-mono text-textMain mt-1.5">${fmtMoney(invested)}</span>
     </div>
-    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between">
-      <span class="text-[10px] uppercase font-semibold text-gray-400 font-mono tracking-wider">Current Holdings Value</span>
-      <span class="text-lg lg:text-xl font-bold font-mono text-white mt-1.5">${fmtMoney(currentValue)}</span>
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between transition-all duration-200">
+      <span class="text-[10px] uppercase font-semibold text-textMuted font-mono tracking-wider">Current Holdings Value</span>
+      <span class="text-lg lg:text-xl font-bold font-mono text-textMain mt-1.5">${fmtMoney(currentValue)}</span>
     </div>
-    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between">
-      <span class="text-[10px] uppercase font-semibold text-gray-400 font-mono tracking-wider">Floating (P&amp;L)</span>
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between transition-all duration-200">
+      <span class="text-[10px] uppercase font-semibold text-textMuted font-mono tracking-wider">Floating (P&amp;L)</span>
       <span class="text-lg lg:text-xl font-bold font-mono mt-1.5 ${unrealized>=0?'text-accentGreen':'text-accentRed'}">${unrealized>=0?'+':''}${fmtMoney(unrealized)}</span>
     </div>
-    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between">
-      <span class="text-[10px] uppercase font-semibold text-gray-400 font-mono tracking-wider">Realized Returns</span>
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between transition-all duration-200">
+      <span class="text-[10px] uppercase font-semibold text-textMuted font-mono tracking-wider">Realized Returns</span>
       <span class="text-lg lg:text-xl font-bold font-mono mt-1.5 ${realizedPnl>=0?'text-accentGreen':'text-accentRed'}">${realizedPnl>=0?'+':''}${fmtMoney(realizedPnl)}</span>
     </div>
-    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between">
-      <span class="text-[10px] uppercase font-semibold text-gray-400 font-mono tracking-wider">Settle Win Rate</span>
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between transition-all duration-200">
+      <span class="text-[10px] uppercase font-semibold text-textMuted font-mono tracking-wider">Settle Win Rate</span>
       <span class="text-lg lg:text-xl font-bold font-mono mt-1.5 text-accentBlue">${winRate}${winRate!=='—'?'%':''}</span>
     </div>
   `;
   refreshIcons();
 }
-
-$('resetPortfolio').addEventListener('click', async () => {
-  const confirmed = await customConfirm('Reset Portfolio Entirely?', 'This permanently wipes all active holdings, history, and simulation progress.');
-  if (confirmed) {
-    localStorage.removeItem(PF_KEY);
-    renderPortfolio();
-    maybeAutoPush();
-    showToast('All virtual ledger caches cleared.', 'info');
-  }
-});
 
 const GH_KEY = 'rsiScreener_ghConfig_v1';
 
@@ -1757,7 +1912,7 @@ async function pushToGithub(){
     if(!putRes.ok){ const err = await putRes.json().catch(()=>({})); throw new Error(err.message || ('HTTP ' + putRes.status)); }
     
     $('ghStatus').textContent = 'cloud synced';
-    showToast('Ledger ledger pushed safely to GitHub!', 'success');
+    showToast('Ledger pushed safely to GitHub!', 'success');
   }catch(e){
     $('ghStatus').textContent = 'fail';
     showToast('Git backup failed: ' + e.message, 'error');
@@ -1906,12 +2061,27 @@ function customClosePrompt(symbol, initialQty, currentLtp) {
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
+    // Standardize all tabs
     document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.remove('active', 'text-white', 'bg-panel/30');
-      b.classList.add('text-gray-400');
+      b.className = "tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all duration-200 border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight";
     });
-    btn.classList.add('active', 'text-white', 'bg-panel/30');
-    btn.classList.remove('text-gray-400');
+
+    // Style active tab with unique theme coloring
+    const colorTheme = btn.dataset.color;
+    let themeClass = "";
+    if (colorTheme === 'emerald') {
+      themeClass = "active text-emerald-500 bg-emerald-500/10 border-emerald-500/30";
+    } else if (colorTheme === 'blue') {
+      themeClass = "active text-blue-500 bg-blue-500/10 border-blue-500/30";
+    } else if (colorTheme === 'purple') {
+      themeClass = "active text-purple-500 bg-purple-500/10 border-purple-500/30";
+    } else if (colorTheme === 'rose') {
+      themeClass = "active text-rose-500 bg-rose-500/10 border-rose-500/30";
+    } else if (colorTheme === 'amber') {
+      themeClass = "active text-amber-500 bg-amber-500/10 border-amber-500/30";
+    }
+
+    btn.className = `tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all duration-200 border ${themeClass}`;
     
     const target = 'panel-' + btn.dataset.tab;
     document.querySelectorAll('.tab-panel').forEach(p => {
@@ -1974,6 +2144,7 @@ $('refreshBtn').addEventListener('click', () => {
 });
 
 window.onload = function() {
+  loadTheme();
   loadAll();
   setInterval(loadAll, REFRESH_MS);
 };
