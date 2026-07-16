@@ -23,143 +23,74 @@
     --font-body:'Inter', sans-serif;
   }
   *{box-sizing:border-box;}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:var(--font-body);
-  }
+  body{margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body);}
   a{color:var(--blue);}
 
-  /* ---- Header ---- */
-  header{
-    border-bottom:1px solid var(--border);
-    padding:20px 24px 0 24px;
-  }
-  .eyebrow{
-    font-family:var(--font-mono);
-    font-size:11px;
-    letter-spacing:.18em;
-    color:var(--green);
-    display:flex;
-    align-items:center;
-    gap:8px;
-  }
-  .dot{
-    width:6px;height:6px;border-radius:50%;
-    background:var(--green);
-    box-shadow:0 0 8px var(--green);
-    animation:pulse 1.6s infinite ease-in-out;
-  }
+  header{border-bottom:1px solid var(--border); padding:20px 24px 0 24px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11px; letter-spacing:.18em; color:var(--green); display:flex; align-items:center; gap:8px;}
+  .dot{width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse 1.6s infinite ease-in-out;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-  h1{
-    font-family:var(--font-display);
-    font-weight:700;
-    font-size:clamp(22px,4vw,34px);
-    margin:6px 0 14px 0;
-    letter-spacing:-0.01em;
-  }
+  h1{font-family:var(--font-display); font-weight:700; font-size:clamp(22px,4vw,34px); margin:6px 0 14px 0; letter-spacing:-0.01em;}
   h1 span{color:var(--muted); font-weight:500;}
 
-  /* ---- Ticker ---- */
-  .ticker-wrap{
-    overflow:hidden;
-    border-top:1px solid var(--border);
-    background:var(--panel);
-    white-space:nowrap;
-  }
-  .ticker{
-    display:inline-block;
-    padding:9px 0;
-    font-family:var(--font-mono);
-    font-size:13px;
-    animation:scroll 38s linear infinite;
-  }
+  .ticker-wrap{overflow:hidden; border-top:1px solid var(--border); background:var(--panel); white-space:nowrap;}
+  .ticker{display:inline-block; padding:9px 0; font-family:var(--font-mono); font-size:13px; animation:scroll 38s linear infinite;}
   .ticker-wrap:hover .ticker{animation-play-state:paused;}
-  @keyframes scroll{
-    0%{transform:translateX(0);}
-    100%{transform:translateX(-50%);}
-  }
+  @keyframes scroll{0%{transform:translateX(0);} 100%{transform:translateX(-50%);}}
   .t-item{display:inline-flex; align-items:center; gap:6px; margin-right:34px;}
   .t-item b{color:var(--text); font-weight:700;}
   .up{color:var(--green);}
   .down{color:var(--red);}
 
-  /* ---- Controls ---- */
-  .controls{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    align-items:center;
-    padding:16px 24px;
-    border-bottom:1px solid var(--border);
-    position:sticky;
-    top:0;
-    background:rgba(11,14,17,.92);
-    backdrop-filter:blur(6px);
-    z-index:5;
+  /* ---- Top bar ---- */
+  .topbar{
+    display:flex; align-items:center; gap:12px; padding:10px 24px;
+    border-bottom:1px solid var(--border); background:rgba(11,14,17,.92);
   }
-  input[type=text], select, input[type=number]{
-    background:var(--panel);
-    border:1px solid var(--border);
-    color:var(--text);
-    border-radius:6px;
-    padding:8px 10px;
-    font-family:var(--font-body);
-    font-size:13px;
+  #globalStatus{font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-left:auto;}
+
+  /* ---- Tabs ---- */
+  .tabs{
+    display:flex; gap:2px; padding:0 24px; background:var(--panel-2);
+    border-bottom:1px solid var(--border); overflow-x:auto;
+  }
+  .tab-btn{
+    background:transparent; border:none; color:var(--muted); padding:13px 16px;
+    font-size:13px; font-family:var(--font-body); font-weight:600; cursor:pointer;
+    border-bottom:2px solid transparent; white-space:nowrap;
+  }
+  .tab-btn:hover{color:var(--text);}
+  .tab-btn.active{color:var(--green); border-bottom-color:var(--green);}
+  .tab-panel{display:none; padding:0 24px 40px 24px;}
+  .tab-panel.active{display:block;}
+
+  .controls{display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:16px 0;}
+  input[type=text], select, input[type=number], input[type=password]{
+    background:var(--panel); border:1px solid var(--border); color:var(--text);
+    border-radius:6px; padding:8px 10px; font-family:var(--font-body); font-size:13px;
   }
   input[type=text]{width:180px;}
   input[type=number]{width:64px;}
   label.mini{font-size:11px; color:var(--muted); display:flex; align-items:center; gap:6px;}
   button{
-    background:var(--panel-2);
-    border:1px solid var(--border);
-    color:var(--text);
-    border-radius:6px;
-    padding:8px 14px;
-    font-size:13px;
-    cursor:pointer;
-    font-family:var(--font-body);
+    background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+    border-radius:6px; padding:8px 14px; font-size:13px; cursor:pointer; font-family:var(--font-body);
   }
   button:hover{border-color:var(--green); color:var(--green);}
-  #status{font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-left:auto;}
 
-  /* ---- Table ---- */
-  main{padding:0 24px 40px 24px;}
-  .table-scroll{overflow-x:auto; border:1px solid var(--border); border-radius:8px; margin-top:18px;}
-  table{border-collapse:collapse; width:100%; min-width:920px;}
+  .table-scroll{overflow-x:auto; border:1px solid var(--border); border-radius:8px; margin-top:6px;}
+  table{border-collapse:collapse; width:100%; min-width:820px;}
   thead th{
-    position:sticky; top:0;
-    background:var(--panel-2);
-    text-align:left;
-    font-size:11px;
-    letter-spacing:.04em;
-    color:var(--muted);
-    text-transform:uppercase;
-    padding:10px 12px;
-    border-bottom:1px solid var(--border);
-    cursor:pointer;
-    white-space:nowrap;
+    position:sticky; top:0; background:var(--panel-2); text-align:left; font-size:11px;
+    letter-spacing:.04em; color:var(--muted); text-transform:uppercase; padding:10px 12px;
+    border-bottom:1px solid var(--border); cursor:pointer; white-space:nowrap;
   }
   thead th:hover{color:var(--text);}
   thead th.active{color:var(--green);}
-  tbody td{
-    padding:9px 12px;
-    font-family:var(--font-mono);
-    font-size:12.5px;
-    border-bottom:1px solid var(--border);
-    white-space:nowrap;
-  }
+  tbody td{padding:9px 12px; font-family:var(--font-mono); font-size:12.5px; border-bottom:1px solid var(--border); white-space:nowrap;}
   tbody tr:hover{background:var(--panel);}
   td.sym{font-family:var(--font-body); font-weight:600;}
-  .badge{
-    font-family:var(--font-body);
-    font-size:11px;
-    font-weight:600;
-    padding:3px 9px;
-    border-radius:20px;
-    display:inline-block;
-  }
+  .badge{font-family:var(--font-body); font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; display:inline-block;}
   .b-buy{background:rgba(61,220,132,.12); color:var(--green); border:1px solid rgba(61,220,132,.35);}
   .b-avoid{background:rgba(124,133,145,.12); color:var(--muted); border:1px solid var(--border);}
   .b-unconfirmed{background:rgba(245,166,35,.12); color:var(--amber); border:1px solid rgba(245,166,35,.35);}
@@ -167,15 +98,9 @@
   .b-bear{background:rgba(255,91,91,.12); color:var(--red); border:1px solid rgba(255,91,91,.35);}
   .b-short{background:rgba(91,157,255,.12); color:var(--blue); border:1px solid rgba(91,157,255,.35);}
 
-  /* ---- Sector panel ---- */
-  .section-title{
-    font-family:var(--font-display);
-    font-size:16px;
-    margin:32px 0 4px 0;
-  }
+  .section-title{font-family:var(--font-display); font-size:16px; margin:20px 0 4px 0;}
   .section-sub{font-size:12px; color:var(--muted); margin-bottom:0;}
 
-  /* ---- Paper trading ---- */
   .trade-btn{padding:4px 11px; font-size:11px; border-radius:5px; border-color:var(--green); color:var(--green);}
   .trade-btn:hover{background:rgba(61,220,132,.12);}
   .close-btn{padding:4px 11px; font-size:11px; border-radius:5px; border-color:var(--red); color:var(--red);}
@@ -184,39 +109,21 @@
   .del-btn:hover{background:rgba(124,133,145,.15); color:var(--text); border-color:var(--muted);}
   .auto-toggle{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted);}
   .portfolio-stats{display:flex; gap:12px; flex-wrap:wrap; margin:14px 0 4px 0;}
-  .stat-card{
-    background:var(--panel); border:1px solid var(--border); border-radius:8px;
-    padding:12px 18px; min-width:140px;
-  }
+  .stat-card{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px 18px; min-width:140px;}
   .stat-card .lbl{font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
   .stat-card .val{font-family:var(--font-mono); font-size:19px; font-weight:700; margin-top:4px;}
   .section-head-row{display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px;}
 
-  /* ---- GitHub sync ---- */
-  details.gh-sync{
-    background:var(--panel); border:1px solid var(--border); border-radius:8px;
-    padding:12px 16px; margin-top:16px;
-  }
+  details.gh-sync{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin-top:16px;}
   details.gh-sync summary{cursor:pointer; font-size:13px; font-weight:600; color:var(--text);}
   .gh-grid{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; align-items:center;}
   .gh-grid input[type=text], .gh-grid input[type=password]{width:150px;}
   #ghStatus{font-family:var(--font-mono); font-size:11px; color:var(--muted);}
 
-  footer{
-    padding:18px 24px 30px 24px;
-    font-size:11px;
-    color:var(--muted);
-    border-top:1px solid var(--border);
-  }
-  #err{
-    display:none;
-    margin:18px 24px 0 24px;
-    padding:12px 14px;
-    border:1px solid var(--red);
-    color:var(--red);
-    border-radius:8px;
-    font-size:13px;
-    font-family:var(--font-mono);
+  footer{padding:18px 24px 30px 24px; font-size:11px; color:var(--muted); border-top:1px solid var(--border);}
+  .err-box{
+    display:none; margin:16px 0 0 0; padding:12px 14px; border:1px solid var(--red);
+    color:var(--red); border-radius:8px; font-size:13px; font-family:var(--font-mono);
   }
 </style>
 </head>
@@ -229,58 +136,77 @@
 
 <div class="ticker-wrap"><div class="ticker" id="ticker">Loading movers&hellip;</div></div>
 
-<div id="err"></div>
-
-<div class="controls">
-  <input type="text" id="search" placeholder="Search symbol…">
-  <select id="sector"><option value="">All sectors</option></select>
-  <select id="output"><option value="">All signals</option></select>
-  <label class="mini">RSI ≥ <input type="number" id="rsiMin" value="0" min="0" max="100"></label>
-  <label class="mini">RSI ≤ <input type="number" id="rsiMax" value="100" min="0" max="100"></label>
-  <label class="mini">Trade size ₹ <input type="number" id="tradeSize" value="20000" min="500" step="500"></label>
-  <label class="auto-toggle"><input type="checkbox" id="autoTrade"> Auto paper-trade on Buy signal</label>
-  <button id="refreshBtn">↻ Refresh now</button>
-  <span id="status">connecting…</span>
+<div class="topbar">
+  <button id="refreshBtn">&#8635; Refresh all</button>
+  <span id="globalStatus">connecting&hellip;</span>
 </div>
 
-<main>
+<div class="tabs">
+  <button class="tab-btn active" data-tab="fulllist">Full List</button>
+  <button class="tab-btn" data-tab="sector">Sector Summary</button>
+  <button class="tab-btn" data-tab="paper">Paper Trading</button>
+  <button class="tab-btn" data-tab="finallist">Final List</button>
+  <button class="tab-btn" data-tab="rsianalysis">RSI Analysis</button>
+</div>
+
+<!-- ===================== FULL LIST ===================== -->
+<div class="tab-panel active" id="panel-fulllist">
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search symbol&hellip;">
+    <select id="sector"><option value="">All sectors</option></select>
+    <select id="output"><option value="">All signals</option></select>
+    <label class="mini">RSI &ge; <input type="number" id="rsiMin" value="0" min="0" max="100"></label>
+    <label class="mini">RSI &le; <input type="number" id="rsiMax" value="100" min="0" max="100"></label>
+  </div>
+  <div id="fullListErr" class="err-box"></div>
   <div class="table-scroll">
     <table id="mainTable">
       <thead><tr id="headRow"></tr></thead>
       <tbody id="body"></tbody>
     </table>
   </div>
+</div>
 
+<!-- ===================== SECTOR SUMMARY ===================== -->
+<div class="tab-panel" id="panel-sector">
   <h2 class="section-title">Sector Summary</h2>
-  <p class="section-sub">Avg RSI, breadth (% of stocks with RSI ≥ 60), and average volume multiple by industry.</p>
+  <p class="section-sub">Avg RSI, breadth (% of stocks with RSI &ge; 60), and average volume multiple by industry.</p>
   <div class="table-scroll">
     <table id="sectorTable">
       <thead><tr>
         <th data-k="0">Industry</th><th data-k="1">Stocks</th><th data-k="2">Avg RSI</th>
-        <th data-k="3">RSI ≥ 60</th><th data-k="4">Avg Vol Multiple</th>
+        <th data-k="3">RSI &ge; 60</th><th data-k="4">Avg Vol Multiple</th>
       </tr></thead>
       <tbody id="sectorBody"></tbody>
     </table>
   </div>
+</div>
 
+<!-- ===================== PAPER TRADING ===================== -->
+<div class="tab-panel" id="panel-paper">
   <div class="section-head-row">
     <div>
       <h2 class="section-title">Paper Trading Portfolio</h2>
-      <p class="section-sub">Simulated trades only — no real money or broker involved. Prices update on every refresh.</p>
+      <p class="section-sub">Simulated trades only &mdash; no real money or broker involved. Prices update on every refresh.</p>
     </div>
     <button id="resetPortfolio">Reset portfolio</button>
   </div>
 
+  <div class="controls" style="padding-top:6px;">
+    <label class="mini">Trade size &#8377; <input type="number" id="tradeSize" value="20000" min="500" step="500"></label>
+    <label class="auto-toggle"><input type="checkbox" id="autoTrade"> Auto paper-trade on Buy signal</label>
+  </div>
+
   <details class="gh-sync">
-    <summary>⚙ GitHub sync (optional — backs up trades to a repo)</summary>
+    <summary>&#9881; GitHub sync (optional &mdash; backs up trades to a repo)</summary>
     <div class="gh-grid">
       <input type="text" id="ghOwner" placeholder="GitHub username">
       <input type="text" id="ghRepo" placeholder="Repo name">
       <input type="text" id="ghPath" placeholder="File path" value="paper-trades.json">
       <input type="password" id="ghToken" placeholder="Personal access token">
       <button id="ghSave">Save config</button>
-      <button id="ghPush">⬆ Push to GitHub</button>
-      <button id="ghPull">⬇ Pull from GitHub</button>
+      <button id="ghPush">&#8593; Push to GitHub</button>
+      <button id="ghPull">&#8595; Pull from GitHub</button>
       <label class="auto-toggle"><input type="checkbox" id="ghAuto"> Auto-push after every trade</label>
       <span id="ghStatus">not configured</span>
     </div>
@@ -288,46 +214,84 @@
 
   <div class="portfolio-stats" id="portfolioStats"></div>
 
-  <h3 class="section-title" style="font-size:14px; margin-top:22px;">Open Positions</h3>
+  <h3 class="section-title" style="font-size:14px;">Open Positions</h3>
   <div class="table-scroll">
     <table id="openTable">
       <thead><tr>
         <th>Symbol</th><th>Qty</th><th>Entry Price</th><th>Entry RSI</th><th>Entry Date</th>
-        <th>LTP</th><th>P&amp;L ₹</th><th>P&amp;L %</th><th>Action</th>
+        <th>LTP</th><th>P&amp;L &#8377;</th><th>P&amp;L %</th><th>Action</th>
       </tr></thead>
       <tbody id="openBody"></tbody>
     </table>
   </div>
 
-  <h3 class="section-title" style="font-size:14px; margin-top:22px;">Closed Trades</h3>
+  <h3 class="section-title" style="font-size:14px;">Closed Trades</h3>
   <div class="table-scroll">
     <table id="closedTable">
       <thead><tr>
         <th>Symbol</th><th>Qty</th><th>Entry Price</th><th>Exit Price</th>
-        <th>Entry Date</th><th>Exit Date</th><th>P&amp;L ₹</th><th>P&amp;L %</th><th>Action</th>
+        <th>Entry Date</th><th>Exit Date</th><th>P&amp;L &#8377;</th><th>P&amp;L %</th><th>Action</th>
       </tr></thead>
       <tbody id="closedBody"></tbody>
     </table>
   </div>
-</main>
+</div>
+
+<!-- ===================== FINAL LIST (generic sheet tab) ===================== -->
+<div class="tab-panel" id="panel-finallist">
+  <div class="section-head-row">
+    <h2 class="section-title">Final List</h2>
+    <span id="finalStatus" style="font-family:var(--font-mono); font-size:11px; color:var(--muted);">connecting&hellip;</span>
+  </div>
+  <div class="controls" style="padding-top:0;">
+    <input type="text" id="finalSearch" placeholder="Search&hellip;">
+  </div>
+  <div id="finalListErr" class="err-box"></div>
+  <div class="table-scroll">
+    <table id="finalListTable">
+      <thead><tr id="finalListHead"></tr></thead>
+      <tbody id="finalListBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ===================== RSI ANALYSIS (generic sheet tab) ===================== -->
+<div class="tab-panel" id="panel-rsianalysis">
+  <div class="section-head-row">
+    <h2 class="section-title">RSI Analysis</h2>
+    <span id="rsiAnalysisStatus" style="font-family:var(--font-mono); font-size:11px; color:var(--muted);">connecting&hellip;</span>
+  </div>
+  <div class="controls" style="padding-top:0;">
+    <input type="text" id="rsiAnalysisSearch" placeholder="Search&hellip;">
+  </div>
+  <div id="rsiAnalysisErr" class="err-box"></div>
+  <div class="table-scroll">
+    <table id="rsiAnalysisTable">
+      <thead><tr id="rsiAnalysisHead"></tr></thead>
+      <tbody id="rsiAnalysisBody"></tbody>
+    </table>
+  </div>
+</div>
 
 <footer>
   Quotes are not sourced from all markets and may be delayed up to 20 minutes. Provided "as is" for informational purposes only, not trading advice.
 </footer>
 
 <script>
-// ---- CONFIG: edit these two lines for your own sheet/tab ----
+// ================= CONFIG =================
 const SHEET_ID = '1ODdw_qJXOwxPrvTLxRAsicqYVFgxzX2xiRNcbmSlPsY';
-const GID = '0'; // tab id — gid=0 is "Sheet1" per the shared link
-const REFRESH_MS = 5 * 60 * 1000; // auto-refresh every 5 minutes
+const GID_FULL_LIST = '0';                 // "Sheet1" tab (per the shared link)
+const GID_FINAL_LIST = '123456789'; // <-- double-check this against the actual tab URL
+const GID_RSI_ANALYSIS = '1583281498';
+const REFRESH_MS = 5 * 60 * 1000;
 
 const MAIN_COLS = ['Symbol','RSI','Vol Multiple','Price','Volume','20D Avg Vol','Industry',
-  '1D Chg %','50 DMA','100 DMA','200 DMA','Output','Δ 200 DMA','CAR Rating'];
-const SECTOR_START_COL = 21; // column V
+  '1D Chg %','50 DMA','100 DMA','200 DMA','Output','\u0394 200 DMA','CAR Rating'];
+const SECTOR_START_COL = 21;
 
-let rawRows = [];   // main table rows (array of arrays, already typed/formatted)
+let rawRows = [];
 let sectorRows = [];
-let sortState = {col:1, dir:-1}; // default sort by RSI desc
+let sortState = {col:1, dir:-1};
 
 const $ = (id) => document.getElementById(id);
 
@@ -338,7 +302,7 @@ function badge(value){
     'In Bull Run':'b-bull','In Bear Run':'b-bear','Short History':'b-short'
   };
   const cls = map[v] || 'b-avoid';
-  return `<span class="badge ${cls}">${v||'—'}</span>`;
+  return '<span class="badge ' + cls + '">' + (v || '\u2014') + '</span>';
 }
 
 function cellValue(cell){
@@ -346,39 +310,40 @@ function cellValue(cell){
   return cell.f !== undefined && cell.f !== null ? cell.f : (cell.v ?? '');
 }
 
-async function fetchSheet(){
-  $('status').textContent = 'fetching…';
-  $('err').style.display = 'none';
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}&headers=1`;
+async function fetchGvizJson(gid){
+  const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&gid=' + gid + '&headers=1';
   const res = await fetch(url);
   if(!res.ok) throw new Error('HTTP ' + res.status);
   const text = await res.text();
-  const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}')+1);
-  const data = JSON.parse(jsonStr);
+  const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+  return JSON.parse(jsonStr);
+}
+
+// ---------------- Full List + Sector Summary ----------------
+async function fetchSheet(){
+  $('globalStatus').textContent = 'fetching\u2026';
+  $('fullListErr').style.display = 'none';
+  const data = await fetchGvizJson(GID_FULL_LIST);
   const rows = data.table.rows;
 
-  rawRows = rows
-    .map(r => MAIN_COLS.map((_, i) => cellValue(r.c[i])))
-    .filter(r => r[0]); // drop blank rows
+  rawRows = rows.map(r => MAIN_COLS.map((_, i) => cellValue(r.c[i]))).filter(r => r[0]);
 
-  sectorRows = rows
-    .map(r => [
-      cellValue(r.c[SECTOR_START_COL]),
-      cellValue(r.c[SECTOR_START_COL+1]),
-      cellValue(r.c[SECTOR_START_COL+2]),
-      cellValue(r.c[SECTOR_START_COL+3]),
-      cellValue(r.c[SECTOR_START_COL+4]),
-    ])
-    .filter(r => r[0]);
+  sectorRows = rows.map(r => [
+    cellValue(r.c[SECTOR_START_COL]),
+    cellValue(r.c[SECTOR_START_COL+1]),
+    cellValue(r.c[SECTOR_START_COL+2]),
+    cellValue(r.c[SECTOR_START_COL+3]),
+    cellValue(r.c[SECTOR_START_COL+4]),
+  ]).filter(r => r[0]);
 
-  $('status').textContent = 'updated ' + new Date().toLocaleTimeString();
+  $('globalStatus').textContent = 'updated ' + new Date().toLocaleTimeString();
 }
 
 function populateFilters(){
   const sectors = [...new Set(rawRows.map(r => r[6]).filter(Boolean))].sort();
   const outputs = [...new Set(rawRows.map(r => r[11]).filter(Boolean))].sort();
-  $('sector').innerHTML = '<option value="">All sectors</option>' + sectors.map(s=>`<option>${s}</option>`).join('');
-  $('output').innerHTML = '<option value="">All signals</option>' + outputs.map(s=>`<option>${s}</option>`).join('');
+  $('sector').innerHTML = '<option value="">All sectors</option>' + sectors.map(s => '<option>' + s + '</option>').join('');
+  $('output').innerHTML = '<option value="">All signals</option>' + outputs.map(s => '<option>' + s + '</option>').join('');
 }
 
 function renderTicker(){
@@ -386,14 +351,14 @@ function renderTicker(){
   $('ticker').innerHTML = [...sorted, ...sorted].map(r => {
     const chg = parseFloat(r[7]);
     const cls = chg >= 0 ? 'up' : 'down';
-    const sign = chg >= 0 ? '▲' : '▼';
-    return `<span class="t-item"><b>${r[0]}</b> RSI ${r[1]} <span class="${cls}">${sign} ${r[7]}</span></span>`;
+    const sign = chg >= 0 ? '\u25B2' : '\u25BC';
+    return '<span class="t-item"><b>' + r[0] + '</b> RSI ' + r[1] + ' <span class="' + cls + '">' + sign + ' ' + r[7] + '</span></span>';
   }).join('');
 }
 
 function renderHead(){
   $('headRow').innerHTML = MAIN_COLS.map((c,i) =>
-    `<th data-k="${i}" class="${sortState.col===i?'active':''}">${c}${sortState.col===i ? (sortState.dir===1?' ↑':' ↓') : ''}</th>`
+    '<th data-k="' + i + '" class="' + (sortState.col===i?'active':'') + '">' + c + (sortState.col===i ? (sortState.dir===1?' \u2191':' \u2193') : '') + '</th>'
   ).join('') + '<th>Action</th>';
   document.querySelectorAll('#headRow th[data-k]').forEach(th => {
     th.onclick = () => {
@@ -431,25 +396,91 @@ function renderBody(){
     return (av+'').localeCompare(bv+'') * sortState.dir;
   });
 
-  $('body').innerHTML = rows.map(r => `<tr>
-    <td class="sym">${r[0]}</td>
-    <td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td>
-    <td>${r[6]}</td>
-    <td class="${parseFloat(r[7])>=0?'up':'down'}">${r[7]}</td>
-    <td>${r[8]}</td><td>${r[9]}</td><td>${r[10]}</td>
-    <td>${badge(r[11])}</td>
-    <td class="${parseFloat(r[12])>=0?'up':'down'}">${r[12]}</td>
-    <td>${r[13]}</td>
-    <td><button class="trade-btn" onclick="buyStock('${r[0]}')">Buy</button></td>
-  </tr>`).join('') || `<tr><td colspan="${MAIN_COLS.length+1}" style="text-align:center; color:var(--muted); padding:20px;">No matches</td></tr>`;
+  $('body').innerHTML = rows.map(r =>
+    '<tr>' +
+    '<td class="sym">' + r[0] + '</td>' +
+    '<td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td><td>' + r[4] + '</td><td>' + r[5] + '</td>' +
+    '<td>' + r[6] + '</td>' +
+    '<td class="' + (parseFloat(r[7])>=0?'up':'down') + '">' + r[7] + '</td>' +
+    '<td>' + r[8] + '</td><td>' + r[9] + '</td><td>' + r[10] + '</td>' +
+    '<td>' + badge(r[11]) + '</td>' +
+    '<td class="' + (parseFloat(r[12])>=0?'up':'down') + '">' + r[12] + '</td>' +
+    '<td>' + r[13] + '</td>' +
+    '<td><button class="trade-btn" onclick="buyStock(\'' + r[0] + '\')">Buy</button></td>' +
+    '</tr>'
+  ).join('') || ('<tr><td colspan="' + (MAIN_COLS.length+1) + '" style="text-align:center; color:var(--muted); padding:20px;">No matches</td></tr>');
 }
 
 function renderSector(){
   const rows = [...sectorRows].sort((a,b) => parseFloat(b[2]) - parseFloat(a[2]));
-  $('sectorBody').innerHTML = rows.map(r => `<tr>
-    <td class="sym">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td>
-  </tr>`).join('');
+  $('sectorBody').innerHTML = rows.map(r =>
+    '<tr><td class="sym">' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td><td>' + r[4] + '</td></tr>'
+  ).join('');
 }
+
+// ---------------- Generic tab viewer (Final List / RSI Analysis) ----------------
+let finalListData = {headers:[], rows:[]};
+let rsiAnalysisData = {headers:[], rows:[]};
+
+async function fetchGenericTab(gid){
+  const data = await fetchGvizJson(gid);
+  const headers = data.table.cols.map((c,i) => c.label || c.id || ('Col' + i));
+  const rows = data.table.rows
+    .map(r => headers.map((_, i) => cellValue(r.c[i])))
+    .filter(r => r.some(v => v !== ''));
+  return {headers, rows};
+}
+
+function renderGenericTable(headElId, bodyElId, data, query){
+  const q = (query || '').trim().toUpperCase();
+  $(headElId).innerHTML = data.headers.map(h => '<th>' + h + '</th>').join('');
+  let rows = data.rows;
+  if(q) rows = rows.filter(r => r.some(v => (v+'').toUpperCase().includes(q)));
+  $(bodyElId).innerHTML = rows.map(r =>
+    '<tr>' + r.map(v => '<td>' + v + '</td>').join('') + '</tr>'
+  ).join('') || ('<tr><td colspan="' + (data.headers.length||1) + '" style="text-align:center;color:var(--muted);padding:16px;">No data</td></tr>');
+}
+
+async function loadFinalList(){
+  if(GID_FINAL_LIST === 'REPLACE_WITH_GID'){
+    $('finalStatus').textContent = 'gid not set';
+    $('finalListErr').style.display = 'block';
+    $('finalListErr').textContent = 'Set GID_FINAL_LIST at the top of the script to the "Final List" tab\'s gid.';
+    return;
+  }
+  try{
+    $('finalListErr').style.display = 'none';
+    finalListData = await fetchGenericTab(GID_FINAL_LIST);
+    renderGenericTable('finalListHead', 'finalListBody', finalListData, $('finalSearch').value);
+    $('finalStatus').textContent = 'updated ' + new Date().toLocaleTimeString();
+  }catch(e){
+    $('finalStatus').textContent = 'error';
+    $('finalListErr').style.display = 'block';
+    $('finalListErr').textContent = 'Could not load Final List: ' + e.message;
+  }
+}
+
+async function loadRsiAnalysis(){
+  if(GID_RSI_ANALYSIS === 'REPLACE_WITH_GID'){
+    $('rsiAnalysisStatus').textContent = 'gid not set';
+    $('rsiAnalysisErr').style.display = 'block';
+    $('rsiAnalysisErr').textContent = 'Set GID_RSI_ANALYSIS at the top of the script to the "RSI Analysis" tab\'s gid.';
+    return;
+  }
+  try{
+    $('rsiAnalysisErr').style.display = 'none';
+    rsiAnalysisData = await fetchGenericTab(GID_RSI_ANALYSIS);
+    renderGenericTable('rsiAnalysisHead', 'rsiAnalysisBody', rsiAnalysisData, $('rsiAnalysisSearch').value);
+    $('rsiAnalysisStatus').textContent = 'updated ' + new Date().toLocaleTimeString();
+  }catch(e){
+    $('rsiAnalysisStatus').textContent = 'error';
+    $('rsiAnalysisErr').style.display = 'block';
+    $('rsiAnalysisErr').textContent = 'Could not load RSI Analysis: ' + e.message;
+  }
+}
+
+$('finalSearch').addEventListener('input', () => renderGenericTable('finalListHead', 'finalListBody', finalListData, $('finalSearch').value));
+$('rsiAnalysisSearch').addEventListener('input', () => renderGenericTable('rsiAnalysisHead', 'rsiAnalysisBody', rsiAnalysisData, $('rsiAnalysisSearch').value));
 
 // ================= Paper Trading =================
 const PF_KEY = 'rsiScreener_paperTrades_v1';
@@ -458,24 +489,18 @@ function loadTrades(){
   try{ return JSON.parse(localStorage.getItem(PF_KEY)) || []; }
   catch(e){ return []; }
 }
-function saveTrades(trades){
-  localStorage.setItem(PF_KEY, JSON.stringify(trades));
-}
-function lookupRow(symbol){
-  return rawRows.find(r => r[0] === symbol);
-}
-function fmtMoney(n){
-  return '₹' + n.toLocaleString('en-IN', {maximumFractionDigits:2});
-}
+function saveTrades(trades){ localStorage.setItem(PF_KEY, JSON.stringify(trades)); }
+function lookupRow(symbol){ return rawRows.find(r => r[0] === symbol); }
+function fmtMoney(n){ return '\u20B9' + n.toLocaleString('en-IN', {maximumFractionDigits:2}); }
 
 function buyStock(symbol){
   const row = lookupRow(symbol);
   if(!row){ alert('Live price not found for ' + symbol + '. Refresh and try again.'); return; }
   const price = parseFloat((row[3]+'').replace(/,/g,''));
   const rsi = row[1];
-  const tradeSize = parseFloat($('tradeSize').value) || 10000;
+  const tradeSize = parseFloat($('tradeSize').value) || 20000;
   const suggestedQty = Math.max(1, Math.floor(tradeSize / price));
-  const input = prompt(`Buy ${symbol} @ ₹${price}\nEnter quantity:`, suggestedQty);
+  const input = prompt('Buy ' + symbol + ' @ \u20B9' + price + '\nEnter quantity:', suggestedQty);
   if(input === null) return;
   const qty = parseInt(input);
   if(!qty || qty <= 0){ alert('Invalid quantity.'); return; }
@@ -497,7 +522,7 @@ function closePosition(id){
   if(!t) return;
   const row = lookupRow(t.symbol);
   const currentPrice = row ? parseFloat((row[3]+'').replace(/,/g,'')) : null;
-  const input = prompt(`Close ${t.symbol} — exit price:`, currentPrice ?? t.entryPrice);
+  const input = prompt('Close ' + t.symbol + ' \u2014 exit price:', currentPrice ?? t.entryPrice);
   if(input === null) return;
   const exitPrice = parseFloat(input);
   if(isNaN(exitPrice)){ alert('Invalid price.'); return; }
@@ -513,7 +538,7 @@ function deleteTrade(id){
   const trades = loadTrades();
   const t = trades.find(x => x.id === id);
   if(!t) return;
-  if(!confirm(`Delete ${t.symbol} trade permanently? This cannot be undone.`)) return;
+  if(!confirm('Delete ' + t.symbol + ' trade permanently? This cannot be undone.')) return;
   saveTrades(trades.filter(x => x.id !== id));
   renderPortfolio();
   maybeAutoPush();
@@ -523,7 +548,7 @@ function autoTradeCheck(){
   if(!$('autoTrade').checked) return;
   const trades = loadTrades();
   const openSymbols = new Set(trades.filter(t => t.status === 'open').map(t => t.symbol));
-  const tradeSize = parseFloat($('tradeSize').value) || 10000;
+  const tradeSize = parseFloat($('tradeSize').value) || 20000;
   let added = false;
   rawRows.forEach(row => {
     if(row[11] === 'Buy/Average Out' && !openSymbols.has(row[0])){
@@ -555,20 +580,18 @@ function renderPortfolio(){
     const pnlPct = ((ltp - t.entryPrice) / t.entryPrice) * 100;
     invested += t.entryPrice * t.qty;
     currentValue += ltp * t.qty;
-    return `<tr>
-      <td class="sym">${t.symbol}${t.auto ? ' <span class="badge b-unconfirmed" style="font-size:9px;">auto</span>' : ''}</td>
-      <td>${t.qty}</td><td>${t.entryPrice.toFixed(2)}</td><td>${t.entryRSI}</td>
-      <td>${new Date(t.entryDate).toLocaleDateString('en-IN')}</td>
-      <td>${ltp.toFixed(2)}</td>
-      <td class="${pnl>=0?'up':'down'}">${fmtMoney(pnl)}</td>
-      <td class="${pnl>=0?'up':'down'}">${pnlPct.toFixed(2)}%</td>
-      <td>
-        <button class="close-btn" onclick="closePosition('${t.id}')">Close</button>
-        <button class="del-btn" onclick="deleteTrade('${t.id}')">Delete</button>
-      </td>
-    </tr>`;
+    return '<tr>' +
+      '<td class="sym">' + t.symbol + (t.auto ? ' <span class="badge b-unconfirmed" style="font-size:9px;">auto</span>' : '') + '</td>' +
+      '<td>' + t.qty + '</td><td>' + t.entryPrice.toFixed(2) + '</td><td>' + t.entryRSI + '</td>' +
+      '<td>' + new Date(t.entryDate).toLocaleDateString('en-IN') + '</td>' +
+      '<td>' + ltp.toFixed(2) + '</td>' +
+      '<td class="' + (pnl>=0?'up':'down') + '">' + fmtMoney(pnl) + '</td>' +
+      '<td class="' + (pnl>=0?'up':'down') + '">' + pnlPct.toFixed(2) + '%</td>' +
+      '<td><button class="close-btn" onclick="closePosition(\'' + t.id + '\')">Close</button>' +
+      '<button class="del-btn" onclick="deleteTrade(\'' + t.id + '\')">Delete</button></td>' +
+      '</tr>';
   });
-  $('openBody').innerHTML = openRows.join('') || `<tr><td colspan="9" style="text-align:center; color:var(--muted); padding:16px;">No open positions — click "Buy" on any stock above.</td></tr>`;
+  $('openBody').innerHTML = openRows.join('') || '<tr><td colspan="9" style="text-align:center; color:var(--muted); padding:16px;">No open positions \u2014 click "Buy" on any stock in Full List.</td></tr>';
 
   let realizedPnl = 0, wins = 0;
   const closedRows = closed.map(t => {
@@ -576,27 +599,26 @@ function renderPortfolio(){
     const pnlPct = ((t.exitPrice - t.entryPrice) / t.entryPrice) * 100;
     realizedPnl += pnl;
     if(pnl > 0) wins++;
-    return `<tr>
-      <td class="sym">${t.symbol}</td><td>${t.qty}</td>
-      <td>${t.entryPrice.toFixed(2)}</td><td>${t.exitPrice.toFixed(2)}</td>
-      <td>${new Date(t.entryDate).toLocaleDateString('en-IN')}</td>
-      <td>${new Date(t.exitDate).toLocaleDateString('en-IN')}</td>
-      <td class="${pnl>=0?'up':'down'}">${fmtMoney(pnl)}</td>
-      <td class="${pnl>=0?'up':'down'}">${pnlPct.toFixed(2)}%</td>
-      <td><button class="del-btn" onclick="deleteTrade('${t.id}')">Delete</button></td>
-    </tr>`;
+    return '<tr>' +
+      '<td class="sym">' + t.symbol + '</td><td>' + t.qty + '</td>' +
+      '<td>' + t.entryPrice.toFixed(2) + '</td><td>' + t.exitPrice.toFixed(2) + '</td>' +
+      '<td>' + new Date(t.entryDate).toLocaleDateString('en-IN') + '</td>' +
+      '<td>' + new Date(t.exitDate).toLocaleDateString('en-IN') + '</td>' +
+      '<td class="' + (pnl>=0?'up':'down') + '">' + fmtMoney(pnl) + '</td>' +
+      '<td class="' + (pnl>=0?'up':'down') + '">' + pnlPct.toFixed(2) + '%</td>' +
+      '<td><button class="del-btn" onclick="deleteTrade(\'' + t.id + '\')">Delete</button></td>' +
+      '</tr>';
   }).reverse();
-  $('closedBody').innerHTML = closedRows.join('') || `<tr><td colspan="9" style="text-align:center; color:var(--muted); padding:16px;">No closed trades yet.</td></tr>`;
+  $('closedBody').innerHTML = closedRows.join('') || '<tr><td colspan="9" style="text-align:center; color:var(--muted); padding:16px;">No closed trades yet.</td></tr>';
 
   const unrealized = currentValue - invested;
-  const winRate = closed.length ? ((wins/closed.length)*100).toFixed(1) : '—';
-  $('portfolioStats').innerHTML = `
-    <div class="stat-card"><div class="lbl">Invested (open)</div><div class="val">${fmtMoney(invested)}</div></div>
-    <div class="stat-card"><div class="lbl">Current value</div><div class="val">${fmtMoney(currentValue)}</div></div>
-    <div class="stat-card"><div class="lbl">Unrealized P&amp;L</div><div class="val ${unrealized>=0?'up':'down'}">${fmtMoney(unrealized)}</div></div>
-    <div class="stat-card"><div class="lbl">Realized P&amp;L</div><div class="val ${realizedPnl>=0?'up':'down'}">${fmtMoney(realizedPnl)}</div></div>
-    <div class="stat-card"><div class="lbl">Win rate (closed)</div><div class="val">${winRate}${winRate!=='—'?'%':''}</div></div>
-  `;
+  const winRate = closed.length ? ((wins/closed.length)*100).toFixed(1) : '\u2014';
+  $('portfolioStats').innerHTML =
+    '<div class="stat-card"><div class="lbl">Invested (open)</div><div class="val">' + fmtMoney(invested) + '</div></div>' +
+    '<div class="stat-card"><div class="lbl">Current value</div><div class="val">' + fmtMoney(currentValue) + '</div></div>' +
+    '<div class="stat-card"><div class="lbl">Unrealized P&amp;L</div><div class="val ' + (unrealized>=0?'up':'down') + '">' + fmtMoney(unrealized) + '</div></div>' +
+    '<div class="stat-card"><div class="lbl">Realized P&amp;L</div><div class="val ' + (realizedPnl>=0?'up':'down') + '">' + fmtMoney(realizedPnl) + '</div></div>' +
+    '<div class="stat-card"><div class="lbl">Win rate (closed)</div><div class="val">' + winRate + (winRate!=='\u2014'?'%':'') + '</div></div>';
 }
 
 $('resetPortfolio').addEventListener('click', () => {
@@ -647,7 +669,7 @@ $('ghSave').addEventListener('click', () => {
     auto: $('ghAuto').checked
   };
   saveGhConfig(cfg);
-  $('ghStatus').textContent = 'saved ✓ (' + cfg.owner + '/' + cfg.repo + ')';
+  $('ghStatus').textContent = 'saved \u2713 (' + cfg.owner + '/' + cfg.repo + ')';
 });
 $('ghAuto').addEventListener('change', () => {
   const cfg = loadGhConfig();
@@ -658,23 +680,23 @@ $('ghAuto').addEventListener('change', () => {
 async function pushToGithub(){
   const cfg = loadGhConfig();
   if(!cfg.owner || !cfg.repo || !cfg.token){ alert('Pehle GitHub owner, repo aur token bharke "Save config" dabao.'); return; }
-  $('ghStatus').textContent = 'pushing…';
+  $('ghStatus').textContent = 'pushing\u2026';
   try{
-    const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
+    const apiUrl = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.path;
     let sha = null;
     const getRes = await fetch(apiUrl, { headers: ghHeaders(cfg.token) });
     if(getRes.ok){ const j = await getRes.json(); sha = j.sha; }
     else if(getRes.status !== 404){ throw new Error('HTTP ' + getRes.status + ' on read'); }
 
     const body = {
-      message: 'Update paper trades — ' + new Date().toISOString(),
+      message: 'Update paper trades \u2014 ' + new Date().toISOString(),
       content: toBase64(JSON.stringify(loadTrades(), null, 2))
     };
     if(sha) body.sha = sha;
 
     const putRes = await fetch(apiUrl, { method:'PUT', headers: ghHeaders(cfg.token), body: JSON.stringify(body) });
     if(!putRes.ok){ const err = await putRes.json().catch(()=>({})); throw new Error(err.message || ('HTTP ' + putRes.status)); }
-    $('ghStatus').textContent = 'pushed ✓ ' + new Date().toLocaleTimeString();
+    $('ghStatus').textContent = 'pushed \u2713 ' + new Date().toLocaleTimeString();
   }catch(e){
     $('ghStatus').textContent = 'push failed: ' + e.message;
   }
@@ -683,20 +705,20 @@ async function pushToGithub(){
 async function pullFromGithub(){
   const cfg = loadGhConfig();
   if(!cfg.owner || !cfg.repo || !cfg.token){ alert('Pehle GitHub owner, repo aur token bharke "Save config" dabao.'); return; }
-  $('ghStatus').textContent = 'pulling…';
+  $('ghStatus').textContent = 'pulling\u2026';
   try{
-    const apiUrl = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
+    const apiUrl = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.path;
     const res = await fetch(apiUrl, { headers: ghHeaders(cfg.token) });
     if(!res.ok){
-      if(res.status === 404){ $('ghStatus').textContent = 'GitHub par abhi file nahi hai — pehle Push karo.'; return; }
+      if(res.status === 404){ $('ghStatus').textContent = 'GitHub par abhi file nahi hai \u2014 pehle Push karo.'; return; }
       throw new Error('HTTP ' + res.status);
     }
     const j = await res.json();
-    const json = fromBase64(j.content.replace(/\n/g,''));
+    const json = fromBase64(j.content.replace(/\n/g, ''));
     const trades = JSON.parse(json);
     saveTrades(trades);
     renderPortfolio();
-    $('ghStatus').textContent = 'pulled ✓ ' + new Date().toLocaleTimeString();
+    $('ghStatus').textContent = 'pulled \u2713 ' + new Date().toLocaleTimeString();
   }catch(e){
     $('ghStatus').textContent = 'pull failed: ' + e.message;
   }
@@ -711,8 +733,17 @@ $('ghPush').addEventListener('click', pushToGithub);
 $('ghPull').addEventListener('click', pullFromGithub);
 fillGhInputsFromConfig();
 
+// ================= Tabs =================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    const target = 'panel-' + btn.dataset.tab;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === target));
+  });
+});
+
 // ================= Main load loop =================
-async function load(){
+async function loadAll(){
   try{
     await fetchSheet();
     populateFilters();
@@ -723,16 +754,18 @@ async function load(){
     autoTradeCheck();
     renderPortfolio();
   }catch(e){
-    $('status').textContent = 'error';
-    $('err').style.display = 'block';
-    $('err').textContent = 'Could not load the sheet — check that it is shared as "Anyone with the link: Viewer". (' + e.message + ')';
+    $('globalStatus').textContent = 'error';
+    $('fullListErr').style.display = 'block';
+    $('fullListErr').textContent = 'Could not load the sheet \u2014 check that it is shared as "Anyone with the link: Viewer". (' + e.message + ')';
   }
+  loadFinalList();
+  loadRsiAnalysis();
 }
 
 ['search','sector','output','rsiMin','rsiMax'].forEach(id => $(id).addEventListener('input', renderBody));
-$('refreshBtn').addEventListener('click', load);
-setInterval(load, REFRESH_MS);
-load();
+$('refreshBtn').addEventListener('click', loadAll);
+setInterval(loadAll, REFRESH_MS);
+loadAll();
 </script>
 </body>
 </html>
