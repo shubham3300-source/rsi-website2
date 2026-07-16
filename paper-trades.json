@@ -25,5 +25,14 @@
     "entryRSI": "63.0",
     "entryDate": "2026-07-16T03:43:04.044Z",
     "status": "open"
+  },
+  {
+    "id": "1784173402807-SIGNATURE",
+    "symbol": "SIGNATURE",
+    "qty": 20,
+    "entryPrice": 837,
+    "entryRSI": "59.3",
+    "entryDate": "2026-07-16T03:43:22.807Z",
+    "status": "open"
   }
 ]
