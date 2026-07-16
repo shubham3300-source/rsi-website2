@@ -34,5 +34,14 @@
     "entryRSI": "59.3",
     "entryDate": "2026-07-16T03:43:22.807Z",
     "status": "open"
+  },
+  {
+    "id": "1784173413822-HARIOMPIPE",
+    "symbol": "HARIOMPIPE",
+    "qty": 100,
+    "entryPrice": 407,
+    "entryRSI": "54.5",
+    "entryDate": "2026-07-16T03:43:33.822Z",
+    "status": "open"
   }
 ]
