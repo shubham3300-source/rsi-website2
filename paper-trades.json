@@ -61,5 +61,14 @@
     "entryRSI": "47.6",
     "entryDate": "2026-07-16T04:00:28.747Z",
     "status": "open"
+  },
+  {
+    "id": "1784174442319-MRPL",
+    "symbol": "MRPL",
+    "qty": 120,
+    "entryPrice": 166.03,
+    "entryRSI": "50.9",
+    "entryDate": "2026-07-16T04:00:42.319Z",
+    "status": "open"
   }
 ]
