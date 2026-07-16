@@ -1,289 +1,732 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smallcap RSI Screener</title>
+<title>Pro Smallcap RSI Screener & Sector Rotation Terminal</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<script>
+  // Configuring Tailwind custom dark theme tokens matching the dashboard colors
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          bg: '#080A0D',
+          panel: '#0E1318',
+          panelDark: '#0B0E11',
+          panelLight: '#151C24',
+          border: '#202936',
+          borderLight: '#2C3A4E',
+          accentGreen: '#10B981',
+          accentRed: '#EF4444',
+          accentAmber: '#F59E0B',
+          accentBlue: '#3B82F6',
+        },
+        fontFamily: {
+          display: ['"Space Grotesk"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+          body: ['Inter', 'sans-serif'],
+        }
+      }
+    }
+  }
+</script>
+
 <style>
-  :root{
-    --bg:#0B0E11;
-    --panel:#12161B;
-    --panel-2:#171C22;
-    --border:#232830;
-    --text:#E4E7EB;
-    --muted:#7C8591;
-    --green:#3DDC84;
-    --red:#FF5B5B;
-    --amber:#F5A623;
-    --blue:#5B9DFF;
-    --font-display:'Space Grotesk', sans-serif;
-    --font-mono:'JetBrains Mono', monospace;
-    --font-body:'Inter', sans-serif;
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
   }
-  *{box-sizing:border-box;}
-  body{margin:0; background:var(--bg); color:var(--text); font-family:var(--font-body);}
-  a{color:var(--blue);}
-
-  header{border-bottom:1px solid var(--border); padding:20px 24px 0 24px;}
-  .eyebrow{font-family:var(--font-mono); font-size:11px; letter-spacing:.18em; color:var(--green); display:flex; align-items:center; gap:8px;}
-  .dot{width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:pulse 1.6s infinite ease-in-out;}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-  h1{font-family:var(--font-display); font-weight:700; font-size:clamp(22px,4vw,34px); margin:6px 0 14px 0; letter-spacing:-0.01em;}
-  h1 span{color:var(--muted); font-weight:500;}
-
-  .ticker-wrap{overflow:hidden; border-top:1px solid var(--border); background:var(--panel); white-space:nowrap;}
-  .ticker{display:inline-block; padding:9px 0; font-family:var(--font-mono); font-size:13px; animation:scroll 38s linear infinite;}
-  .ticker-wrap:hover .ticker{animation-play-state:paused;}
-  @keyframes scroll{0%{transform:translateX(0);} 100%{transform:translateX(-50%);}}
-  .t-item{display:inline-flex; align-items:center; gap:6px; margin-right:34px;}
-  .t-item b{color:var(--text); font-weight:700;}
-  .up{color:var(--green);}
-  .down{color:var(--red);}
-
-  /* ---- Top bar ---- */
-  .topbar{
-    display:flex; align-items:center; gap:12px; padding:10px 24px;
-    border-bottom:1px solid var(--border); background:rgba(11,14,17,.92);
+  ::-webkit-scrollbar-track {
+    background: #080A0D;
   }
-  #globalStatus{font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-left:auto;}
-
-  /* ---- Tabs ---- */
-  .tabs{
-    display:flex; gap:2px; padding:0 24px; background:var(--panel-2);
-    border-bottom:1px solid var(--border); overflow-x:auto;
+  ::-webkit-scrollbar-thumb {
+    background: #202936;
+    border-radius: 4px;
   }
-  .tab-btn{
-    background:transparent; border:none; color:var(--muted); padding:13px 16px;
-    font-size:13px; font-family:var(--font-body); font-weight:600; cursor:pointer;
-    border-bottom:2px solid transparent; white-space:nowrap;
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2C3A4E;
   }
-  .tab-btn:hover{color:var(--text);}
-  .tab-btn.active{color:var(--green); border-bottom-color:var(--green);}
-  .tab-panel{display:none; padding:0 24px 40px 24px;}
-  .tab-panel.active{display:block;}
-
-  .controls{display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:16px 0;}
-  input[type=text], select, input[type=number], input[type=password]{
-    background:var(--panel); border:1px solid var(--border); color:var(--text);
-    border-radius:6px; padding:8px 10px; font-family:var(--font-body); font-size:13px;
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
   }
-  input[type=text]{width:180px;}
-  input[type=number]{width:90px;}
-  #tradeSize{width:110px;}
-  .hl{background:rgba(61,220,132,.15); color:var(--green); font-weight:700; border-radius:4px; padding:2px 7px;}
-  label.mini{font-size:11px; color:var(--muted); display:flex; align-items:center; gap:6px;}
-  button{
-    background:var(--panel-2); border:1px solid var(--border); color:var(--text);
-    border-radius:6px; padding:8px 14px; font-size:13px; cursor:pointer; font-family:var(--font-body);
+  .animate-marquee {
+    animation: marquee 35s linear infinite;
   }
-  button:hover{border-color:var(--green); color:var(--green);}
-
-  .table-scroll{overflow-x:auto; border:1px solid var(--border); border-radius:8px; margin-top:6px;}
-  table{border-collapse:collapse; width:100%; min-width:820px;}
-  thead th{
-    position:sticky; top:0; background:var(--panel-2); text-align:left; font-size:11px;
-    letter-spacing:.04em; color:var(--muted); text-transform:uppercase; padding:10px 12px;
-    border-bottom:1px solid var(--border); cursor:pointer; white-space:nowrap;
+  .animate-marquee:hover {
+    animation-play-state: paused;
   }
-  thead th:hover{color:var(--text);}
-  thead th.active{color:var(--green);}
-  tbody td{padding:9px 12px; font-family:var(--font-mono); font-size:12.5px; border-bottom:1px solid var(--border); white-space:nowrap;}
-  tbody tr:hover{background:var(--panel);}
-  td.sym{font-family:var(--font-body); font-weight:600;}
-  .badge{font-family:var(--font-body); font-size:11px; font-weight:600; padding:3px 9px; border-radius:20px; display:inline-block;}
-  .b-buy{background:rgba(61,220,132,.12); color:var(--green); border:1px solid rgba(61,220,132,.35);}
-  .b-avoid{background:rgba(124,133,145,.12); color:var(--muted); border:1px solid var(--border);}
-  .b-unconfirmed{background:rgba(245,166,35,.12); color:var(--amber); border:1px solid rgba(245,166,35,.35);}
-  .b-bull{background:rgba(61,220,132,.12); color:var(--green); border:1px solid rgba(61,220,132,.35);}
-  .b-bear{background:rgba(255,91,91,.12); color:var(--red); border:1px solid rgba(255,91,91,.35);}
-  .b-short{background:rgba(91,157,255,.12); color:var(--blue); border:1px solid rgba(91,157,255,.35);}
-
-  .section-title{font-family:var(--font-display); font-size:16px; margin:20px 0 4px 0;}
-  .section-sub{font-size:12px; color:var(--muted); margin-bottom:0;}
-
-  .trade-btn{padding:4px 11px; font-size:11px; border-radius:5px; border-color:var(--green); color:var(--green);}
-  .trade-btn:hover{background:rgba(61,220,132,.12);}
-  .close-btn{padding:4px 11px; font-size:11px; border-radius:5px; border-color:var(--red); color:var(--red);}
-  .close-btn:hover{background:rgba(255,91,91,.12);}
-  .del-btn{padding:4px 11px; font-size:11px; border-radius:5px; border-color:var(--border); color:var(--muted); margin-left:4px;}
-  .del-btn:hover{background:rgba(124,133,145,.15); color:var(--text); border-color:var(--muted);}
-  .auto-toggle{display:flex; align-items:center; gap:6px; font-size:12px; color:var(--muted);}
-  .portfolio-stats{display:flex; gap:12px; flex-wrap:wrap; margin:14px 0 4px 0;}
-  .stat-card{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px 18px; min-width:140px;}
-  .stat-card .lbl{font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
-  .stat-card .val{font-family:var(--font-mono); font-size:19px; font-weight:700; margin-top:4px;}
-  .section-head-row{display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:10px;}
-
-  details.gh-sync{background:var(--panel); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin-top:16px;}
-  details.gh-sync summary{cursor:pointer; font-size:13px; font-weight:600; color:var(--text);}
-  .gh-grid{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px; align-items:center;}
-  .gh-grid input[type=text], .gh-grid input[type=password]{width:150px;}
-  #ghStatus{font-family:var(--font-mono); font-size:11px; color:var(--muted);}
-
-  footer{padding:18px 24px 30px 24px; font-size:11px; color:var(--muted); border-top:1px solid var(--border);}
-  .err-box{
-    display:none; margin:16px 0 0 0; padding:12px 14px; border:1px solid var(--red);
-    color:var(--red); border-radius:8px; font-size:13px; font-family:var(--font-mono);
+  .glow-green {
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+  }
+  .glow-red {
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+  }
+  .drawer-transition {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .heatmap-cell {
+    transition: background-color 0.2s ease;
   }
 </style>
 </head>
-<body>
+<body class="bg-bg text-gray-100 font-body min-h-screen flex flex-col antialiased selection:bg-accentGreen/30 selection:text-white">
 
-<header>
-  <div class="eyebrow"><span class="dot"></span> LIVE &middot; SOURCED FROM GOOGLE SHEET</div>
-  <h1>Smallcap RSI Screener <span>/ Sector Rotation</span></h1>
+<header class="border-b border-border bg-panel/80 backdrop-blur-md sticky top-0 z-30 px-4 py-3 lg:px-6">
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+      <div class="relative flex items-center justify-center">
+        <span class="absolute inline-flex h-3 w-3 rounded-full bg-accentGreen opacity-75 animate-ping"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-accentGreen"></span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-mono text-xs tracking-widest text-accentGreen uppercase font-bold">Live Market Terminal</span>
+          <span class="text-xs bg-panelLight border border-border px-1.5 py-0.5 rounded text-gray-400 font-mono">GOOGLE SHEET SOURCED</span>
+        </div>
+        <h1 class="font-display font-bold text-xl lg:text-2xl tracking-tight text-white mt-0.5">
+          Smallcap RSI Screener <span class="text-gray-500 font-medium">/ Sector Rotation Suite</span>
+        </h1>
+      </div>
+    </div>
+    
+    <div class="flex flex-wrap items-center gap-2">
+      <button id="refreshBtn" class="bg-panelLight border border-border hover:border-accentGreen hover:text-accentGreen text-gray-200 px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all duration-200">
+        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Refresh Terminal
+      </button>
+      <div class="bg-panelDark border border-border rounded-lg px-3 py-1.5 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-accentGreen"></span>
+        <span id="globalStatus" class="font-mono text-[10px] text-gray-400">connecting...</span>
+      </div>
+    </div>
+  </div>
 </header>
 
-<div class="ticker-wrap"><div class="ticker" id="ticker">Loading movers&hellip;</div></div>
-
-<div class="topbar">
-  <button id="refreshBtn">&#8635; Refresh all</button>
-  <span id="globalStatus">connecting&hellip;</span>
-</div>
-
-<div class="tabs">
-  <button class="tab-btn active" data-tab="fulllist">Full List</button>
-  <button class="tab-btn" data-tab="sector">Sector Summary</button>
-  <button class="tab-btn" data-tab="paper">Paper Trading</button>
-  <button class="tab-btn" data-tab="finallist">Final List</button>
-  <button class="tab-btn" data-tab="rsianalysis">RSI Analysis</button>
-</div>
-
-<!-- ===================== FULL LIST ===================== -->
-<div class="tab-panel active" id="panel-fulllist">
-  <div class="controls">
-    <input type="text" id="search" placeholder="Search symbol&hellip;">
-    <select id="sector"><option value="">All sectors</option></select>
-    <select id="output"><option value="">All signals</option></select>
-    <label class="mini">RSI &ge; <input type="number" id="rsiMin" value="0" min="0" max="100"></label>
-    <label class="mini">RSI &le; <input type="number" id="rsiMax" value="100" min="0" max="100"></label>
-  </div>
-  <div id="fullListErr" class="err-box"></div>
-  <div class="table-scroll">
-    <table id="mainTable">
-      <thead><tr id="headRow"></tr></thead>
-      <tbody id="body"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ===================== SECTOR SUMMARY ===================== -->
-<div class="tab-panel" id="panel-sector">
-  <h2 class="section-title">Sector Summary</h2>
-  <p class="section-sub">Avg RSI, breadth (% of stocks with RSI &ge; 60), and average volume multiple by industry.</p>
-  <div class="table-scroll">
-    <table id="sectorTable">
-      <thead><tr>
-        <th data-k="0">Industry</th><th data-k="1">Stocks</th><th data-k="2">Avg RSI</th>
-        <th data-k="3">RSI &ge; 60</th><th data-k="4">Avg Vol Multiple</th>
-      </tr></thead>
-      <tbody id="sectorBody"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- ===================== PAPER TRADING ===================== -->
-<div class="tab-panel" id="panel-paper">
-  <div class="section-head-row">
-    <div>
-      <h2 class="section-title">Paper Trading Portfolio</h2>
-      <p class="section-sub">Simulated trades only &mdash; no real money or broker involved. Prices update on every refresh.</p>
+<div class="border-b border-border bg-panelDark overflow-hidden py-2 select-none">
+  <div class="whitespace-nowrap flex" id="tickerContainer">
+    <div class="inline-block animate-marquee" id="ticker">
+      <span class="text-gray-500 text-xs px-4">Initializing live movers...</span>
     </div>
-    <button id="resetPortfolio">Reset portfolio</button>
+  </div>
+</div>
+
+<main class="flex-grow max-w-7xl w-full mx-auto p-4 lg:p-6 flex flex-col gap-6">
+  
+  <div class="flex border-b border-border overflow-x-auto gap-1 no-scrollbar bg-panel/30 p-1 rounded-xl">
+    <button class="tab-btn active px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all" data-tab="fulllist">
+      <i data-lucide="list-filter" class="w-4 h-4"></i> Full Screener
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all text-gray-400 hover:text-white" data-tab="sector">
+      <i data-lucide="pie-chart" class="w-4 h-4"></i> Sector Summary
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all text-gray-400 hover:text-white" data-tab="paper">
+      <i data-lucide="wallet" class="w-4 h-4"></i> Paper Trading Terminal
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all text-gray-400 hover:text-white" data-tab="finallist">
+      <i data-lucide="bookmark-check" class="w-4 h-4"></i> Final List
+    </button>
+    <button class="tab-btn px-4 py-2 text-xs lg:text-sm font-semibold rounded-lg flex items-center gap-2 transition-all text-gray-400 hover:text-white" data-tab="rsianalysis">
+      <i data-lucide="trending-up" class="w-4 h-4"></i> RSI Analysis
+    </button>
   </div>
 
-  <div class="controls" style="padding-top:6px;">
-    <label class="mini">Trade size &#8377; <input type="number" id="tradeSize" value="20000" min="500" step="500"></label>
-    <label class="auto-toggle"><input type="checkbox" id="autoTrade"> Auto paper-trade on Buy signal</label>
-  </div>
+  <!-- ===================== PANEL: FULL LIST ===================== -->
+  <div class="tab-panel active space-y-4" id="panel-fulllist">
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-wrap gap-3 items-center justify-between">
+      <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+        <div class="relative w-full sm:w-60">
+          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-500"></i>
+          <input type="text" id="search" placeholder="Filter symbol, sector..." class="w-full bg-panelDark border border-border rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all">
+        </div>
+        <select id="sector" class="bg-panelDark border border-border text-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen">
+          <option value="">All Sectors</option>
+        </select>
+        <select id="output" class="bg-panelDark border border-border text-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen">
+          <option value="">All Signals</option>
+        </select>
+      </div>
 
-  <details class="gh-sync">
-    <summary>&#9881; GitHub sync (optional &mdash; backs up trades to a repo)</summary>
-    <div class="gh-grid">
-      <input type="text" id="ghOwner" placeholder="GitHub username">
-      <input type="text" id="ghRepo" placeholder="Repo name">
-      <input type="text" id="ghPath" placeholder="File path" value="paper-trades.json">
-      <input type="password" id="ghToken" placeholder="Personal access token">
-      <button id="ghSave">Save config</button>
-      <button id="ghPush">&#8593; Push to GitHub</button>
-      <button id="ghPull">&#8595; Pull from GitHub</button>
-      <label class="auto-toggle"><input type="checkbox" id="ghAuto"> Auto-push after every trade</label>
-      <span id="ghStatus">not configured</span>
+      <div class="flex items-center gap-4 bg-panelDark/50 px-3 py-1.5 rounded-lg border border-border/60 text-xs text-gray-400 w-full lg:w-auto justify-between lg:justify-start">
+        <div class="flex items-center gap-2">
+          <span>RSI:</span>
+          <input type="number" id="rsiMin" value="0" min="0" max="100" class="w-12 bg-panelDark border border-border text-center rounded py-1 text-[11px] focus:outline-none focus:border-accentGreen font-mono">
+          <span class="text-gray-600">to</span>
+          <input type="number" id="rsiMax" value="100" min="0" max="100" class="w-12 bg-panelDark border border-border text-center rounded py-1 text-[11px] focus:outline-none focus:border-accentGreen font-mono">
+        </div>
+        <div class="h-4 w-px bg-border hidden sm:block"></div>
+        <span class="text-gray-500 text-[10px] hidden sm:inline">Click table row to slide open TradingView analysis chart</span>
+      </div>
     </div>
-  </details>
 
-  <div class="portfolio-stats" id="portfolioStats"></div>
+    <div id="fullListErr" class="hidden bg-accentRed/10 border border-accentRed/30 text-accentRed rounded-xl p-4 text-xs font-mono"></div>
 
-  <h3 class="section-title" style="font-size:14px;">Open Positions</h3>
-  <div class="table-scroll">
-    <table id="openTable">
-      <thead><tr>
-        <th>Symbol</th><th>Qty</th><th>Entry Price</th><th>Entry RSI</th><th>Entry Date</th>
-        <th>LTP</th><th>P&amp;L &#8377;</th><th>P&amp;L %</th><th>Action</th>
-      </tr></thead>
-      <tbody id="openBody"></tbody>
-    </table>
+    <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl">
+      <div class="overflow-x-auto">
+        <table id="mainTable" class="w-full text-left border-collapse">
+          <thead>
+            <tr id="headRow" class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+              <!-- Dynamic headers -->
+            </tr>
+          </thead>
+          <tbody id="body" class="divide-y divide-border/40 text-xs">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
-  <h3 class="section-title" style="font-size:14px;">Closed Trades</h3>
-  <div class="table-scroll">
-    <table id="closedTable">
-      <thead><tr>
-        <th>Symbol</th><th>Qty</th><th>Entry Price</th><th>Exit Price</th>
-        <th>Entry Date</th><th>Exit Date</th><th>P&amp;L &#8377;</th><th>P&amp;L %</th><th>Action</th>
-      </tr></thead>
-      <tbody id="closedBody"></tbody>
-    </table>
-  </div>
-</div>
+  <!-- ===================== PANEL: SECTOR SUMMARY ===================== -->
+  <div class="tab-panel hidden space-y-6" id="panel-sector">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <div class="lg:col-span-2 bg-panel border border-border rounded-xl p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="font-display font-bold text-base text-white">Sector RSI Distribution & Strength Map</h3>
+            <p class="text-xs text-gray-400">Comparing average industry RSI versus historical volume multiples.</p>
+          </div>
+          <span class="text-[10px] text-accentGreen bg-accentGreen/15 border border-accentGreen/20 px-2 py-0.5 rounded-full font-mono">Live Visualizer</span>
+        </div>
+        <div class="bg-panelDark border border-border rounded-lg p-3 flex-grow min-h-[280px] flex items-center justify-center">
+          <canvas id="sectorVisualizerCanvas" class="w-full h-full max-h-[350px]"></canvas>
+        </div>
+      </div>
 
-<!-- ===================== FINAL LIST (generic sheet tab) ===================== -->
-<div class="tab-panel" id="panel-finallist">
-  <div class="section-head-row">
-    <h2 class="section-title">Final List</h2>
-    <span id="finalStatus" style="font-family:var(--font-mono); font-size:11px; color:var(--muted);">connecting&hellip;</span>
-  </div>
-  <div class="controls" style="padding-top:0;">
-    <input type="text" id="finalSearch" placeholder="Search&hellip;">
-  </div>
-  <div id="finalListErr" class="err-box"></div>
-  <div class="table-scroll">
-    <table id="finalListTable">
-      <thead><tr id="finalListHead"></tr></thead>
-      <tbody id="finalListBody"></tbody>
-    </table>
-  </div>
-</div>
+      <div class="bg-panel border border-border rounded-xl p-5 flex flex-col font-body">
+        <h3 class="font-display font-bold text-base text-white mb-1">Key Sector Insights</h3>
+        <p class="text-xs text-gray-400 mb-4">Actionable industry rotation signals.</p>
+        <div class="space-y-3 flex-grow overflow-y-auto max-h-[280px]" id="sectorInsightsContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
 
-<!-- ===================== RSI ANALYSIS (generic sheet tab) ===================== -->
-<div class="tab-panel" id="panel-rsianalysis">
-  <div class="section-head-row">
-    <h2 class="section-title">RSI Analysis</h2>
-    <span id="rsiAnalysisStatus" style="font-family:var(--font-mono); font-size:11px; color:var(--muted);">connecting&hellip;</span>
-  </div>
-  <div class="controls" style="padding-top:0;">
-    <input type="text" id="rsiAnalysisSearch" placeholder="Search&hellip;">
-  </div>
-  <div id="rsiAnalysisErr" class="err-box"></div>
-  <div class="table-scroll">
-    <table id="rsiAnalysisTable">
-      <thead><tr id="rsiAnalysisHead"></tr></thead>
-      <tbody id="rsiAnalysisBody"></tbody>
-    </table>
-  </div>
-</div>
+    </div>
 
-<footer>
-  Quotes are not sourced from all markets and may be delayed up to 20 minutes. Provided "as is" for informational purposes only, not trading advice.
+    <!-- Detailed Industry matrix -->
+    <div class="bg-panel border border-border rounded-xl overflow-hidden">
+      <div class="px-5 py-4 border-b border-border flex items-center justify-between">
+        <div>
+          <h3 class="font-display font-bold text-base text-white">Detailed Industry Matrix</h3>
+          <p class="text-xs text-gray-400">Total stocks monitored, average relative strength index, and breadth statistics.</p>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table id="sectorTable" class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+              <th class="p-3">Industry</th>
+              <th class="p-3 text-center">Stocks Count</th>
+              <th class="p-3 text-center">Avg RSI</th>
+              <th class="p-3 text-center">RSI ≥ 60 Breadth</th>
+              <th class="p-3 text-center">Avg Vol Multiple</th>
+            </tr>
+          </thead>
+          <tbody id="sectorBody" class="divide-y divide-border/40 text-xs">
+            <!-- Dynamically populated sector summary row -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PANEL: PAPER TRADING ===================== -->
+  <div class="tab-panel hidden space-y-6" id="panel-paper">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-panel border border-border rounded-xl p-5">
+      <div>
+        <h2 class="font-display font-bold text-lg text-white">Virtual Paper Trading Terminal</h2>
+        <p class="text-xs text-gray-400">Simulate market entries without risk. Live rates automatically track current Google sheets feed.</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <div class="flex items-center gap-2 bg-panelDark border border-border rounded-lg px-3 py-1.5 text-xs text-gray-300">
+          <span>Allocation Size:</span>
+          <span class="text-gray-500 font-bold">₹</span>
+          <input type="number" id="tradeSize" value="20000" min="500" step="500" class="w-20 bg-transparent focus:outline-none font-mono text-white text-right font-bold">
+        </div>
+        <label class="flex items-center gap-2 cursor-pointer bg-panelDark border border-border rounded-lg px-3 py-1.5 text-xs text-gray-300">
+          <input type="checkbox" id="autoTrade" class="rounded border-border text-accentGreen focus:ring-0 focus:ring-offset-0 bg-panel">
+          <span>Auto-Trade on BUY signal</span>
+        </label>
+        <button id="resetPortfolio" class="bg-accentRed/10 border border-accentRed/30 hover:bg-accentRed/20 text-accentRed text-xs px-3 py-1.5 rounded-lg transition-all font-semibold">
+          Reset Portfolio
+        </button>
+      </div>
+    </div>
+
+    <!-- Portfolio Quick Statistics -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="portfolioStats">
+      <!-- Generated by JS -->
+    </div>
+
+    <details class="group bg-panel border border-border rounded-xl overflow-hidden">
+      <summary class="flex items-center justify-between p-4 cursor-pointer text-xs font-semibold text-gray-300 select-none hover:bg-panelLight/30 transition-all">
+        <span class="flex items-center gap-2 text-gray-100">
+          <i data-lucide="github" class="w-4 h-4 text-accentBlue"></i> 
+          GitHub Synchronization System (Optional Cloud Backup)
+        </span>
+        <span class="text-[10px] text-gray-500 group-open:rotate-180 transition-transform duration-200">▼</span>
+      </summary>
+      <div class="p-4 border-t border-border bg-panelDark/40 space-y-4">
+        <p class="text-[11px] text-gray-400">Synchronize trade ledgers via private repository files. Perfect for persistent tracking across browser instances.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+          <div class="space-y-1">
+            <label class="text-[10px] text-gray-500 font-mono">Owner (Username)</label>
+            <input type="text" id="ghOwner" placeholder="Octocat" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-gray-100 focus:outline-none focus:border-accentBlue">
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] text-gray-500 font-mono">Repo Name</label>
+            <input type="text" id="ghRepo" placeholder="trading-ledger" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-gray-100 focus:outline-none focus:border-accentBlue">
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] text-gray-500 font-mono">File Path</label>
+            <input type="text" id="ghPath" placeholder="paper-trades.json" class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-gray-100 focus:outline-none focus:border-accentBlue">
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] text-gray-500 font-mono">Personal Access Token</label>
+            <input type="password" id="ghToken" placeholder="ghp_..." class="w-full bg-panel border border-border rounded-lg px-3 py-2 text-xs text-gray-100 focus:outline-none focus:border-accentBlue">
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <div class="flex items-center gap-2">
+            <button id="ghSave" class="bg-accentBlue text-white hover:bg-accentBlue/90 px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
+              <i data-lucide="save" class="w-3.5 h-3.5"></i> Save Settings
+            </button>
+            <button id="ghPush" class="border border-border text-gray-300 hover:text-white hover:border-accentBlue px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
+              <i data-lucide="cloud-upload" class="w-3.5 h-3.5"></i> Backup (Push)
+            </button>
+            <button id="ghPull" class="border border-border text-gray-300 hover:text-white hover:border-accentBlue px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
+              <i data-lucide="cloud-download" class="w-3.5 h-3.5"></i> Retrieve (Pull)
+            </button>
+          </div>
+          <div class="flex items-center gap-4">
+            <label class="flex items-center gap-1.5 text-xs text-gray-400 cursor-pointer">
+              <input type="checkbox" id="ghAuto" class="rounded border-border text-accentBlue focus:ring-0 bg-panel">
+              <span>Auto-Push after action</span>
+            </label>
+            <div class="text-[11px] font-mono text-gray-500 flex items-center gap-1">
+              <span class="w-2 h-2 rounded-full bg-gray-600" id="ghStatusDot"></span>
+              <span id="ghStatus">not configured</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <div class="bg-panel border border-border rounded-xl overflow-hidden">
+      <div class="px-5 py-3 border-b border-border bg-panelLight/20 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-accentGreen glow-green"></span>
+        <h3 class="font-display font-bold text-sm text-white">Active Virtual Holdings</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table id="openTable" class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+              <th class="p-3">Symbol</th>
+              <th class="p-3">Qty</th>
+              <th class="p-3">Entry Rate</th>
+              <th class="p-3">Entry RSI</th>
+              <th class="p-3">Entry Date</th>
+              <th class="p-3">LTP</th>
+              <th class="p-3">Unrealized P&L</th>
+              <th class="p-3">Return (%)</th>
+              <th class="p-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="openBody" class="divide-y divide-border/40 text-xs">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Closed position history -->
+    <div class="bg-panel border border-border rounded-xl overflow-hidden">
+      <div class="px-5 py-3 border-b border-border bg-panelLight/20 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-gray-500"></span>
+        <h3 class="font-display font-bold text-sm text-white">Realized Trading History</h3>
+      </div>
+      <div class="overflow-x-auto">
+        <table id="closedTable" class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+              <th class="p-3">Symbol</th>
+              <th class="p-3">Qty</th>
+              <th class="p-3">Entry Rate</th>
+              <th class="p-3">Exit Rate</th>
+              <th class="p-3">Entry Date</th>
+              <th class="p-3">Exit Date</th>
+              <th class="p-3">Realized P&L</th>
+              <th class="p-3">ROI</th>
+              <th class="p-3 text-right">Operations</th>
+            </tr>
+          </thead>
+          <tbody id="closedBody" class="divide-y divide-border/40 text-xs">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PANEL: FINAL LIST (Sourced from GID 123456789) ===================== -->
+  <div class="tab-panel hidden space-y-6" id="panel-finallist">
+    
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-panel border border-border rounded-xl p-5">
+      <div>
+        <h2 class="font-display font-bold text-lg text-white">Final List Watch Structures</h2>
+        <p class="text-xs text-gray-400">High-conviction watch lists cleaned and mapped dynamically from your private Google Sheet segments.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="relative w-full sm:w-60">
+          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-500"></i>
+          <input type="text" id="finalSearch" placeholder="Filter finalized symbols..." class="w-full bg-panelDark border border-border rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all">
+        </div>
+        <span id="finalStatus" class="font-mono text-[10px] bg-panelDark border border-border px-3 py-2 rounded-lg text-gray-400">connecting...</span>
+      </div>
+    </div>
+    
+    <div id="finalListErr" class="hidden bg-accentRed/10 border border-accentRed/30 text-accentRed rounded-xl p-4 text-xs font-mono"></div>
+
+    <!-- Dual Split Grid matching exact spreadsheet structures -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Table 1: Filtered Stocks for Reversal -->
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl">
+        <div class="px-5 py-3.5 border-b border-border bg-gradient-to-r from-accentRed/25 to-transparent flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-accentRed"></span>
+            <h3 class="font-display font-bold text-sm text-white">Filtered Stocks for Reversal</h3>
+          </div>
+          <span class="text-[10px] bg-accentRed/10 text-accentRed border border-accentRed/25 px-2 py-0.5 rounded font-mono font-bold">REVERSAL SIGNALS</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+                <th class="p-3">Symbol</th>
+                <th class="p-3">Price</th>
+                <th class="p-3">Volume</th>
+                <th class="p-3">RSI</th>
+                <th class="p-3">Vol Multiplier</th>
+                <th class="p-3">Industry</th>
+                <th class="p-3">DMA Filter</th>
+                <th class="p-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="finalLeftBody" class="divide-y divide-border/40 text-xs">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Table 2: Oversold Stocks to Watch -->
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl">
+        <div class="px-5 py-3.5 border-b border-border bg-gradient-to-r from-accentAmber/25 to-transparent flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-accentAmber"></span>
+            <h3 class="font-display font-bold text-sm text-white">Oversold Stocks to Watch</h3>
+          </div>
+          <span class="text-[10px] bg-accentAmber/10 text-accentAmber border border-accentAmber/25 px-2 py-0.5 rounded font-mono font-bold">OVERSOLD WATCH</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono">
+                <th class="p-3">Symbol</th>
+                <th class="p-3">Price</th>
+                <th class="p-3">Volume</th>
+                <th class="p-3">RSI</th>
+                <th class="p-3">Vol Multiplier</th>
+                <th class="p-3">Industry</th>
+                <th class="p-3">Output</th>
+                <th class="p-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="finalRightBody" class="divide-y divide-border/40 text-xs">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================== PANEL: RSI ANALYSIS (Sourced from GID 1583281498) ===================== -->
+  <div class="tab-panel hidden space-y-6" id="panel-rsianalysis">
+    
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-panel border border-border rounded-xl p-5">
+      <div>
+        <h2 class="font-display font-bold text-lg text-white">Oscillator Strength Analysis Dashboard</h2>
+        <p class="text-xs text-gray-400">Comparing relative strength clusters, oversold thresholds, and industry support layers side-by-side.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="relative w-full sm:w-60">
+          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-500"></i>
+          <input type="text" id="rsiAnalysisSearch" placeholder="Search matrix symbols..." class="w-full bg-panelDark border border-border rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all">
+        </div>
+        <span id="rsiAnalysisStatus" class="font-mono text-[10px] bg-panelDark border border-border px-3 py-2 rounded-lg text-gray-400">connecting...</span>
+      </div>
+    </div>
+
+    <div id="rsiAnalysisErr" class="hidden bg-accentRed/10 border border-accentRed/30 text-accentRed rounded-xl p-4 text-xs font-mono"></div>
+
+    <!-- 4-Column Split Dashboard layout -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      
+      <!-- Segment 1: Master RSI Status List -->
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col">
+        <div class="px-4 py-3.5 border-b border-border bg-gradient-to-r from-accentBlue/10 to-transparent flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-300">RSI Status Registry</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-accentBlue"></span>
+        </div>
+        <div class="overflow-x-auto flex-grow max-h-[500px] overflow-y-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono sticky top-0 z-10">
+                <th class="p-3 bg-panelLight/95">Symbol</th>
+                <th class="p-3 bg-panelLight/95">Industry</th>
+                <th class="p-3 bg-panelLight/95">RSI</th>
+                <th class="p-3 bg-panelLight/95">1D Change</th>
+                <th class="p-3 bg-panelLight/95">RSI Status</th>
+              </tr>
+            </thead>
+            <tbody id="rsiList1Body" class="divide-y divide-border/40 text-xs">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Segment 2: Over Sold Stocks -->
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col">
+        <div class="px-4 py-3.5 border-b border-border bg-gradient-to-r from-accentGreen/10 to-transparent flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-300">Oversold Stocks</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-accentGreen"></span>
+        </div>
+        <div class="overflow-x-auto flex-grow max-h-[500px] overflow-y-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono sticky top-0 z-10">
+                <th class="p-3 bg-panelLight/95">Symbol</th>
+                <th class="p-3 bg-panelLight/95">Industry</th>
+                <th class="p-3 bg-panelLight/95">RSI</th>
+                <th class="p-3 bg-panelLight/95">1D Change</th>
+              </tr>
+            </thead>
+            <tbody id="rsiList2Body" class="divide-y divide-border/40 text-xs">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Segment 3: Support Range Stocks -->
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col">
+        <div class="px-4 py-3.5 border-b border-border bg-gradient-to-r from-accentAmber/10 to-transparent flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-300">Support Range</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-accentAmber"></span>
+        </div>
+        <div class="overflow-x-auto flex-grow max-h-[500px] overflow-y-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono sticky top-0 z-10">
+                <th class="p-3 bg-panelLight/95">Symbol</th>
+                <th class="p-3 bg-panelLight/95">Industry</th>
+                <th class="p-3 bg-panelLight/95">RSI</th>
+                <th class="p-3 bg-panelLight/95">1D Change</th>
+              </tr>
+            </thead>
+            <tbody id="rsiList3Body" class="divide-y divide-border/40 text-xs">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Segment 4: Over Bought Stocks -->
+      <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl flex flex-col">
+        <div class="px-4 py-3.5 border-b border-border bg-gradient-to-r from-accentRed/10 to-transparent flex items-center justify-between">
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-300">Overbought Stocks</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-accentRed"></span>
+        </div>
+        <div class="overflow-x-auto flex-grow max-h-[500px] overflow-y-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-gray-400 uppercase font-mono sticky top-0 z-10">
+                <th class="p-3 bg-panelLight/95">Symbol</th>
+                <th class="p-3 bg-panelLight/95">Industry</th>
+                <th class="p-3 bg-panelLight/95">RSI</th>
+                <th class="p-3 bg-panelLight/95">1D Change</th>
+              </tr>
+            </thead>
+            <tbody id="rsiList4Body" class="divide-y divide-border/40 text-xs">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<footer class="border-t border-border bg-panel/30 py-6 px-4 lg:px-6 text-center text-xs text-gray-500">
+  <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+    <p>Quotes sourced from corresponding indices. Prices may lag up to 20 mins. Handcrafted premium trade tracking interface.</p>
+    <p class="font-mono text-[10px] text-gray-600">&copy; 2026 RSI Screener. Strictly for simulator usage only.</p>
+  </div>
 </footer>
 
+<div id="tvDrawer" class="fixed inset-y-0 right-0 w-full sm:w-[500px] md:w-[650px] bg-panelDark border-l border-border shadow-2xl z-50 transform translate-x-full drawer-transition flex flex-col">
+  <div class="p-4 border-b border-border bg-panel flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <i data-lucide="line-chart" class="w-5 h-5 text-accentGreen"></i>
+      <div>
+        <h4 id="drawerSymbol" class="font-display font-bold text-base text-white">RELIANCE</h4>
+        <p id="drawerSector" class="text-[11px] text-gray-400 font-body">Energy Industry</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <a id="externalTVLink" target="_blank" href="#" class="bg-panelLight hover:bg-border px-3 py-1.5 rounded-lg text-xs text-gray-300 font-semibold flex items-center gap-1.5 transition-all">
+        Open External <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+      </a>
+      <button id="closeDrawerBtn" class="p-1.5 text-gray-400 hover:text-white hover:bg-panelLight rounded-lg transition-all">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </div>
+  <div id="tvWidgetContainer" class="flex-grow bg-bg relative">
+    <div id="tvWidgetPlaceholder" class="absolute inset-0 flex flex-col items-center justify-center text-gray-500 gap-2">
+      <div class="w-8 h-8 rounded-full border-2 border-accentGreen border-t-transparent animate-spin"></div>
+      <span class="text-xs font-mono">Loading TradingView visual chart...</span>
+    </div>
+    <iframe id="tvIframe" class="w-full h-full border-none opacity-0 transition-opacity duration-300" src=""></iframe>
+  </div>
+  <div class="p-4 border-t border-border bg-panel flex items-center justify-between text-xs">
+    <div class="flex gap-3">
+      <span class="text-gray-400">RSI: <strong id="drawerRsi" class="text-white font-mono">-</strong></span>
+      <span class="text-gray-400">Vol Multiplier: <strong id="drawerVol" class="text-white font-mono">-</strong></span>
+    </div>
+    <button id="drawerBuyBtn" class="bg-accentGreen text-white hover:bg-accentGreen/90 font-semibold px-4 py-1.5 rounded-lg transition-all">
+      Buy / Paper-Trade
+    </button>
+  </div>
+</div>
+
+<!-- Drawer Backdrop overlay -->
+<div id="drawerOverlay" class="fixed inset-0 bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300 z-40"></div>
+
+<div id="modalOverlay" class="fixed inset-0 bg-black/75 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200 z-50">
+  
+  <!-- Buy stock modal dialog -->
+  <div id="buyModal" class="hidden bg-panel border border-border rounded-xl w-full max-w-md overflow-hidden transform scale-95 transition-all duration-200">
+    <div class="px-5 py-4 border-b border-border bg-panelLight/30 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="plus-circle" class="w-5 h-5 text-accentGreen"></i>
+        <h4 class="font-display font-bold text-white">Execute Virtual Purchase</h4>
+      </div>
+      <button class="modal-close text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-400">Asset Symbol:</span>
+        <span id="buySymbol" class="font-display font-bold text-base text-white tracking-wider">MOCKSYM</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-400">Current Market Rate (LTP):</span>
+        <span id="buyPrice" class="font-mono text-sm text-accentGreen font-semibold">₹0.00</span>
+      </div>
+      <div class="h-px bg-border"></div>
+      
+      <div class="grid grid-cols-2 gap-3">
+        <div class="space-y-1">
+          <label class="text-[11px] text-gray-400">Execution Quantity</label>
+          <input type="number" id="buyQtyInput" min="1" class="w-full bg-panelDark border border-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-accentGreen font-mono">
+        </div>
+        <div class="space-y-1">
+          <label class="text-[11px] text-gray-400">Suggested Max Allocation</label>
+          <div class="w-full bg-panelDark border border-border rounded-lg p-2.5 text-xs text-gray-400 font-mono flex items-center justify-between">
+            <span>₹</span><span id="buySuggestedAlloc">20,000</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-panelDark/60 p-3 rounded-lg border border-border flex items-center justify-between">
+        <span class="text-xs text-gray-400">Estimated Total Capital:</span>
+        <span id="buyTotalCapital" class="font-mono text-sm text-white font-bold">₹0.00</span>
+      </div>
+    </div>
+    <div class="px-5 py-3 border-t border-border bg-panelLight/10 flex justify-end gap-2.5">
+      <button class="modal-close border border-border text-gray-300 hover:text-white px-4 py-2 rounded-lg text-xs transition-all">Cancel</button>
+      <button id="confirmBuySubmit" class="bg-accentGreen hover:bg-accentGreen/90 text-white font-semibold px-5 py-2 rounded-lg text-xs transition-all">Confirm Acquisition</button>
+    </div>
+  </div>
+
+  <!-- Close position / sell modal dialog -->
+  <div id="closeModal" class="hidden bg-panel border border-border rounded-xl w-full max-w-md overflow-hidden transform scale-95 transition-all duration-200 font-body">
+    <div class="px-5 py-4 border-b border-border bg-panelLight/30 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="minus-circle" class="w-5 h-5 text-accentRed"></i>
+        <h4 class="font-display font-bold text-white">Liquidate Asset Position</h4>
+      </div>
+      <button class="modal-close text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+    </div>
+    <div class="p-5 space-y-4">
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-400">Position Target:</span>
+        <span id="closeSymbol" class="font-display font-bold text-base text-white tracking-wider">MOCKSYM</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm text-gray-400">Initial Acquired Qty:</span>
+        <span id="closeQty" class="font-mono text-sm text-white font-semibold">0</span>
+      </div>
+      <div class="h-px bg-border"></div>
+      
+      <div class="space-y-1">
+        <label class="text-[11px] text-gray-400">Market Exit Price (₹)</label>
+        <input type="number" id="closePriceInput" step="0.01" class="w-full bg-panelDark border border-border rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-accentRed font-mono">
+      </div>
+    </div>
+    <div class="px-5 py-3 border-t border-border bg-panelLight/10 flex justify-end gap-2.5">
+      <button class="modal-close border border-border text-gray-300 hover:text-white px-4 py-2 rounded-lg text-xs transition-all">Cancel</button>
+      <button id="confirmCloseSubmit" class="bg-accentRed hover:bg-accentRed/90 text-white font-semibold px-5 py-2 rounded-lg text-xs transition-all">Close Position</button>
+    </div>
+  </div>
+
+  <!-- Confirmation modal dialog -->
+  <div id="confirmDialog" class="hidden bg-panel border border-border rounded-xl w-full max-w-sm overflow-hidden transform scale-95 transition-all duration-200">
+    <div class="p-5 space-y-3 text-center">
+      <div class="w-12 h-12 bg-accentRed/10 text-accentRed rounded-full flex items-center justify-center mx-auto mb-2">
+        <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+      </div>
+      <h4 class="font-display font-bold text-white text-base" id="confirmTitle">Are you sure?</h4>
+      <p class="text-xs text-gray-400 font-body" id="confirmDesc">This action is irreversible. All cached ledger records will be lost.</p>
+    </div>
+    <div class="px-5 py-3 border-t border-border bg-panelLight/10 flex justify-center gap-2">
+      <button id="confirmCancelBtn" class="border border-border text-gray-300 hover:text-white px-4 py-2 rounded-lg text-xs transition-all">Cancel</button>
+      <button id="confirmActionBtn" class="bg-accentRed hover:bg-accentRed/90 text-white font-semibold px-5 py-2 rounded-lg text-xs transition-all">Confirm Execution</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toasts Center -->
+<div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"></div>
+
 <script>
-// ================= CONFIG =================
 const SHEET_ID = '1ODdw_qJXOwxPrvTLxRAsicqYVFgxzX2xiRNcbmSlPsY';
-const GID_FULL_LIST = '0';                 // "Sheet1" tab (per the shared link)
-const GID_FINAL_LIST = '123456789'; // <-- double-check this against the actual tab URL
+const GID_FULL_LIST = '0';
+const GID_FINAL_LIST = '123456789'; 
 const GID_RSI_ANALYSIS = '1583281498';
 const REFRESH_MS = 5 * 60 * 1000;
 
@@ -293,18 +736,56 @@ const SECTOR_START_COL = 21;
 
 let rawRows = [];
 let sectorRows = [];
-let sortState = {col:1, dir:-1};
+let sortState = {col:1, dir:-1}; // Full list sort
+
+// Dynamic structured watch storage
+let finalListLeft = [];
+let finalListRight = [];
+let rsiList1 = [];
+let rsiList2 = [];
+let rsiList3 = [];
+let rsiList4 = [];
 
 const $ = (id) => document.getElementById(id);
 
-function badge(value){
-  const v = (value||'').trim();
-  const map = {
-    'Buy/Average Out':'b-buy','Avoid/Hold':'b-avoid','Unconfirmed':'b-unconfirmed',
-    'In Bull Run':'b-bull','In Bear Run':'b-bear','Short History':'b-short'
-  };
-  const cls = map[v] || 'b-avoid';
-  return '<span class="badge ' + cls + '">' + (v || '\u2014') + '</span>';
+function refreshIcons() {
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+}
+
+// Custom Toast notification dispatcher
+function showToast(message, type = 'info') {
+  const container = $('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `p-3.5 rounded-xl border flex items-center gap-2.5 shadow-xl transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto bg-panel/95 backdrop-blur-md`;
+  
+  let icon = 'info';
+  if (type === 'success') {
+    toast.className += ' border-accentGreen/30 text-accentGreen';
+    icon = 'check-circle';
+  } else if (type === 'error') {
+    toast.className += ' border-accentRed/30 text-accentRed';
+    icon = 'alert-octagon';
+  } else {
+    toast.className += ' border-border text-gray-300';
+  }
+  
+  toast.innerHTML = `
+    <i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i>
+    <span class="text-xs font-semibold">${message}</span>
+  `;
+  container.appendChild(toast);
+  refreshIcons();
+  
+  setTimeout(() => {
+    toast.classList.remove('translate-y-2', 'opacity-0');
+  }, 10);
+  
+  setTimeout(() => {
+    toast.classList.add('opacity-0', 'translate-y-1');
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
 }
 
 function cellValue(cell){
@@ -321,10 +802,18 @@ async function fetchGvizJson(gid){
   return JSON.parse(jsonStr);
 }
 
-// ---------------- Full List + Sector Summary ----------------
+// Helper to pull safe cell indices dynamically
+function getVal(row, index) {
+  if (!row || !row.c || index >= row.c.length) return '';
+  const cell = row.c[index];
+  if (!cell) return '';
+  return cell.f !== undefined && cell.f !== null ? cell.f : (cell.v ?? '');
+}
+
+// ================= STREAMING_CHUNK: Fetch Master Spreadsheet & Sector Map =================
 async function fetchSheet(){
-  $('globalStatus').textContent = 'fetching\u2026';
-  $('fullListErr').style.display = 'none';
+  $('globalStatus').textContent = 'fetching data...';
+  $('fullListErr').classList.add('hidden');
   const data = await fetchGvizJson(GID_FULL_LIST);
   const rows = data.table.rows;
 
@@ -338,30 +827,54 @@ async function fetchSheet(){
     cellValue(r.c[SECTOR_START_COL+4]),
   ]).filter(r => r[0]);
 
-  $('globalStatus').textContent = 'updated ' + new Date().toLocaleTimeString();
+  $('globalStatus').textContent = 'Live: ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
 }
 
 function populateFilters(){
   const sectors = [...new Set(rawRows.map(r => r[6]).filter(Boolean))].sort();
   const outputs = [...new Set(rawRows.map(r => r[11]).filter(Boolean))].sort();
-  $('sector').innerHTML = '<option value="">All sectors</option>' + sectors.map(s => '<option>' + s + '</option>').join('');
-  $('output').innerHTML = '<option value="">All signals</option>' + outputs.map(s => '<option>' + s + '</option>').join('');
+  $('sector').innerHTML = '<option value="">All Sectors</option>' + sectors.map(s => '<option>' + s + '</option>').join('');
+  $('output').innerHTML = '<option value="">All Signals</option>' + outputs.map(s => '<option>' + s + '</option>').join('');
 }
 
 function renderTicker(){
   const sorted = [...rawRows].sort((a,b) => parseFloat(b[7]) - parseFloat(a[7])).slice(0,15);
-  $('ticker').innerHTML = [...sorted, ...sorted].map(r => {
+  const tickerHtml = sorted.map(r => {
     const chg = parseFloat(r[7]);
-    const cls = chg >= 0 ? 'up' : 'down';
-    const sign = chg >= 0 ? '\u25B2' : '\u25BC';
-    return '<span class="t-item"><b>' + r[0] + '</b> RSI ' + r[1] + ' <span class="' + cls + '">' + sign + ' ' + r[7] + '</span></span>';
+    const cls = chg >= 0 ? 'text-accentGreen' : 'text-accentRed';
+    const sign = chg >= 0 ? '▲' : '▼';
+    return `<span class="t-item inline-flex items-center gap-1.5 mr-10 cursor-pointer text-xs" onclick="openTradingView('${r[0]}')">
+      <b class="text-white hover:text-accentGreen font-mono transition-colors">${r[0]}</b> 
+      <span class="text-gray-400 font-mono">RSI ${r[1]}</span> 
+      <span class="${cls} font-mono font-bold">${sign} ${r[7]}</span>
+    </span>`;
   }).join('');
+  $('ticker').innerHTML = tickerHtml + tickerHtml;
+}
+
+function badge(value){
+  const v = (value||'').trim();
+  const map = {
+    'Buy/Average Out': 'bg-accentGreen/10 text-accentGreen border-accentGreen/30',
+    'Avoid/Hold': 'bg-gray-500/10 text-gray-400 border-border',
+    'Unconfirmed': 'bg-accentAmber/10 text-accentAmber border-accentAmber/30',
+    'In Bull Run': 'bg-accentGreen/15 text-accentGreen border-accentGreen/45',
+    'In Bear Run': 'bg-accentRed/10 text-accentRed border-accentRed/30',
+    'Short History': 'bg-accentBlue/10 text-accentBlue border-accentBlue/30'
+  };
+  const cls = map[v] || 'bg-gray-500/10 text-gray-400 border-border';
+  return `<span class="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border ${cls}">${v || '—'}</span>`;
 }
 
 function renderHead(){
-  $('headRow').innerHTML = MAIN_COLS.map((c,i) =>
-    '<th data-k="' + i + '" class="' + (sortState.col===i?'active':'') + '">' + c + (sortState.col===i ? (sortState.dir===1?' \u2191':' \u2193') : '') + '</th>'
-  ).join('') + '<th>Action</th>';
+  $('headRow').innerHTML = MAIN_COLS.map((c,i) => {
+    const isSorted = sortState.col === i;
+    const arrow = isSorted ? (sortState.dir === 1 ? ' ▲' : ' ▼') : '';
+    return `<th data-k="${i}" class="p-3 cursor-pointer hover:bg-panelLight/40 hover:text-white transition-all ${isSorted ? 'text-accentGreen bg-panelLight/20 font-bold' : ''}">
+      <span class="flex items-center gap-1">${c}${arrow}</span>
+    </th>`;
+  }).join('') + '<th class="p-3 text-right">Actions</th>';
+
   document.querySelectorAll('#headRow th[data-k]').forEach(th => {
     th.onclick = () => {
       const k = parseInt(th.dataset.k);
@@ -381,7 +894,7 @@ function renderBody(){
   const rMax = parseFloat($('rsiMax').value) || 100;
 
   let rows = rawRows.filter(r => {
-    if(q && !r[0].toUpperCase().includes(q)) return false;
+    if(q && !r[0].toUpperCase().includes(q) && !r[6].toUpperCase().includes(q)) return false;
     if(sector && r[6] !== sector) return false;
     if(output && r[11] !== output) return false;
     const rsi = parseFloat(r[1]);
@@ -398,97 +911,640 @@ function renderBody(){
     return (av+'').localeCompare(bv+'') * sortState.dir;
   });
 
-  $('body').innerHTML = rows.map(r =>
-    '<tr>' +
-    '<td class="sym">' + r[0] + '</td>' +
-    '<td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td><td>' + r[4] + '</td><td>' + r[5] + '</td>' +
-    '<td>' + r[6] + '</td>' +
-    '<td class="' + (parseFloat(r[7])>=0?'up':'down') + '">' + r[7] + '</td>' +
-    '<td>' + r[8] + '</td><td>' + r[9] + '</td><td>' + r[10] + '</td>' +
-    '<td>' + badge(r[11]) + '</td>' +
-    '<td class="' + (parseFloat(r[12])>=0?'up':'down') + '">' + r[12] + '</td>' +
-    '<td>' + r[13] + '</td>' +
-    '<td><button class="trade-btn" onclick="buyStock(\'' + r[0] + '\')">Buy</button></td>' +
-    '</tr>'
-  ).join('') || ('<tr><td colspan="' + (MAIN_COLS.length+1) + '" style="text-align:center; color:var(--muted); padding:20px;">No matches</td></tr>');
+  $('body').innerHTML = rows.map(r => {
+    const symb = r[0];
+    return `
+      <tr class="hover:bg-panelLight/30 cursor-pointer group transition-all" onclick="handleRowClick(event, '${symb}')">
+        <td class="p-3 font-semibold text-white tracking-wide font-display group-hover:text-accentGreen transition-colors flex items-center gap-1.5">
+          <i data-lucide="line-chart" class="w-3.5 h-3.5 text-gray-500 hover:text-accentGreen transition-colors cursor-pointer" onclick="event.stopPropagation(); openTradingView('${symb}')"></i>
+          ${symb}
+        </td>
+        <td class="p-3 font-mono font-semibold">${r[1]}</td>
+        <td class="p-3 font-mono">${r[2]}</td>
+        <td class="p-3 font-mono text-gray-300">₹${r[3]}</td>
+        <td class="p-3 font-mono text-gray-400">${r[4]}</td>
+        <td class="p-3 font-mono text-gray-400">${r[5]}</td>
+        <td class="p-3 text-gray-400 text-xs">${r[6]}</td>
+        <td class="p-3 font-mono ${parseFloat(r[7])>=0?'text-accentGreen':'text-accentRed'}">${r[7]}</td>
+        <td class="p-3 font-mono text-gray-400">${r[8]}</td>
+        <td class="p-3 font-mono text-gray-400">${r[9]}</td>
+        <td class="p-3 font-mono text-gray-400">${r[10]}</td>
+        <td class="p-3">${badge(r[11])}</td>
+        <td class="p-3 font-mono ${parseFloat(r[12])>=0?'text-accentGreen':'text-accentRed'}">${r[12]}</td>
+        <td class="p-3 font-mono">${r[13]}</td>
+        <td class="p-3 text-right" onclick="event.stopPropagation()">
+          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-white hover:text-black font-semibold text-[11px] px-3.5 py-1.5 rounded-lg transition-all" onclick="triggerBuy('${symb}')">
+            Buy
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('') || `<tr><td colspan="${MAIN_COLS.length+1}" class="text-center text-gray-500 py-12">No active records match the current screen filters.</td></tr>`;
+  
+  refreshIcons();
 }
+
+function handleRowClick(event, symbol) {
+  if (event.target.closest('button') || event.target.closest('i')) return;
+  openTradingView(symbol);
+}
+
+function getCleanTVTicker(symbol) {
+  let s = symbol.trim().toUpperCase();
+  if (s.endsWith('.NS')) {
+    return 'NSE:' + s.replace('.NS', '');
+  } else if (s.endsWith('.BO')) {
+    return 'BSE:' + s.replace('.BO', '');
+  }
+  return 'NSE:' + s;
+}
+
+// ================= STREAMING_CHUNK: Setting up TradingView Widget loader =================
+function openTradingView(symbol) {
+  const row = lookupInAllSheets(symbol);
+
+  const tvTicker = getCleanTVTicker(symbol);
+  $('drawerSymbol').textContent = symbol;
+  $('drawerSector').textContent = row ? (row.sector || 'Sector Rotation Watch') : 'Sector Rotation Watch';
+  $('drawerRsi').textContent = row ? (row.rsi || '—') : '—';
+  $('drawerVol').textContent = row ? (row.volMultiple || '—') : '—';
+
+  const tvUrl = `https://s.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=${tvTicker}&interval=D&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=151c24&studies=%5B%5D&theme=dark&style=1&timezone=Asia%2FKolkata&locale=en`;
+  
+  $('tvIframe').src = tvUrl;
+  $('tvIframe').onload = () => {
+    $('tvIframe').classList.remove('opacity-0');
+  };
+  $('externalTVLink').href = `https://www.tradingview.com/chart/?symbol=${tvTicker}`;
+
+  const drawer = $('tvDrawer');
+  const overlay = $('drawerOverlay');
+  
+  drawer.classList.remove('translate-x-full');
+  overlay.classList.remove('opacity-0', 'pointer-events-none');
+
+  $('drawerBuyBtn').onclick = () => {
+    closeTradingView();
+    triggerBuy(symbol);
+  };
+}
+
+function lookupInAllSheets(symbol) {
+  // 1. Check raw master rows
+  let raw = rawRows.find(r => r[0] === symbol);
+  if (raw) return { sector: raw[6], rsi: raw[1], volMultiple: raw[2], price: parseFloat((raw[3]+'').replace(/,/g,'')) };
+  
+  // 2. Check finalListLeft
+  let fl = finalListLeft.find(r => r.symbol === symbol);
+  if (fl) return { sector: fl.industry, rsi: fl.rsi, volMultiple: fl.volMultiple, price: parseFloat((fl.price+'').replace(/,/g,'')) };
+  
+  // 3. Check finalListRight
+  let fr = finalListRight.find(r => r.symbol === symbol);
+  if (fr) return { sector: fr.industry, rsi: fr.rsi, volMultiple: fr.volMultiple, price: parseFloat((fr.price+'').replace(/,/g,'')) };
+  
+  // 4. Check rsiList1
+  let ra1 = rsiList1.find(r => r.symbol === symbol);
+  if (ra1) return { sector: ra1.industry, rsi: ra1.rsi, volMultiple: '—', price: null };
+
+  // 5. Check rsiList2
+  let ra2 = rsiList2.find(r => r.symbol === symbol);
+  if (ra2) return { sector: ra2.industry, rsi: ra2.rsi, volMultiple: '—', price: null };
+
+  // 6. Check rsiList3
+  let ra3 = rsiList3.find(r => r.symbol === symbol);
+  if (ra3) return { sector: ra3.industry, rsi: ra3.rsi, volMultiple: '—', price: null };
+
+  // 7. Check rsiList4
+  let ra4 = rsiList4.find(r => r.symbol === symbol);
+  if (ra4) return { sector: ra4.industry, rsi: ra4.rsi, volMultiple: '—', price: null };
+
+  return null;
+}
+
+function closeTradingView() {
+  const drawer = $('tvDrawer');
+  const overlay = $('drawerOverlay');
+  
+  drawer.classList.add('translate-x-full');
+  overlay.classList.add('opacity-0', 'pointer-events-none');
+  setTimeout(() => {
+    $('tvIframe').src = '';
+    $('tvIframe').classList.add('opacity-0');
+  }, 300);
+}
+
+$('closeDrawerBtn').addEventListener('click', closeTradingView);
+$('drawerOverlay').addEventListener('click', closeTradingView);
 
 function renderSector(){
-  const rows = [...sectorRows].sort((a,b) => parseFloat(b[2]) - parseFloat(a[2]));
-  $('sectorBody').innerHTML = rows.map(r => {
+  const sortedSectors = [...sectorRows].sort((a,b) => parseFloat(b[2]) - parseFloat(a[2]));
+  $('sectorBody').innerHTML = sortedSectors.map(r => {
     const avgRsi = parseFloat(r[2]);
     const rsiGe60Pct = parseFloat((r[3]+'').replace('%',''));
-    const avgRsiCell = avgRsi > 55 ? '<span class="hl">' + r[2] + '</span>' : r[2];
-    const rsiGe60Cell = rsiGe60Pct > 60 ? '<span class="hl">' + r[3] + '</span>' : r[3];
-    return '<tr><td class="sym">' + r[0] + '</td><td>' + r[1] + '</td><td>' + avgRsiCell + '</td><td>' + rsiGe60Cell + '</td><td>' + r[4] + '</td></tr>';
+    const avgRsiCell = avgRsi > 55 ? `<span class="bg-accentGreen/10 text-accentGreen px-2.5 py-1 rounded font-bold">${r[2]}</span>` : r[2];
+    const rsiGe60Cell = rsiGe60Pct > 60 ? `<span class="bg-accentGreen/15 text-accentGreen px-2.5 py-1 rounded font-bold">${r[3]}</span>` : r[3];
+    return `
+      <tr class="hover:bg-panelLight/30 transition-all">
+        <td class="p-3 font-semibold text-white tracking-wide font-display">${r[0]}</td>
+        <td class="p-3 text-center font-mono text-gray-300">${r[1]}</td>
+        <td class="p-3 text-center font-mono">${avgRsiCell}</td>
+        <td class="p-3 text-center font-mono">${rsiGe60Cell}</td>
+        <td class="p-3 text-center font-mono text-gray-400">${r[4]}</td>
+      </tr>
+    `;
   }).join('');
+
+  drawSectorChart(sortedSectors);
+  generateSectorInsights(sortedSectors);
 }
 
-// ---------------- Generic tab viewer (Final List / RSI Analysis) ----------------
-let finalListData = {headers:[], rows:[]};
-let rsiAnalysisData = {headers:[], rows:[]};
-
-async function fetchGenericTab(gid){
-  const data = await fetchGvizJson(gid);
-  const headers = data.table.cols.map((c,i) => c.label || c.id || ('Col' + i));
-  const rows = data.table.rows
-    .map(r => headers.map((_, i) => cellValue(r.c[i])))
-    .filter(r => r.some(v => v !== ''));
-  return {headers, rows};
-}
-
-function renderGenericTable(headElId, bodyElId, data, query){
-  const q = (query || '').trim().toUpperCase();
-  $(headElId).innerHTML = data.headers.map(h => '<th>' + h + '</th>').join('');
-  let rows = data.rows;
-  if(q) rows = rows.filter(r => r.some(v => (v+'').toUpperCase().includes(q)));
-  $(bodyElId).innerHTML = rows.map(r =>
-    '<tr>' + r.map(v => '<td>' + v + '</td>').join('') + '</tr>'
-  ).join('') || ('<tr><td colspan="' + (data.headers.length||1) + '" style="text-align:center;color:var(--muted);padding:16px;">No data</td></tr>');
-}
-
-async function loadFinalList(){
-  if(GID_FINAL_LIST === 'REPLACE_WITH_GID'){
-    $('finalStatus').textContent = 'gid not set';
-    $('finalListErr').style.display = 'block';
-    $('finalListErr').textContent = 'Set GID_FINAL_LIST at the top of the script to the "Final List" tab\'s gid.';
+function generateSectorInsights(sectors) {
+  const container = $('sectorInsightsContainer');
+  if(!sectors.length) {
+    container.innerHTML = '<p class="text-xs text-gray-500">No rotation data mapped.</p>';
     return;
   }
-  try{
-    $('finalListErr').style.display = 'none';
-    finalListData = await fetchGenericTab(GID_FINAL_LIST);
-    renderGenericTable('finalListHead', 'finalListBody', finalListData, $('finalSearch').value);
-    $('finalStatus').textContent = 'updated ' + new Date().toLocaleTimeString();
-  }catch(e){
+
+  const hotSectors = sectors.filter(s => parseFloat(s[2]) >= 60).slice(0, 3);
+  let insightHtml = '';
+
+  if (hotSectors.length > 0) {
+    insightHtml += `
+      <div class="p-3 rounded-lg bg-accentGreen/10 border border-accentGreen/20">
+        <div class="flex items-center gap-1.5 text-accentGreen font-bold text-xs font-display">
+          <i data-lucide="flame" class="w-4 h-4"></i> HOT ROTATION ACTIVE
+        </div>
+        <p class="text-[11px] text-gray-300 mt-1">Sectors like <strong>${hotSectors.map(s => s[0]).join(', ')}</strong> are demonstrating extreme relative strength (RSI &ge; 60). Consider momentum trend strategies.</p>
+      </div>
+    `;
+  } else {
+    insightHtml += `
+      <div class="p-3 rounded-lg bg-accentAmber/10 border border-accentAmber/20">
+        <div class="flex items-center gap-1.5 text-accentAmber font-bold text-xs font-display">
+          <i data-lucide="shield-alert" class="w-4 h-4"></i> ACCUMULATION PHASE
+        </div>
+        <p class="text-[11px] text-gray-300 mt-1">No major sector resides in a hot overbought matrix. Perfect environment for defensive scaling of oversold value gems.</p>
+      </div>
+    `;
+  }
+
+  const volMover = [...sectors].sort((a,b) => parseFloat(b[4]) - parseFloat(a[4]))[0];
+  if(volMover) {
+    insightHtml += `
+      <div class="p-3 rounded-lg bg-accentBlue/10 border border-accentBlue/20 mt-2">
+        <div class="flex items-center gap-1.5 text-accentBlue font-bold text-xs font-display">
+          <i data-lucide="activity" class="w-4 h-4"></i> VOLUMETRIC SURGE
+        </div>
+        <p class="text-[11px] text-gray-300 mt-1"><strong>${volMover[0]}</strong> industry is experiencing unusual trade volumes (Avg Multiple: ${volMover[4]}x). High institutional interest flagged.</p>
+      </div>
+    `;
+  }
+
+  container.innerHTML = insightHtml;
+  refreshIcons();
+}
+
+function drawSectorChart(sectors) {
+  const canvas = $('sectorVisualizerCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const width = rect.width;
+  const height = rect.height;
+
+  ctx.clearRect(0, 0, width, height);
+
+  ctx.strokeStyle = '#202936';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#6b7280';
+  ctx.font = '10px JetBrains Mono';
+
+  const sectorsToDraw = sectors.slice(0, 8); 
+  if(!sectorsToDraw.length) return;
+
+  const padding = 40;
+  const graphWidth = width - padding * 2;
+  const graphHeight = height - padding * 2;
+
+  for (let i = 0; i <= 4; i++) {
+    const y = padding + (graphHeight / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(padding, y);
+    ctx.lineTo(width - padding, y);
+    ctx.stroke();
+    
+    const val = (80 - 15 * i).toFixed(0);
+    ctx.fillText(`RSI ${val}`, 5, y + 3);
+  }
+
+  const barWidth = graphWidth / sectorsToDraw.length - 10;
+  sectorsToDraw.forEach((sec, i) => {
+    const rsiVal = parseFloat(sec[2]) || 0;
+    const x = padding + (graphWidth / sectorsToDraw.length) * i + 5;
+    
+    const normalizedHeight = ((rsiVal - 20) / 60) * graphHeight;
+    const y = height - padding - Math.min(graphHeight, Math.max(0, normalizedHeight));
+
+    const grad = ctx.createLinearGradient(0, y, 0, height - padding);
+    if(rsiVal >= 60) {
+      grad.addColorStop(0, '#10b981');
+      grad.addColorStop(1, 'rgba(16, 185, 129, 0.15)');
+    } else {
+      grad.addColorStop(0, '#3b82f6');
+      grad.addColorStop(1, 'rgba(59, 130, 246, 0.15)');
+    }
+
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(x, y, barWidth, (height - padding - y), [4, 4, 0, 0]);
+    ctx.fill();
+
+    ctx.save();
+    ctx.translate(x + barWidth / 2, height - padding + 12);
+    ctx.rotate(-Math.PI / 8);
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = '8px Inter';
+    ctx.textAlign = 'right';
+    const cleanLabel = sec[0].length > 12 ? sec[0].substring(0, 10) + '..' : sec[0];
+    ctx.fillText(cleanLabel, 0, 0);
+    ctx.restore();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 9px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText(rsiVal, x + barWidth / 2, y - 5);
+  });
+}
+
+// ================= STREAMING_CHUNK: OVERHAULED DYNAMIC PARSER FOR FINAL LIST =================
+
+/**
+ * Custom Multi-table parser for the Final List tab
+ * Dynamically scans Row 2 for 'SYMBOL' to safely resolve offsets without relying on hardcoded indices.
+ * Prevents layout disruptions if empty/blank separator columns are optimized and skipped by the GViz API.
+ */
+async function loadFinalList() {
+  try {
+    $('finalListErr').classList.add('hidden');
+    $('finalStatus').textContent = 'fetching...';
+    
+    const data = await fetchGvizJson(GID_FINAL_LIST);
+    const rows = data.table.rows;
+    
+    if (!rows || rows.length < 2) {
+      throw new Error("Insufficient rows detected in Final List tab.");
+    }
+
+    finalListLeft = [];
+    finalListRight = [];
+
+    // Find the header columns containing 'SYMBOL' dynamically to calculate the absolute offsets
+    let symbolIndices = [];
+    const headerRow = rows[1]; // Row index 1 contains column subheaders
+    if (headerRow && headerRow.c) {
+      for (let colIdx = 0; colIdx < headerRow.c.length; colIdx++) {
+        const val = (getVal(headerRow, colIdx) || '').toUpperCase().trim();
+        if (val === 'SYMBOL') {
+          symbolIndices.push(colIdx);
+        }
+      }
+    }
+
+    // Default sequential indices in case dynamic scan returns an anomaly
+    const leftStart = symbolIndices.length > 0 ? symbolIndices[0] : 0;
+    const rightStart = symbolIndices.length > 1 ? symbolIndices[1] : 8;
+
+    // Row index 0 contains decorative merged headers. Row index 1 contains column headers. Data starts at row 2
+    for (let i = 2; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r || !r.c) continue;
+
+      // Left Table: Filtered Stocks for Reversal (calculated based on Left Start Symbol index)
+      const leftSym = getVal(r, leftStart);
+      if (leftSym && leftSym.trim() !== '' && leftSym !== 'Symbol') {
+        finalListLeft.push({
+          symbol: leftSym,
+          price: getVal(r, leftStart + 1),
+          volume: getVal(r, leftStart + 2),
+          rsi: getVal(r, leftStart + 3),
+          volMultiple: getVal(r, leftStart + 4),
+          industry: getVal(r, leftStart + 5),
+          dmaFilter: getVal(r, leftStart + 6)
+        });
+      }
+
+      // Right Table: Oversold Stocks to Watch (calculated based on Right Start Symbol index)
+      const rightSym = getVal(r, rightStart);
+      if (rightSym && rightSym.trim() !== '' && rightSym !== 'Symbol') {
+        finalListRight.push({
+          symbol: rightSym,
+          price: getVal(r, rightStart + 1),
+          volume: getVal(r, rightStart + 2),
+          rsi: getVal(r, rightStart + 3),
+          volMultiple: getVal(r, rightStart + 4),
+          industry: getVal(r, rightStart + 5),
+          output: getVal(r, rightStart + 6)
+        });
+      }
+    }
+
+    renderFinalListTables();
+    $('finalStatus').textContent = 'sync success';
+  } catch(e) {
     $('finalStatus').textContent = 'error';
-    $('finalListErr').style.display = 'block';
-    $('finalListErr').textContent = 'Could not load Final List: ' + e.message;
+    $('finalListErr').classList.remove('hidden');
+    $('finalListErr').textContent = 'Final List Sync Failed: ' + e.message;
   }
 }
 
-async function loadRsiAnalysis(){
-  if(GID_RSI_ANALYSIS === 'REPLACE_WITH_GID'){
-    $('rsiAnalysisStatus').textContent = 'gid not set';
-    $('rsiAnalysisErr').style.display = 'block';
-    $('rsiAnalysisErr').textContent = 'Set GID_RSI_ANALYSIS at the top of the script to the "RSI Analysis" tab\'s gid.';
-    return;
+function renderFinalListTables() {
+  const query = $('finalSearch').value.trim().toUpperCase();
+
+  // 1. Render Left Table: Filtered Stocks for Reversal
+  let filteredLeft = [...finalListLeft];
+  if (query) {
+    filteredLeft = filteredLeft.filter(r => r.symbol.toUpperCase().includes(query) || r.industry.toUpperCase().includes(query));
   }
-  try{
-    $('rsiAnalysisErr').style.display = 'none';
-    rsiAnalysisData = await fetchGenericTab(GID_RSI_ANALYSIS);
-    renderGenericTable('rsiAnalysisHead', 'rsiAnalysisBody', rsiAnalysisData, $('rsiAnalysisSearch').value);
-    $('rsiAnalysisStatus').textContent = 'updated ' + new Date().toLocaleTimeString();
-  }catch(e){
+  
+  $('finalLeftBody').innerHTML = filteredLeft.map(r => {
+    return `
+      <tr class="hover:bg-panelLight/30 cursor-pointer group transition-all" onclick="handleRowClick(event, '${r.symbol}')">
+        <td class="p-3 font-semibold text-white tracking-wide font-display group-hover:text-accentGreen transition-colors flex items-center gap-1.5">
+          <i data-lucide="line-chart" class="w-3.5 h-3.5 text-gray-500 hover:text-accentGreen transition-colors cursor-pointer" onclick="event.stopPropagation(); openTradingView('${r.symbol}')"></i>
+          ${r.symbol}
+        </td>
+        <td class="p-3 font-mono text-gray-300">₹${r.price}</td>
+        <td class="p-3 font-mono text-gray-400">${r.volume}</td>
+        <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
+        <td class="p-3 font-mono text-gray-400">${r.volMultiple}</td>
+        <td class="p-3 text-gray-400 text-[11px]">${r.industry}</td>
+        <td class="p-3">${badge(r.dmaFilter)}</td>
+        <td class="p-3 text-right" onclick="event.stopPropagation()">
+          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-white hover:text-black font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">
+            Buy
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('') || `<tr><td colspan="8" class="text-center text-gray-500 py-6">No matching reversal stocks.</td></tr>`;
+
+  // 2. Render Right Table: Oversold Stocks to Watch
+  let filteredRight = [...finalListRight];
+  if (query) {
+    filteredRight = filteredRight.filter(r => r.symbol.toUpperCase().includes(query) || r.industry.toUpperCase().includes(query));
+  }
+
+  $('finalRightBody').innerHTML = filteredRight.map(r => {
+    return `
+      <tr class="hover:bg-panelLight/30 cursor-pointer group transition-all" onclick="handleRowClick(event, '${r.symbol}')">
+        <td class="p-3 font-semibold text-white tracking-wide font-display group-hover:text-accentGreen transition-colors flex items-center gap-1.5">
+          <i data-lucide="line-chart" class="w-3.5 h-3.5 text-gray-500 hover:text-accentGreen transition-colors cursor-pointer" onclick="event.stopPropagation(); openTradingView('${r.symbol}')"></i>
+          ${r.symbol}
+        </td>
+        <td class="p-3 font-mono text-gray-300">₹${r.price}</td>
+        <td class="p-3 font-mono text-gray-400">${r.volume}</td>
+        <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
+        <td class="p-3 font-mono text-gray-400">${r.volMultiple}</td>
+        <td class="p-3 text-gray-400 text-[11px]">${r.industry}</td>
+        <td class="p-3">${badge(r.output)}</td>
+        <td class="p-3 text-right" onclick="event.stopPropagation()">
+          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-white hover:text-black font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">
+            Buy
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('') || `<tr><td colspan="8" class="text-center text-gray-500 py-6">No matching oversold watchstocks.</td></tr>`;
+
+  refreshIcons();
+}
+
+function rsiColorValue(rsiVal) {
+  const val = parseFloat(rsiVal);
+  if (isNaN(val)) return rsiVal;
+  let statusColor = 'text-gray-300';
+  if (val >= 70) statusColor = 'text-accentRed bg-accentRed/10 border border-accentRed/25 px-1.5 py-0.5 rounded font-bold';
+  if (val <= 30) statusColor = 'text-accentGreen bg-accentGreen/10 border border-accentGreen/25 px-1.5 py-0.5 rounded font-bold';
+  return `<span class="${statusColor}">${rsiVal}</span>`;
+}
+
+// ================= STREAMING_CHUNK: OVERHAULED DYNAMIC PARSER FOR RSI ANALYSIS =================
+
+/**
+ * Custom Multi-table parser for the RSI Analysis tab
+ * Scans Rows 1 & 2 for instances of 'SYMBOL' to dynamic build indices for the 4 parallel groups.
+ * Ensures robust data alignment even when blank spacers are trimmed.
+ */
+async function loadRsiAnalysis() {
+  try {
+    $('rsiAnalysisErr').classList.add('hidden');
+    $('rsiAnalysisStatus').textContent = 'fetching...';
+    
+    const data = await fetchGvizJson(GID_RSI_ANALYSIS);
+    const rows = data.table.rows;
+
+    if (!rows || rows.length < 1) {
+      throw new Error("Insufficient rows detected in RSI Analysis matrix.");
+    }
+
+    rsiList1 = [];
+    rsiList2 = [];
+    rsiList3 = [];
+    rsiList4 = [];
+
+    // Dynamically search across the first two decorative/sub-header rows for Symbol Column index mapping
+    let symbolIndices = [];
+    const r0 = rows[0];
+    const r1 = rows[1];
+    const maxColsCheck = Math.max(r0?.c?.length || 0, r1?.c?.length || 0);
+
+    for (let colIdx = 0; colIdx < maxColsCheck; colIdx++) {
+      const val0 = (getVal(r0, colIdx) || '').toUpperCase().trim();
+      const val1 = (getVal(r1, colIdx) || '').toUpperCase().trim();
+      if (val0 === 'SYMBOL' || val1 === 'SYMBOL') {
+        symbolIndices.push(colIdx);
+      }
+    }
+
+    // Default fallbacks in case dynamic scanning is obstructed
+    const start1 = symbolIndices.length > 0 ? symbolIndices[0] : 0;
+    const start2 = symbolIndices.length > 1 ? symbolIndices[1] : 5;
+    const start3 = symbolIndices.length > 2 ? symbolIndices[2] : 10;
+    const start4 = symbolIndices.length > 3 ? symbolIndices[3] : 15;
+    
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r || !r.c) continue;
+
+      // Group 1: General RSI Status Registry
+      const sym1 = getVal(r, start1);
+      if (sym1 && sym1.trim() !== '' && sym1 !== 'Symbol') {
+        rsiList1.push({
+          symbol: sym1,
+          industry: getVal(r, start1 + 1),
+          rsi: getVal(r, start1 + 2),
+          change: getVal(r, start1 + 3),
+          status: getVal(r, start1 + 4)
+        });
+      }
+
+      // Groups 2, 3, and 4 start Under headers on index 2 (Row 3)
+      if (i >= 2) {
+        // Group 2: Over Sold Stocks
+        const sym2 = getVal(r, start2);
+        if (sym2 && sym2.trim() !== '' && sym2 !== 'Symbol') {
+          rsiList2.push({
+            symbol: sym2,
+            industry: getVal(r, start2 + 1),
+            rsi: getVal(r, start2 + 2),
+            change: getVal(r, start2 + 3)
+          });
+        }
+
+        // Group 3: Support Range Stocks
+        const sym3 = getVal(r, start3);
+        if (sym3 && sym3.trim() !== '' && sym3 !== 'Symbol') {
+          rsiList3.push({
+            symbol: sym3,
+            industry: getVal(r, start3 + 1),
+            rsi: getVal(r, start3 + 2),
+            change: getVal(r, start3 + 3)
+          });
+        }
+
+        // Group 4: Over Bought Stocks
+        const sym4 = getVal(r, start4);
+        if (sym4 && sym4.trim() !== '' && sym4 !== 'Symbol') {
+          rsiList4.push({
+            symbol: sym4,
+            industry: getVal(r, start4 + 1),
+            rsi: getVal(r, start4 + 2),
+            change: getVal(r, start4 + 3)
+          });
+        }
+      }
+    }
+
+    renderRsiAnalysisTables();
+    $('rsiAnalysisStatus').textContent = 'sync success';
+  } catch(e) {
     $('rsiAnalysisStatus').textContent = 'error';
-    $('rsiAnalysisErr').style.display = 'block';
-    $('rsiAnalysisErr').textContent = 'Could not load RSI Analysis: ' + e.message;
+    $('rsiAnalysisErr').classList.remove('hidden');
+    $('rsiAnalysisErr').textContent = 'RSI Strength Matrix Parser Failed: ' + e.message;
   }
 }
 
-$('finalSearch').addEventListener('input', () => renderGenericTable('finalListHead', 'finalListBody', finalListData, $('finalSearch').value));
-$('rsiAnalysisSearch').addEventListener('input', () => renderGenericTable('rsiAnalysisHead', 'rsiAnalysisBody', rsiAnalysisData, $('rsiAnalysisSearch').value));
+function renderRsiAnalysisTables() {
+  const query = $('rsiAnalysisSearch').value.trim().toUpperCase();
 
-// ================= Paper Trading =================
+  // Filter Group 1
+  let filtered1 = [...rsiList1];
+  if (query) {
+    filtered1 = filtered1.filter(r => r.symbol.toUpperCase().includes(query) || r.industry.toUpperCase().includes(query));
+  }
+  $('rsiList1Body').innerHTML = filtered1.map(r => {
+    const changeVal = parseFloat(r.change);
+    const changeCls = changeVal >= 0 ? 'text-accentGreen' : 'text-accentRed';
+    return `
+      <tr class="hover:bg-panelLight/20 cursor-pointer group transition-all" onclick="handleRowClick(event, '${r.symbol}')">
+        <td class="p-3 font-semibold text-white tracking-wide font-display group-hover:text-accentGreen transition-colors flex items-center gap-1">
+          <i data-lucide="line-chart" class="w-3.5 h-3.5 text-gray-500 cursor-pointer" onclick="event.stopPropagation(); openTradingView('${r.symbol}')"></i>
+          ${r.symbol}
+        </td>
+        <td class="p-3 text-gray-400 text-[11px] font-body">${r.industry}</td>
+        <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
+        <td class="p-3 font-mono ${changeCls}">${r.change}</td>
+        <td class="p-3 text-[11px] font-semibold text-gray-400 font-body">${rsiBadgeFormat(r.status)}</td>
+      </tr>
+    `;
+  }).join('') || `<tr><td colspan="5" class="text-center text-gray-500 py-6">No matches found.</td></tr>`;
+
+  // Filter Group 2
+  let filtered2 = [...rsiList2];
+  if (query) {
+    filtered2 = filtered2.filter(r => r.symbol.toUpperCase().includes(query) || r.industry.toUpperCase().includes(query));
+  }
+  $('rsiList2Body').innerHTML = filtered2.map(r => {
+    const changeVal = parseFloat(r.change);
+    const changeCls = changeVal >= 0 ? 'text-accentGreen' : 'text-accentRed';
+    return `
+      <tr class="hover:bg-panelLight/20 cursor-pointer group transition-all" onclick="handleRowClick(event, '${r.symbol}')">
+        <td class="p-3 font-semibold text-white tracking-wide font-display group-hover:text-accentGreen transition-colors flex items-center gap-1">
+          <i data-lucide="line-chart" class="w-3.5 h-3.5 text-gray-500 cursor-pointer" onclick="event.stopPropagation(); openTradingView('${r.symbol}')"></i>
+          ${r.symbol}
+        </td>
+        <td class="p-3 text-gray-400 text-[11px] font-body">${r.industry}</td>
+        <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
+        <td class="p-3 font-mono ${changeCls}">${r.change}</td>
+      </tr>
+    `;
+  }).join('') || `<tr><td colspan="4" class="text-center text-gray-500 py-6">No matches found.</td></tr>`;
+
+  // Filter Group 3
+  let filtered3 = [...rsiList3];
+  if (query) {
+    filtered3 = filtered3.filter(r => r.symbol.toUpperCase().includes(query) || r.industry.toUpperCase().includes(query));
+  }
+  $('rsiList3Body').innerHTML = filtered3.map(r => {
+    const changeVal = parseFloat(r.change);
+    const changeCls = changeVal >= 0 ? 'text-accentGreen' : 'text-accentRed';
+    return `
+      <tr class="hover:bg-panelLight/20 cursor-pointer group transition-all" onclick="handleRowClick(event, '${r.symbol}')">
+        <td class="p-3 font-semibold text-white tracking-wide font-display group-hover:text-accentGreen transition-colors flex items-center gap-1">
+          <i data-lucide="line-chart" class="w-3.5 h-3.5 text-gray-500 cursor-pointer" onclick="event.stopPropagation(); openTradingView('${r.symbol}')"></i>
+          ${r.symbol}
+        </td>
+        <td class="p-3 text-gray-400 text-[11px] font-body">${r.industry}</td>
+        <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
+        <td class="p-3 font-mono ${changeCls}">${r.change}</td>
+      </tr>
+    `;
+  }).join('') || `<tr><td colspan="4" class="text-center text-gray-500 py-6">No matches found.</td></tr>`;
+
+  // Filter Group 4
+  let filtered4 = [...rsiList4];
+  if (query) {
+    filtered4 = filtered4.filter(r => r.symbol.toUpperCase().includes(query) || r.industry.toUpperCase().includes(query));
+  }
+  $('rsiList4Body').innerHTML = filtered4.map(r => {
+    const changeVal = parseFloat(r.change);
+    const changeCls = changeVal >= 0 ? 'text-accentGreen' : 'text-accentRed';
+    return `
+      <tr class="hover:bg-panelLight/20 cursor-pointer group transition-all" onclick="handleRowClick(event, '${r.symbol}')">
+        <td class="p-3 font-semibold text-white tracking-wide font-display group-hover:text-accentGreen transition-colors flex items-center gap-1">
+          <i data-lucide="line-chart" class="w-3.5 h-3.5 text-gray-500 cursor-pointer" onclick="event.stopPropagation(); openTradingView('${r.symbol}')"></i>
+          ${r.symbol}
+        </td>
+        <td class="p-3 text-gray-400 text-[11px] font-body">${r.industry}</td>
+        <td class="p-3 font-mono font-semibold">${rsiColorValue(r.rsi)}</td>
+        <td class="p-3 font-mono ${changeCls}">${r.change}</td>
+      </tr>
+    `;
+  }).join('') || `<tr><td colspan="4" class="text-center text-gray-500 py-6">No matches found.</td></tr>`;
+
+  refreshIcons();
+}
+
+function rsiBadgeFormat(statusStr) {
+  const normalized = (statusStr || '').toUpperCase().trim();
+  if (normalized.includes('OVER BOUGHT') || normalized.includes('OVERBOUGHT')) {
+    return `<span class="px-2 py-0.5 rounded bg-accentRed/10 text-accentRed border border-accentRed/25 font-bold text-[9px]">OVER BOUGHT</span>`;
+  }
+  if (normalized.includes('SUPPORT RANG') || normalized.includes('SUPPORT RANGE')) {
+    return `<span class="px-2 py-0.5 rounded bg-accentBlue/10 text-accentBlue border border-accentBlue/25 font-bold text-[9px]">SUPPORT RANGE</span>`;
+  }
+  if (normalized.includes('OVER SOLD') || normalized.includes('OVERSOLD')) {
+    return `<span class="px-2 py-0.5 rounded bg-accentGreen/10 text-accentGreen border border-accentGreen/25 font-bold text-[9px]">OVER SOLD</span>`;
+  }
+  return statusStr;
+}
+
+// ================= STREAMING_CHUNK: virtual Paper Trading Simulation Operations =================
 const PF_KEY = 'rsiScreener_paperTrades_v1';
 
 function loadTrades(){
@@ -497,19 +1553,25 @@ function loadTrades(){
 }
 function saveTrades(trades){ localStorage.setItem(PF_KEY, JSON.stringify(trades)); }
 function lookupRow(symbol){ return rawRows.find(r => r[0] === symbol); }
-function fmtMoney(n){ return '\u20B9' + n.toLocaleString('en-IN', {maximumFractionDigits:2}); }
+function fmtMoney(n){ return '₹' + n.toLocaleString('en-IN', {maximumFractionDigits:2}); }
 
-function buyStock(symbol){
-  const row = lookupRow(symbol);
-  if(!row){ alert('Live price not found for ' + symbol + '. Refresh and try again.'); return; }
-  const price = parseFloat((row[3]+'').replace(/,/g,''));
-  const rsi = row[1];
+async function triggerBuy(symbol){
+  const row = lookupInAllSheets(symbol);
+  if(!row || !row.price){ 
+    showToast('Real-time rate for ' + symbol + ' currently unavailable. Ensure the stock price exists in sheet segments.', 'error');
+    return; 
+  }
+  const price = row.price;
+  const rsi = row.rsi || '—';
   const tradeSize = parseFloat($('tradeSize').value) || 20000;
   const suggestedQty = Math.max(1, Math.floor(tradeSize / price));
-  const input = prompt('Buy ' + symbol + ' @ \u20B9' + price + '\nEnter quantity:', suggestedQty);
-  if(input === null) return;
-  const qty = parseInt(input);
-  if(!qty || qty <= 0){ alert('Invalid quantity.'); return; }
+  
+  const qty = await customBuyPrompt(symbol, price, suggestedQty);
+  if(qty === null) return;
+  if(!qty || qty <= 0){ 
+    showToast('Invalid stock volume input designated.', 'error');
+    return; 
+  }
 
   const trades = loadTrades();
   trades.push({
@@ -520,34 +1582,40 @@ function buyStock(symbol){
   saveTrades(trades);
   renderPortfolio();
   maybeAutoPush();
+  showToast(`Successfully bought ${qty} shares of ${symbol}!`, 'success');
 }
 
-function closePosition(id){
+async function closePosition(id){
   const trades = loadTrades();
   const t = trades.find(x => x.id === id);
   if(!t) return;
-  const row = lookupRow(t.symbol);
-  const currentPrice = row ? parseFloat((row[3]+'').replace(/,/g,'')) : null;
-  const input = prompt('Close ' + t.symbol + ' \u2014 exit price:', currentPrice ?? t.entryPrice);
-  if(input === null) return;
-  const exitPrice = parseFloat(input);
-  if(isNaN(exitPrice)){ alert('Invalid price.'); return; }
+  const row = lookupInAllSheets(t.symbol);
+  const currentPrice = row ? row.price : null;
+  
+  const exitPrice = await customClosePrompt(t.symbol, t.qty, currentPrice ?? t.entryPrice);
+  if(exitPrice === null || isNaN(exitPrice)){ return; }
+
   t.status = 'closed';
   t.exitPrice = exitPrice;
   t.exitDate = new Date().toISOString();
   saveTrades(trades);
   renderPortfolio();
   maybeAutoPush();
+  showToast(`Closed virtual trade position on ${t.symbol}`, 'success');
 }
 
-function deleteTrade(id){
+async function deleteTrade(id){
   const trades = loadTrades();
   const t = trades.find(x => x.id === id);
   if(!t) return;
-  if(!confirm('Delete ' + t.symbol + ' trade permanently? This cannot be undone.')) return;
+  
+  const confirmed = await customConfirm('Permanently Delete Ledger Item?', `This removes ${t.symbol} permanently from simulator statistics.`);
+  if(!confirmed) return;
+
   saveTrades(trades.filter(x => x.id !== id));
   renderPortfolio();
   maybeAutoPush();
+  showToast(`Simulator record deleted cleanly.`, 'info');
 }
 
 function autoTradeCheck(){
@@ -570,7 +1638,11 @@ function autoTradeCheck(){
       added = true;
     }
   });
-  if(added){ saveTrades(trades); maybeAutoPush(); }
+  if(added){ 
+    saveTrades(trades); 
+    maybeAutoPush(); 
+    showToast(`Executed automated breakout purchases via RSI scan.`, 'success');
+  }
 }
 
 function renderPortfolio(){
@@ -580,24 +1652,35 @@ function renderPortfolio(){
 
   let invested = 0, currentValue = 0;
   const openRows = open.map(t => {
-    const row = lookupRow(t.symbol);
-    const ltp = row ? parseFloat((row[3]+'').replace(/,/g,'')) : t.entryPrice;
+    const row = lookupInAllSheets(t.symbol);
+    const ltp = row && row.price ? row.price : t.entryPrice;
     const pnl = (ltp - t.entryPrice) * t.qty;
     const pnlPct = ((ltp - t.entryPrice) / t.entryPrice) * 100;
     invested += t.entryPrice * t.qty;
     currentValue += ltp * t.qty;
-    return '<tr>' +
-      '<td class="sym">' + t.symbol + (t.auto ? ' <span class="badge b-unconfirmed" style="font-size:9px;">auto</span>' : '') + '</td>' +
-      '<td>' + t.qty + '</td><td>' + t.entryPrice.toFixed(2) + '</td><td>' + t.entryRSI + '</td>' +
-      '<td>' + new Date(t.entryDate).toLocaleDateString('en-IN') + '</td>' +
-      '<td>' + ltp.toFixed(2) + '</td>' +
-      '<td class="' + (pnl>=0?'up':'down') + '">' + fmtMoney(pnl) + '</td>' +
-      '<td class="' + (pnl>=0?'up':'down') + '">' + pnlPct.toFixed(2) + '%</td>' +
-      '<td><button class="close-btn" onclick="closePosition(\'' + t.id + '\')">Close</button>' +
-      '<button class="del-btn" onclick="deleteTrade(\'' + t.id + '\')">Delete</button></td>' +
-      '</tr>';
+    return `
+      <tr class="hover:bg-panelLight/20 transition-all font-mono">
+        <td class="p-3 font-semibold text-white font-display flex items-center gap-1.5">
+          <i data-lucide="line-chart" class="w-3.5 h-3.5 text-gray-500 hover:text-accentGreen transition-colors cursor-pointer" onclick="openTradingView('${t.symbol}')"></i>
+          ${t.symbol} ${t.auto ? '<span class="text-[9px] bg-accentAmber/10 border border-accentAmber/35 px-1 rounded text-accentAmber">AUTO</span>' : ''}
+        </td>
+        <td class="p-3 text-gray-300">${t.qty}</td>
+        <td class="p-3 text-gray-400 font-bold">₹${t.entryPrice.toFixed(2)}</td>
+        <td class="p-3 text-gray-500">${t.entryRSI}</td>
+        <td class="p-3 text-gray-500">${new Date(t.entryDate).toLocaleDateString('en-IN')}</td>
+        <td class="p-3 text-white">₹${ltp.toFixed(2)}</td>
+        <td class="p-3 font-bold ${pnl>=0?'text-accentGreen':'text-accentRed'}">${pnl>=0?'+':''}${fmtMoney(pnl)}</td>
+        <td class="p-3 font-bold ${pnl>=0?'text-accentGreen':'text-accentRed'}">${pnl>=0?'+':''}${pnlPct.toFixed(2)}%</td>
+        <td class="p-3 text-right">
+          <div class="inline-flex gap-1.5">
+            <button class="bg-accentRed/10 border border-accentRed/20 hover:border-accentRed hover:bg-accentRed hover:text-white text-xs px-3 py-1 rounded-lg transition-all font-semibold select-none" onclick="closePosition('${t.id}')">Close</button>
+            <button class="border border-border text-gray-500 hover:text-white hover:border-gray-500 text-xs px-2 py-1 rounded-lg transition-all select-none" onclick="deleteTrade('${t.id}')"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+          </div>
+        </td>
+      </tr>
+    `;
   });
-  $('openBody').innerHTML = openRows.join('') || '<tr><td colspan="9" style="text-align:center; color:var(--muted); padding:16px;">No open positions \u2014 click "Buy" on any stock in Full List.</td></tr>';
+  $('openBody').innerHTML = openRows.join('') || '<tr><td colspan="9" class="text-center text-gray-500 py-12">No active assets in simulated simulator ledger. Click "Buy" next to screener lists.</td></tr>';
 
   let realizedPnl = 0, wins = 0;
   const closedRows = closed.map(t => {
@@ -605,37 +1688,66 @@ function renderPortfolio(){
     const pnlPct = ((t.exitPrice - t.entryPrice) / t.entryPrice) * 100;
     realizedPnl += pnl;
     if(pnl > 0) wins++;
-    return '<tr>' +
-      '<td class="sym">' + t.symbol + '</td><td>' + t.qty + '</td>' +
-      '<td>' + t.entryPrice.toFixed(2) + '</td><td>' + t.exitPrice.toFixed(2) + '</td>' +
-      '<td>' + new Date(t.entryDate).toLocaleDateString('en-IN') + '</td>' +
-      '<td>' + new Date(t.exitDate).toLocaleDateString('en-IN') + '</td>' +
-      '<td class="' + (pnl>=0?'up':'down') + '">' + fmtMoney(pnl) + '</td>' +
-      '<td class="' + (pnl>=0?'up':'down') + '">' + pnlPct.toFixed(2) + '%</td>' +
-      '<td><button class="del-btn" onclick="deleteTrade(\'' + t.id + '\')">Delete</button></td>' +
-      '</tr>';
+    return `
+      <tr class="hover:bg-panelLight/20 transition-all font-mono">
+        <td class="p-3 font-semibold text-white font-display flex items-center gap-1.5">
+          <i data-lucide="line-chart" class="w-3.5 h-3.5 text-gray-500 hover:text-accentGreen transition-colors cursor-pointer" onclick="openTradingView('${t.symbol}')"></i>
+          ${t.symbol}
+        </td>
+        <td class="p-3 text-gray-400">${t.qty}</td>
+        <td class="p-3 text-gray-500">₹${t.entryPrice.toFixed(2)}</td>
+        <td class="p-3 text-gray-300">₹${t.exitPrice.toFixed(2)}</td>
+        <td class="p-3 text-gray-500">${new Date(t.entryDate).toLocaleDateString('en-IN')}</td>
+        <td class="p-3 text-gray-500">${new Date(t.exitDate).toLocaleDateString('en-IN')}</td>
+        <td class="p-3 font-bold ${pnl>=0?'text-accentGreen':'text-accentRed'}">${pnl>=0?'+':''}${fmtMoney(pnl)}</td>
+        <td class="p-3 font-bold ${pnl>=0?'text-accentGreen':'text-accentRed'}">${pnl>=0?'+':''}${pnlPct.toFixed(2)}%</td>
+        <td class="p-3 text-right">
+          <button class="border border-border text-gray-500 hover:text-white hover:border-gray-500 text-xs px-2 py-1 rounded-lg transition-all" onclick="deleteTrade('${t.id}')"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+        </td>
+      </tr>
+    `;
   }).reverse();
-  $('closedBody').innerHTML = closedRows.join('') || '<tr><td colspan="9" style="text-align:center; color:var(--muted); padding:16px;">No closed trades yet.</td></tr>';
+  $('closedBody').innerHTML = closedRows.join('') || '<tr><td colspan="9" class="text-center text-gray-500 py-12">No liquidated trades in recent session.</td></tr>';
 
   const unrealized = currentValue - invested;
-  const winRate = closed.length ? ((wins/closed.length)*100).toFixed(1) : '\u2014';
-  $('portfolioStats').innerHTML =
-    '<div class="stat-card"><div class="lbl">Invested (open)</div><div class="val">' + fmtMoney(invested) + '</div></div>' +
-    '<div class="stat-card"><div class="lbl">Current value</div><div class="val">' + fmtMoney(currentValue) + '</div></div>' +
-    '<div class="stat-card"><div class="lbl">Unrealized P&amp;L</div><div class="val ' + (unrealized>=0?'up':'down') + '">' + fmtMoney(unrealized) + '</div></div>' +
-    '<div class="stat-card"><div class="lbl">Realized P&amp;L</div><div class="val ' + (realizedPnl>=0?'up':'down') + '">' + fmtMoney(realizedPnl) + '</div></div>' +
-    '<div class="stat-card"><div class="lbl">Win rate (closed)</div><div class="val">' + winRate + (winRate!=='\u2014'?'%':'') + '</div></div>';
+  const winRate = closed.length ? ((wins/closed.length)*100).toFixed(1) : '—';
+  
+  $('portfolioStats').innerHTML = `
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between">
+      <span class="text-[10px] uppercase font-semibold text-gray-400 font-mono tracking-wider">Invested (Open)</span>
+      <span class="text-lg lg:text-xl font-bold font-mono text-white mt-1.5">${fmtMoney(invested)}</span>
+    </div>
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between">
+      <span class="text-[10px] uppercase font-semibold text-gray-400 font-mono tracking-wider">Current Holdings Value</span>
+      <span class="text-lg lg:text-xl font-bold font-mono text-white mt-1.5">${fmtMoney(currentValue)}</span>
+    </div>
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between">
+      <span class="text-[10px] uppercase font-semibold text-gray-400 font-mono tracking-wider">Floating (P&amp;L)</span>
+      <span class="text-lg lg:text-xl font-bold font-mono mt-1.5 ${unrealized>=0?'text-accentGreen':'text-accentRed'}">${unrealized>=0?'+':''}${fmtMoney(unrealized)}</span>
+    </div>
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between">
+      <span class="text-[10px] uppercase font-semibold text-gray-400 font-mono tracking-wider">Realized Returns</span>
+      <span class="text-lg lg:text-xl font-bold font-mono mt-1.5 ${realizedPnl>=0?'text-accentGreen':'text-accentRed'}">${realizedPnl>=0?'+':''}${fmtMoney(realizedPnl)}</span>
+    </div>
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-col justify-between">
+      <span class="text-[10px] uppercase font-semibold text-gray-400 font-mono tracking-wider">Settle Win Rate</span>
+      <span class="text-lg lg:text-xl font-bold font-mono mt-1.5 text-accentBlue">${winRate}${winRate!=='—'?'%':''}</span>
+    </div>
+  `;
+  refreshIcons();
 }
 
-$('resetPortfolio').addEventListener('click', () => {
-  if(confirm('Delete all open and closed paper trades? This cannot be undone.')){
+$('resetPortfolio').addEventListener('click', async () => {
+  const confirmed = await customConfirm('Reset Portfolio Entirely?', 'This permanently wipes all active holdings, history, and simulation progress.');
+  if (confirmed) {
     localStorage.removeItem(PF_KEY);
     renderPortfolio();
     maybeAutoPush();
+    showToast('All virtual ledger caches cleared.', 'info');
   }
 });
 
-// ================= GitHub Sync =================
+// ================= STREAMING_CHUNK: Configuration For GitHub Synchronization System =================
 const GH_KEY = 'rsiScreener_ghConfig_v1';
 
 function loadGhConfig(){
@@ -662,7 +1774,8 @@ function fillGhInputsFromConfig(){
   $('ghToken').value = cfg.token || '';
   $('ghAuto').checked = !!cfg.auto;
   if(cfg.owner && cfg.repo && cfg.token){
-    $('ghStatus').textContent = 'configured: ' + cfg.owner + '/' + cfg.repo;
+    $('ghStatus').textContent = `${cfg.owner}/${cfg.repo}`;
+    $('ghStatusDot').className = 'w-2 h-2 rounded-full bg-accentGreen glow-green';
   }
 }
 
@@ -675,8 +1788,11 @@ $('ghSave').addEventListener('click', () => {
     auto: $('ghAuto').checked
   };
   saveGhConfig(cfg);
-  $('ghStatus').textContent = 'saved \u2713 (' + cfg.owner + '/' + cfg.repo + ')';
+  $('ghStatus').textContent = `${cfg.owner}/${cfg.repo}`;
+  $('ghStatusDot').className = 'w-2 h-2 rounded-full bg-accentGreen glow-green';
+  showToast('GitHub cloud configurations synchronized.', 'success');
 });
+
 $('ghAuto').addEventListener('change', () => {
   const cfg = loadGhConfig();
   cfg.auto = $('ghAuto').checked;
@@ -685,8 +1801,11 @@ $('ghAuto').addEventListener('change', () => {
 
 async function pushToGithub(){
   const cfg = loadGhConfig();
-  if(!cfg.owner || !cfg.repo || !cfg.token){ alert('Pehle GitHub owner, repo aur token bharke "Save config" dabao.'); return; }
-  $('ghStatus').textContent = 'pushing\u2026';
+  if(!cfg.owner || !cfg.repo || !cfg.token){ 
+    showToast('Provide GitHub credentials and save first.', 'error');
+    return; 
+  }
+  $('ghStatus').textContent = 'syncing...';
   try{
     const apiUrl = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.path;
     let sha = null;
@@ -695,28 +1814,37 @@ async function pushToGithub(){
     else if(getRes.status !== 404){ throw new Error('HTTP ' + getRes.status + ' on read'); }
 
     const body = {
-      message: 'Update paper trades \u2014 ' + new Date().toISOString(),
+      message: 'Update paper trades — ' + new Date().toISOString(),
       content: toBase64(JSON.stringify(loadTrades(), null, 2))
     };
     if(sha) body.sha = sha;
 
     const putRes = await fetch(apiUrl, { method:'PUT', headers: ghHeaders(cfg.token), body: JSON.stringify(body) });
     if(!putRes.ok){ const err = await putRes.json().catch(()=>({})); throw new Error(err.message || ('HTTP ' + putRes.status)); }
-    $('ghStatus').textContent = 'pushed \u2713 ' + new Date().toLocaleTimeString();
+    
+    $('ghStatus').textContent = 'cloud synced';
+    showToast('Ledger ledger pushed safely to GitHub!', 'success');
   }catch(e){
-    $('ghStatus').textContent = 'push failed: ' + e.message;
+    $('ghStatus').textContent = 'fail';
+    showToast('Git backup failed: ' + e.message, 'error');
   }
 }
 
 async function pullFromGithub(){
   const cfg = loadGhConfig();
-  if(!cfg.owner || !cfg.repo || !cfg.token){ alert('Pehle GitHub owner, repo aur token bharke "Save config" dabao.'); return; }
-  $('ghStatus').textContent = 'pulling\u2026';
+  if(!cfg.owner || !cfg.repo || !cfg.token){ 
+    showToast('Provide GitHub credentials first.', 'error'); 
+    return; 
+  }
+  $('ghStatus').textContent = 'syncing...';
   try{
     const apiUrl = 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.path;
     const res = await fetch(apiUrl, { headers: ghHeaders(cfg.token) });
     if(!res.ok){
-      if(res.status === 404){ $('ghStatus').textContent = 'GitHub par abhi file nahi hai \u2014 pehle Push karo.'; return; }
+      if(res.status === 404){ 
+        showToast('Ledger file not established on Github. Executing a push first is recommended.', 'info');
+        return; 
+      }
       throw new Error('HTTP ' + res.status);
     }
     const j = await res.json();
@@ -724,9 +1852,11 @@ async function pullFromGithub(){
     const trades = JSON.parse(json);
     saveTrades(trades);
     renderPortfolio();
-    $('ghStatus').textContent = 'pulled \u2713 ' + new Date().toLocaleTimeString();
+    $('ghStatus').textContent = 'synced';
+    showToast('Retrieved and restored latest simulator data.', 'success');
   }catch(e){
-    $('ghStatus').textContent = 'pull failed: ' + e.message;
+    $('ghStatus').textContent = 'fail';
+    showToast('Git recovery failed: ' + e.message, 'error');
   }
 }
 
@@ -739,16 +1869,142 @@ $('ghPush').addEventListener('click', pushToGithub);
 $('ghPull').addEventListener('click', pullFromGithub);
 fillGhInputsFromConfig();
 
-// ================= Tabs =================
+// ================= STREAMING_CHUNK: Dialog Promise Engine =================
+let activeModalResolve = null;
+
+function showModalOverlay() {
+  const overlay = $('modalOverlay');
+  overlay.classList.remove('pointer-events-none', 'opacity-0');
+}
+
+function hideModalOverlay() {
+  const overlay = $('modalOverlay');
+  overlay.classList.add('pointer-events-none', 'opacity-0');
+  $('buyModal').classList.add('hidden');
+  $('closeModal').classList.add('hidden');
+  $('confirmDialog').classList.add('hidden');
+}
+
+document.querySelectorAll('.modal-close').forEach(btn => {
+  btn.onclick = () => {
+    hideModalOverlay();
+    if(activeModalResolve) activeModalResolve(null);
+  };
+});
+
+function customConfirm(title, description) {
+  return new Promise((resolve) => {
+    activeModalResolve = resolve;
+    $('confirmTitle').textContent = title;
+    $('confirmDesc').textContent = description;
+    
+    $('buyModal').classList.add('hidden');
+    $('closeModal').classList.add('hidden');
+    $('confirmDialog').classList.remove('hidden');
+    
+    showModalOverlay();
+    
+    $('confirmActionBtn').onclick = () => {
+      hideModalOverlay();
+      resolve(true);
+    };
+    $('confirmCancelBtn').onclick = () => {
+      hideModalOverlay();
+      resolve(false);
+    };
+  });
+}
+
+function customBuyPrompt(symbol, price, suggestedQty) {
+  return new Promise((resolve) => {
+    activeModalResolve = resolve;
+    
+    $('buySymbol').textContent = symbol;
+    $('buyPrice').textContent = `₹${price.toLocaleString('en-IN')}`;
+    $('buyQtyInput').value = suggestedQty;
+    
+    const tradeSize = parseFloat($('tradeSize').value) || 20000;
+    $('buySuggestedAlloc').textContent = tradeSize.toLocaleString('en-IN');
+    
+    const recalculateCapital = () => {
+      const q = parseInt($('buyQtyInput').value) || 0;
+      const total = q * price;
+      $('buyTotalCapital').textContent = `₹${total.toLocaleString('en-IN', {maximumFractionDigits:2})}`;
+    };
+    
+    $('buyQtyInput').oninput = recalculateCapital;
+    recalculateCapital();
+
+    $('confirmDialog').classList.add('hidden');
+    $('closeModal').classList.add('hidden');
+    $('buyModal').classList.remove('hidden');
+    
+    showModalOverlay();
+
+    $('confirmBuySubmit').onclick = () => {
+      const qty = parseInt($('buyQtyInput').value);
+      hideModalOverlay();
+      resolve(qty);
+    };
+  });
+}
+
+function customClosePrompt(symbol, initialQty, currentLtp) {
+  return new Promise((resolve) => {
+    activeModalResolve = resolve;
+    
+    $('closeSymbol').textContent = symbol;
+    $('closeQty').textContent = initialQty;
+    $('closePriceInput').value = currentLtp || '';
+
+    $('confirmDialog').classList.add('hidden');
+    $('buyModal').classList.add('hidden');
+    $('closeModal').classList.remove('hidden');
+    
+    showModalOverlay();
+
+    $('confirmCloseSubmit').onclick = () => {
+      const exitPrice = parseFloat($('closePriceInput').value);
+      hideModalOverlay();
+      resolve(exitPrice);
+    };
+  });
+}
+
+// ================= STREAMING_CHUNK: Tab Switch Engine =================
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.remove('active', 'text-white', 'bg-panel/30');
+      b.classList.add('text-gray-400');
+    });
+    btn.classList.add('active', 'text-white', 'bg-panel/30');
+    btn.classList.remove('text-gray-400');
+    
     const target = 'panel-' + btn.dataset.tab;
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === target));
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      if(p.id === target) {
+        p.classList.remove('hidden');
+      } else {
+        p.classList.add('hidden');
+      }
+    });
+
+    if (btn.dataset.tab === 'sector') {
+      setTimeout(() => {
+        renderSector();
+      }, 50);
+    }
   });
 });
 
-// ================= Main load loop =================
+window.addEventListener('resize', () => {
+  if (!document.getElementById('panel-sector').classList.contains('hidden')) {
+    renderSector();
+  }
+});
+
+// ================= STREAMING_CHUNK: Orchestration Bootstrap Loader =================
 async function loadAll(){
   try{
     await fetchSheet();
@@ -760,18 +2016,36 @@ async function loadAll(){
     autoTradeCheck();
     renderPortfolio();
   }catch(e){
-    $('globalStatus').textContent = 'error';
-    $('fullListErr').style.display = 'block';
-    $('fullListErr').textContent = 'Could not load the sheet \u2014 check that it is shared as "Anyone with the link: Viewer". (' + e.message + ')';
+    $('globalStatus').textContent = 'offline';
+    $('fullListErr').classList.remove('hidden');
+    $('fullListErr').innerHTML = `
+      <strong>System Streaming Disrupted:</strong> Unable to process target Google Sheet. 
+      Please ensure sharing is configured for public viewer access. <br><span class="text-[10px] mt-1 opacity-70">Details: ${e.message}</span>
+    `;
   }
   loadFinalList();
   loadRsiAnalysis();
 }
 
 ['search','sector','output','rsiMin','rsiMax'].forEach(id => $(id).addEventListener('input', renderBody));
-$('refreshBtn').addEventListener('click', loadAll);
-setInterval(loadAll, REFRESH_MS);
-loadAll();
+
+$('finalSearch').addEventListener('input', () => {
+  renderFinalListTables();
+});
+
+$('rsiAnalysisSearch').addEventListener('input', () => {
+  renderRsiAnalysisTables();
+});
+
+$('refreshBtn').addEventListener('click', () => {
+  loadAll();
+  showToast('Refreshing live sheet statistics...', 'info');
+});
+
+window.onload = function() {
+  loadAll();
+  setInterval(loadAll, REFRESH_MS);
+};
 </script>
 </body>
 </html>
