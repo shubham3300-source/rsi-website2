@@ -9,7 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Highly stable Lucide CDN with robust icon objects -->
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.354.0/dist/umd/lucide.min.js"></script>
 <!-- Chart.js CDN for standalone independent charts -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -1137,6 +1138,32 @@ let activeChartInstance = null; // Standalone Chart.js instance
 
 const $ = (id) => document.getElementById(id);
 
+
+// Evaluates the text content of a single sheet cell safely
+function cellValue(cell){
+  if(!cell) return '';
+  return cell.f !== undefined && cell.f !== null ? cell.f : (cell.v ?? '');
+}
+
+// Fetches visual spreadsheet layout data using the standard GViz query architecture
+async function fetchGvizJson(gid){
+  const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&gid=' + gid + '&headers=1';
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  const text = await res.text();
+  const jsonStr = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+  return JSON.parse(jsonStr);
+}
+
+// Helper to pull safe cell indices dynamically from Google Sheets rows
+function getVal(row, index) {
+  if (!row || !row.c || index >= row.c.length) return '';
+  const cell = row.c[index];
+  if (!cell) return '';
+  return cell.f !== undefined && cell.f !== null ? cell.f : (cell.v ?? '');
+}
+
+
 function applyFontSize() {
   document.documentElement.style.fontSize = `${currentFontSize}px`;
   localStorage.setItem('rsiScreener_fontSize', currentFontSize);
@@ -1228,6 +1255,7 @@ function showToast(message, type = 'info') {
   }, 3500);
 }
 
+
 function toggleFavorite(symbol) {
   const norm = symbol.trim().toUpperCase();
   const index = favorites.indexOf(norm);
@@ -1290,7 +1318,7 @@ function renderFavoritesList() {
           </div>
         </td>
         <td class="p-3 font-mono font-bold">${rsiColorValue(s.rsi)}</td>
-        <td class="p-3 font-mono text-textMuted">${s.volMultiple || '—'}</td>
+        <td class="p-3 font-mono text-textMuted">${s.volMultiplier || '—'}</td>
         <td class="p-3 font-mono">₹${s.price ? s.price.toFixed(2) : '—'}</td>
         <td class="p-3 text-textMuted text-[11px] font-body">${s.sector || '—'}</td>
         <td class="p-3 text-right">
@@ -1317,6 +1345,7 @@ function toggleCollapse(wrapperId, chevronId) {
     chevron.classList.toggle('rotate-180');
   }
 }
+
 
 // Professional Data Export Engine
 function exportCSV() {
@@ -1454,6 +1483,7 @@ function openLocalChart(symbol, price, rsi) {
   });
 }
 
+
 async function fetchSheet(){
   $('globalStatus').textContent = 'fetching data...';
   $('fullListErr').classList.add('hidden');
@@ -1579,6 +1609,7 @@ function renderTicker(){
   $('ticker').innerHTML = tickerHtml + tickerHtml;
 }
 
+
 const INDUSTRY_METADATA = {
   'alcoholic beverages': { icon: 'beer', color: 'indigo', border: 'border-indigo-500/30', bg: 'bg-indigo-500/10', text: 'text-indigo-400' },
   'auto components': { icon: 'car', color: 'emerald', border: 'border-emerald-500/30', bg: 'bg-emerald-500/10', text: 'text-emerald-400' },
@@ -1701,6 +1732,21 @@ function hideIndustryDrilldown() {
   $('industryOverviewGrid').parentElement.classList.remove('hidden');
 }
 
+
+function badge(value){
+  const v = (value||'').trim();
+  const map = {
+    'Buy/Average Out': 'bg-accentGreen/10 text-accentGreen border-accentGreen/30',
+    'Avoid/Hold': 'bg-gray-500/10 text-textMuted border-border',
+    'Unconfirmed': 'bg-accentAmber/10 text-accentAmber border-accentAmber/30',
+    'In Bull Run': 'bg-accentGreen/15 text-accentGreen border-accentGreen/45',
+    'In Bear Run': 'bg-accentRed/10 text-accentRed border-accentRed/30',
+    'Short History': 'bg-accentBlue/10 text-accentBlue border-accentBlue/30'
+  };
+  const cls = map[v] || 'bg-gray-500/10 text-textMuted border-border';
+  return `<span class="inline-block px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border ${cls}">${v || '—'}</span>`;
+}
+
 function renderHead(){
   $('headRow').innerHTML = MAIN_COLS.map((c,i) => {
     const isSorted = sortState.col === i;
@@ -1797,20 +1843,15 @@ function lookupInAllSheets(symbol) {
   let fr = finalListRight.find(r => r.symbol === symbol);
   if (fr) return { sector: fr.industry, rsi: fr.rsi, volMultiple: fr.volMultiplier, price: parseFloat((fr.price+'').replace(/,/g,'')) };
   
-  let ra1 = rsiList1.find(r => r.symbol === symbol);
-  if (ra1) return { sector: ra1.industry, rsi: ra1.rsi, volMultiple: '—', price: null };
-
-  let ra2 = rsiList2.find(r => r.symbol === symbol);
-  if (ra2) return { sector: ra2.industry, rsi: ra2.rsi, volMultiple: '—', price: null };
-
-  let ra3 = rsiList3.find(r => r.symbol === symbol);
-  if (ra3) return { sector: ra3.industry, rsi: ra3.rsi, volMultiple: '—', price: null };
-
-  let ra4 = rsiList4.find(r => r.symbol === symbol);
-  if (ra4) return { sector: ra4.industry, rsi: ra4.rsi, volMultiple: '—', price: null };
+  let rsiTabs = [rsiList1, rsiList2, rsiList3, rsiList4];
+  for (let tab of rsiTabs) {
+    let match = tab.find(r => r.symbol === symbol);
+    if (match) return { sector: match.industry, rsi: match.rsi, volMultiple: '—', price: null };
+  }
 
   return null;
 }
+
 
 function renderSector(){
   const sortedSectors = [...sectorRows].sort((a,b) => parseFloat(b[2]) - parseFloat(a[2]));
@@ -1945,6 +1986,7 @@ function drawSectorChart(sectors) {
     ctx.fillText(rsiVal, x + barWidth / 2, y - 5);
   });
 }
+
 
 async function loadFinalList() {
   try {
@@ -2093,6 +2135,7 @@ function rsiColorValue(rsiVal) {
   if (val <= 30) statusColor = 'text-accentGreen bg-accentGreen/10 border border-accentGreen/25 px-1.5 py-0.5 rounded font-bold';
   return `<span class="${statusColor}">${rsiVal}</span>`;
 }
+
 
 async function loadRsiAnalysis() {
   try {
@@ -2304,6 +2347,7 @@ function rsiBadgeFormat(statusStr) {
   }
   return statusStr;
 }
+
 
 const PF_KEY = 'rsiScreener_paperTrades_v1';
 
@@ -2552,6 +2596,7 @@ function renderPortfolio(){
   refreshIcons();
 }
 
+
 const ACTION_MOCK_DATA = [
   { type: 'EARNINGS', desc: 'Q1 Board Meet Results Release', offsetDays: 4, actionValue: 'Audited Financials' },
   { type: 'DIVIDEND', desc: 'Interim Ex-Dividend Declaration', offsetDays: 7, actionValue: '₹8.50 Dividend' },
@@ -2639,6 +2684,7 @@ function renderEvents() {
 }
 
 $('eventFilter').addEventListener('change', renderEvents);
+
 
 const GH_KEY = 'rsiScreener_ghConfig_v1';
 
@@ -2761,6 +2807,7 @@ $('ghPush').addEventListener('click', pushToGithub);
 $('ghPull').addEventListener('click', pullFromGithub);
 fillGhInputsFromConfig();
 
+
 let activeModalResolve = null;
 
 function showModalOverlay() {
@@ -2874,6 +2921,7 @@ function customClosePrompt(symbol, initialQty, currentLtp) {
   });
 }
 
+
 // Vertical/Horizontal responsive layout tab navigations
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -2936,6 +2984,7 @@ window.addEventListener('resize', () => {
     renderSector();
   }
 });
+
 
 async function loadAll(){
   try{
