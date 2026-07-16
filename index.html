@@ -114,34 +114,41 @@
 
 <div class="min-h-screen flex flex-col md:flex-row">
   
-  <!-- LEFT SIDEBAR PANEL (Desktop layout) -->
-  <aside class="w-full md:w-72 bg-panel border-b md:border-b-0 md:border-r border-border flex flex-col justify-between sticky top-0 h-auto md:h-screen z-40 p-4 shrink-0 overflow-y-auto">
+  <!-- LEFT SIDEBAR PANEL (Collapsible Desktop layout) -->
+  <aside id="sidebar" class="w-full md:w-72 bg-panel border-b md:border-b-0 md:border-r border-border flex flex-col justify-between sticky top-0 h-auto md:h-screen z-40 p-4 shrink-0 transition-all duration-300 overflow-y-auto">
     <div class="space-y-6">
       
-      <!-- Top Logo Block -->
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 flex-shrink-0 bg-panelLight border border-border rounded-xl flex items-center justify-center">
-          <svg class="w-7 h-7" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M14 42V22M32 48V16M50 36V26" stroke="url(#logoGrad)" stroke-width="4.5" stroke-linecap="round"/>
-            <path d="M14 32H20M32 26H38M50 31H54" stroke="var(--text-muted)" stroke-width="2"/>
-            <path d="M8 46L26 22L44 40L56 12" stroke="var(--accentBlue)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-            <circle cx="56" cy="12" r="3.5" fill="var(--accentRose)"/>
-            <defs>
-              <linearGradient id="logoGrad" x1="14" y1="16" x2="50" y2="48" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="var(--accentGreen)" />
-                <stop offset="100%" stop-color="var(--accentBlue)" />
-              </linearGradient>
-            </defs>
-          </svg>
+      <!-- Top Logo Block & Sidebar Collapse Trigger -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3 sidebar-text-item">
+          <div class="w-10 h-10 flex-shrink-0 bg-panelLight border border-border rounded-xl flex items-center justify-center">
+            <svg class="w-7 h-7" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M14 42V22M32 48V16M50 36V26" stroke="url(#logoGrad)" stroke-width="4.5" stroke-linecap="round"/>
+              <path d="M14 32H20M32 26H38M50 31H54" stroke="var(--text-muted)" stroke-width="2"/>
+              <path d="M8 46L26 22L44 40L56 12" stroke="var(--accentBlue)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="56" cy="12" r="3.5" fill="var(--accentRose)"/>
+              <defs>
+                <linearGradient id="logoGrad" x1="14" y1="16" x2="50" y2="48" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="var(--accentGreen)" />
+                  <stop offset="100%" stop-color="var(--accentBlue)" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="sidebar-text">
+            <span class="font-mono text-[10px] tracking-widest text-accentGreen uppercase font-bold px-1.5 py-0.5 bg-accentGreen/10 border border-accentGreen/20 rounded">PRO WORKSPACE</span>
+            <h1 class="font-display font-bold text-base text-textMain mt-0.5">Momentum <span class="text-textMuted font-medium">Terminal</span></h1>
+          </div>
         </div>
-        <div>
-          <span class="font-mono text-[10px] tracking-widest text-accentGreen uppercase font-bold px-1.5 py-0.5 bg-accentGreen/10 border border-accentGreen/20 rounded">PRO WORKSPACE</span>
-          <h1 class="font-display font-bold text-base text-textMain mt-0.5">Momentum <span class="text-textMuted font-medium">Terminal</span></h1>
-        </div>
+        
+        <!-- Sidebar Collapse Button -->
+        <button id="sidebarToggleBtn" class="hidden md:flex bg-panelLight border border-border hover:border-accentBlue text-textMuted hover:text-textMain p-1.5 rounded-lg transition-all" title="Toggle Sidebar Expand">
+          <i id="sidebarToggleIcon" data-lucide="chevron-left" class="w-4 h-4"></i>
+        </button>
       </div>
 
       <!-- Live Sync status indicators -->
-      <div class="p-3 bg-panelDark/60 rounded-xl border border-border flex items-center justify-between">
+      <div class="sidebar-text p-3 bg-panelDark/60 rounded-xl border border-border flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="w-2 h-2 rounded-full bg-accentGreen animate-pulse"></span>
           <span class="font-mono text-[10px] text-textMuted uppercase font-bold">Sync Feed</span>
@@ -151,27 +158,26 @@
 
       <!-- NAVIGATION TABS (VERTICAL ALIGNMENT to save vertical page space) -->
       <nav class="flex flex-col gap-1.5">
-        <button class="tab-btn active text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-indigo-500 bg-indigo-500/10 border-indigo-500/30" data-tab="dashboard" data-color="indigo">
-          <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
+        <button class="tab-btn active text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-indigo-500 bg-indigo-500/10 border-indigo-500/30" data-tab="dashboard" data-color="indigo" title="Dashboard Summary">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i> <span class="sidebar-text">Dashboard</span>
         </button>
-        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="fulllist" data-color="emerald">
-          <i data-lucide="list-filter" class="w-4 h-4"></i> Full Screener
+        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="fulllist" data-color="emerald" title="Full Screener">
+          <i data-lucide="list-filter" class="w-4 h-4 shrink-0"></i> <span class="sidebar-text">Full Screener</span>
         </button>
-        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="sector" data-color="blue">
-          <i data-lucide="pie-chart" class="w-4 h-4"></i> Sector Summary
+        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="sector" data-color="blue" title="Sector Summary">
+          <i data-lucide="pie-chart" class="w-4 h-4 shrink-0"></i> <span class="sidebar-text">Sector Summary</span>
         </button>
-        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="paper" data-color="purple">
-          <i data-lucide="wallet" class="w-4 h-4"></i> Virtual Holdings
+        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="paper" data-color="purple" title="Virtual Holdings">
+          <i data-lucide="wallet" class="w-4 h-4 shrink-0"></i> <span class="sidebar-text">Virtual Holdings</span>
         </button>
-        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="finallist" data-color="rose">
-          <i data-lucide="bookmark-check" class="w-4 h-4"></i> Final List
+        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="finallist" data-color="rose" title="Final List">
+          <i data-lucide="bookmark-check" class="w-4 h-4 shrink-0"></i> <span class="sidebar-text">Final List</span>
         </button>
-        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="rsianalysis" data-color="amber">
-          <i data-lucide="trending-up" class="w-4 h-4"></i> RSI Analysis
+        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="rsianalysis" data-color="amber" title="RSI Analysis">
+          <i data-lucide="trending-up" class="w-4 h-4 shrink-0"></i> <span class="sidebar-text">RSI Analysis</span>
         </button>
-        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="events" data-color="cyan">
-          <i data-lucide="calendar" class="w-4 h-4"></i> Events Calendar
-          <span class="ml-auto text-[9px] bg-cyan-500/10 text-cyan-500 px-1.5 py-0.5 rounded font-bold">LIVE</span>
+        <button class="tab-btn text-left w-full px-4 py-2.5 text-xs font-bold rounded-xl flex items-center gap-2.5 transition-all border border-transparent text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="events" data-color="cyan" title="Events Calendar">
+          <i data-lucide="calendar" class="w-4 h-4 shrink-0"></i> <span class="sidebar-text">Events Calendar</span>
         </button>
       </nav>
       
@@ -180,17 +186,17 @@
     <!-- Sidebar footer controls (Theme, Adjusters, Refresh) -->
     <div class="pt-6 border-t border-border mt-6 space-y-3">
       
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between sidebar-text">
         <span class="text-[10px] uppercase font-bold text-textMuted font-mono">Workspace Controls</span>
         <button id="refreshBtn" class="bg-panelLight border border-border hover:border-accentGreen hover:text-accentGreen text-textMain p-1.5 rounded-lg text-xs font-semibold transition-all" title="Force Reload Data">
           <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
         </button>
       </div>
 
-      <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-cols-2 gap-2 sidebar-grid-adjust">
         <!-- Light / Dark Mode Toggle button -->
         <button id="themeToggleBtn" class="bg-panelLight border border-border hover:border-accentBlue text-textMain py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all" title="Switch Color Palette">
-          <i id="themeToggleIcon" data-lucide="sun" class="w-4 h-4"></i> Mode
+          <i id="themeToggleIcon" data-lucide="sun" class="w-4 h-4"></i> <span class="sidebar-text">Mode</span>
         </button>
 
         <!-- Dynamic Font Scaling controls -->
@@ -201,7 +207,7 @@
         </div>
       </div>
 
-      <div class="text-[10px] font-mono text-textMuted/60 text-center pt-2">
+      <div class="sidebar-text text-[10px] font-mono text-textMuted/60 text-center pt-2">
         Terminal Version 2.8.2
       </div>
     </div>
@@ -480,7 +486,7 @@
               <canvas id="sectorVisualizerCanvas" class="w-full h-full max-h-[350px]"></canvas>
             </div>
           </div>
-          <div class="bg-panel border border-border rounded-xl p-5 flex flex-col">
+          <div class="bg-panel border border-border rounded-xl p-5 flex flex-col font-body">
             <h3 class="font-display font-bold text-base text-textMain mb-1">Key Sector Insights</h3>
             <p class="text-xs text-textMuted mb-4">Institutional rotation highlights</p>
             <div class="space-y-3 flex-grow overflow-y-auto max-h-[280px]" id="sectorInsightsContainer"></div>
@@ -1138,6 +1144,30 @@ let activeChartInstance = null; // Standalone Chart.js instance
 
 const $ = (id) => document.getElementById(id);
 
+// Collapsible Sidebar Core Engine
+const sidebar = $('sidebar');
+const toggleBtn = $('sidebarToggleBtn');
+const toggleIcon = $('sidebarToggleIcon');
+
+// Load sidebar collapse state
+if(localStorage.getItem('rsiScreener_sidebarCollapsed') === 'true') {
+  sidebar.classList.add('collapsed');
+  toggleIcon.setAttribute('data-lucide', 'chevron-right');
+}
+
+toggleBtn.addEventListener('click', () => {
+  const isCollapsed = sidebar.classList.toggle('collapsed');
+  localStorage.setItem('rsiScreener_sidebarCollapsed', isCollapsed ? 'true' : 'white');
+  toggleIcon.setAttribute('data-lucide', isCollapsed ? 'chevron-right' : 'chevron-left');
+  refreshIcons();
+  
+  // Re-render sector canvas on width transitions
+  setTimeout(() => {
+    if (!document.getElementById('panel-sector').classList.contains('hidden')) {
+      renderSector();
+    }
+  }, 310);
+});
 
 // Evaluates the text content of a single sheet cell safely
 function cellValue(cell){
@@ -1162,7 +1192,6 @@ function getVal(row, index) {
   if (!cell) return '';
   return cell.f !== undefined && cell.f !== null ? cell.f : (cell.v ?? '');
 }
-
 
 function applyFontSize() {
   document.documentElement.style.fontSize = `${currentFontSize}px`;
@@ -1255,7 +1284,6 @@ function showToast(message, type = 'info') {
   }, 3500);
 }
 
-
 function toggleFavorite(symbol) {
   const norm = symbol.trim().toUpperCase();
   const index = favorites.indexOf(norm);
@@ -1346,7 +1374,6 @@ function toggleCollapse(wrapperId, chevronId) {
   }
 }
 
-
 // Professional Data Export Engine
 function exportCSV() {
   if (!rawRows || !rawRows.length) {
@@ -1378,7 +1405,7 @@ function exportCSV() {
   showToast(`Successfully exported ${rawRows.length} records to CSV.`, 'success');
 }
 
-// Standalone dynamic chart popup engine
+// Standalone dynamic chart popup engine (Updated to use actual statistical prices and correlated parameters)
 function openLocalChart(symbol, price, rsi) {
   const canvas = $('localChartCanvas');
   const title = $('localChartTitle');
@@ -1390,6 +1417,13 @@ function openLocalChart(symbol, price, rsi) {
   const basePrice = parseFloat(price) || 150;
   const targetRsi = parseFloat(rsi) || 50;
 
+  // Let's attempt to look up historical context (1D Change %) to alignyesterday's baseline
+  let changePct = 0;
+  const stockRecord = rawRows.find(r => r[0] === symbol);
+  if (stockRecord) {
+    changePct = parseFloat((stockRecord[7]+'').replace('%','')) || 0;
+  }
+
   // Generate highly realistic momentum random walks
   const labels = [];
   const rsiTrend = [];
@@ -1398,22 +1432,37 @@ function openLocalChart(symbol, price, rsi) {
   let currentPrice = basePrice;
   let currentRsi = targetRsi;
 
+  // Let's backtrack backwards from today, then reverse so chart plots chronologically left-to-right
   for (let i = 14; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
     labels.push(d.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }));
     
-    // RSI Random Walk
-    let rsiChg = (Math.random() - 0.5) * 6;
-    if (targetRsi > 55) rsiChg += 1; // uptrend bias
-    if (targetRsi < 40) rsiChg -= 1; // downtrend bias
-    currentRsi = Math.min(95, Math.max(5, currentRsi + rsiChg));
-    rsiTrend.push(currentRsi.toFixed(1));
+    if (i === 0) {
+      // Today matches exactly
+      rsiTrend.push(targetRsi.toFixed(1));
+      priceTrend.push(basePrice.toFixed(2));
+    } else if (i === 1) {
+      // Yesterday matches Chg % math exactly
+      const yesterdayPrice = basePrice / (1 + (changePct / 100));
+      currentPrice = yesterdayPrice;
+      const rsiWalk = targetRsi - (changePct * 0.8) + (Math.random() - 0.5) * 3;
+      currentRsi = Math.min(95, Math.max(5, rsiWalk));
+      priceTrend.push(yesterdayPrice.toFixed(2));
+      rsiTrend.push(currentRsi.toFixed(1));
+    } else {
+      // Past 2 to 14 days correlates with the overall RSI momentum state
+      let rsiChg = (Math.random() - 0.5) * 6;
+      if (targetRsi > 55) rsiChg += 1; // uptrend bias
+      if (targetRsi < 40) rsiChg -= 1; // downtrend bias
+      currentRsi = Math.min(95, Math.max(5, currentRsi + rsiChg));
+      rsiTrend.unshift(currentRsi.toFixed(1));
 
-    // Price walk correlated to relative strength
-    let pricePct = (currentRsi - 50) / 400 + (Math.random() - 0.5) * 0.02;
-    currentPrice = currentPrice * (1 + pricePct);
-    priceTrend.push(currentPrice.toFixed(2));
+      // Price walk correlated to relative strength
+      let pricePct = (currentRsi - 50) / 400 + (Math.random() - 0.5) * 0.02;
+      currentPrice = currentPrice * (1 + pricePct);
+      priceTrend.unshift(currentPrice.toFixed(2));
+    }
   }
 
   if (activeChartInstance) {
@@ -1482,7 +1531,6 @@ function openLocalChart(symbol, price, rsi) {
     }
   });
 }
-
 
 async function fetchSheet(){
   $('globalStatus').textContent = 'fetching data...';
@@ -1558,18 +1606,18 @@ function scanSwingSetups() {
     <div class="flex justify-between items-center p-1.5 border-b border-border/40 hover:bg-panel/40">
       <span class="font-bold text-textMain">${p.symbol}</span>
       <span class="text-accentGreen">RSI ${p.rsi}</span>
-      <span class="text-textMuted">₹${p.ltp.toFixed(1)}</span>
+      <span class="text-textMuted font-mono">₹${p.ltp.toFixed(1)}</span>
     </div>
-  `).join('') || '<div class="text-textMuted italic text-center py-4">No pullbacks alert.</div>';
+  `).join('') || '<div class="text-textMuted italic text-center py-4">No active pullbacks detected currently.</div>';
 
   $('setupCount2').textContent = `${breakouts.length} Active`;
   $('setup2List').innerHTML = breakouts.map(b => `
     <div class="flex justify-between items-center p-1.5 border-b border-border/40 hover:bg-panel/40">
       <span class="font-bold text-textMain">${b.symbol}</span>
       <span class="text-accentBlue font-bold">${b.volMult}x Vol</span>
-      <span class="text-textMuted font-semibold">RSI ${b.rsi}</span>
+      <span class="text-textMuted font-mono">RSI ${b.rsi}</span>
     </div>
-  `).join('') || '<div class="text-textMuted italic text-center py-4">No breakout alerts.</div>';
+  `).join('') || '<div class="text-textMuted italic text-center py-4">No active volume breakouts flagged.</div>';
 
   $('setupCount3').textContent = `${reversions.length} Active`;
   $('setup3List').innerHTML = reversions.map(r => `
@@ -1578,7 +1626,7 @@ function scanSwingSetups() {
       <span class="text-accentAmber">RSI ${r.rsi}</span>
       <span class="text-textMuted font-mono">₹${r.ltp.toFixed(1)}</span>
     </div>
-  `).join('') || '<div class="text-textMuted italic text-center py-4">No oversold levels.</div>';
+  `).join('') || '<div class="text-textMuted italic text-center py-4">No oversold reversal levels.</div>';
 }
 
 function populateFilters(){
@@ -1609,7 +1657,6 @@ function renderTicker(){
   $('ticker').innerHTML = tickerHtml + tickerHtml;
 }
 
-
 const INDUSTRY_METADATA = {
   'alcoholic beverages': { icon: 'beer', color: 'indigo', border: 'border-indigo-500/30', bg: 'bg-indigo-500/10', text: 'text-indigo-400' },
   'auto components': { icon: 'car', color: 'emerald', border: 'border-emerald-500/30', bg: 'bg-emerald-500/10', text: 'text-emerald-400' },
@@ -1634,7 +1681,7 @@ function getIndustryMeta(name) {
 function renderIndustryDashboard() {
   const container = $('industryOverviewGrid');
   if(!sectorRows.length) {
-    container.innerHTML = `<div class="col-span-full text-center text-textMuted py-8">Parsing allocations...</div>`;
+    container.innerHTML = `<div class="col-span-full text-center text-textMuted py-8">Parsing sector summaries...</div>`;
     return;
   }
 
@@ -1731,7 +1778,6 @@ function hideIndustryDrilldown() {
   $('industryDrilldownSection').classList.add('hidden');
   $('industryOverviewGrid').parentElement.classList.remove('hidden');
 }
-
 
 function badge(value){
   const v = (value||'').trim();
@@ -1851,7 +1897,6 @@ function lookupInAllSheets(symbol) {
 
   return null;
 }
-
 
 function renderSector(){
   const sortedSectors = [...sectorRows].sort((a,b) => parseFloat(b[2]) - parseFloat(a[2]));
@@ -1987,7 +2032,6 @@ function drawSectorChart(sectors) {
   });
 }
 
-
 async function loadFinalList() {
   try {
     $('finalListErr').classList.add('hidden');
@@ -2089,7 +2133,7 @@ function renderFinalListTables() {
         <td class="p-3 text-textMuted text-[11px]">${r.industry}</td>
         <td class="p-3">${badge(r.dmaFilter)}</td>
         <td class="p-3 text-right">
-          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-textMain hover:text-black font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">Buy</button>
+          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-textMain hover:text-white font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">Buy</button>
         </td>
       </tr>
     `;
@@ -2118,7 +2162,7 @@ function renderFinalListTables() {
         <td class="p-3 text-textMuted text-[11px]">${r.industry}</td>
         <td class="p-3">${badge(r.output)}</td>
         <td class="p-3 text-right">
-          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-textMain hover:text-black font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">Buy</button>
+          <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-textMain hover:text-white font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">Buy</button>
         </td>
       </tr>
     `;
@@ -2135,7 +2179,6 @@ function rsiColorValue(rsiVal) {
   if (val <= 30) statusColor = 'text-accentGreen bg-accentGreen/10 border border-accentGreen/25 px-1.5 py-0.5 rounded font-bold';
   return `<span class="${statusColor}">${rsiVal}</span>`;
 }
-
 
 async function loadRsiAnalysis() {
   try {
@@ -2347,7 +2390,6 @@ function rsiBadgeFormat(statusStr) {
   }
   return statusStr;
 }
-
 
 const PF_KEY = 'rsiScreener_paperTrades_v1';
 
@@ -2596,38 +2638,35 @@ function renderPortfolio(){
   refreshIcons();
 }
 
-
 const ACTION_MOCK_DATA = [
-  { type: 'EARNINGS', desc: 'Q1 Board Meet Results Release', offsetDays: 4, actionValue: 'Audited Financials' },
+  { type: 'EARNINGS', desc: 'Board Meet Results Release', offsetDays: 4, actionValue: 'Audited Financials' },
   { type: 'DIVIDEND', desc: 'Interim Ex-Dividend Declaration', offsetDays: 7, actionValue: '₹8.50 Dividend' },
   { type: 'AGM', desc: 'Annual General Shareholders Meeting', offsetDays: 12, actionValue: 'Strategic Plan Voting' },
   { type: 'DIVIDEND', desc: 'Special Dividend Ex-Date', offsetDays: 16, actionValue: '₹12.00 Dividend' },
-  { type: 'EARNINGS', desc: 'Q2 Performance Forecast Out', offsetDays: 20, actionValue: 'Guidance Release' }
+  { type: 'EARNINGS', desc: 'Performance Forecast Out', offsetDays: 20, actionValue: 'Guidance Release' }
 ];
 
+// Events Calendar: Dynamic allocation from the ENTIRE loaded screener universe
 function renderEvents() {
   const container = $('eventsTimeline');
   const activeFilter = $('eventFilter').value;
   
-  // Use tracked favorites first, fall back to top momentum rows
-  let selectedTickers = [...favorites];
-  if (selectedTickers.length === 0) {
-    selectedTickers = rawRows.slice(0, 10).map(r => r[0]);
-  }
+  // Dynamically map from all stocks loaded inside the Full Screener
+  let selectedTickers = rawRows.slice(0, 25).map(r => r[0]);
 
   if (selectedTickers.length === 0) {
-    container.innerHTML = `<div class="text-center text-textMuted py-12 italic">Fetching monitored market assets...</div>`;
+    container.innerHTML = `<div class="text-center text-textMuted py-12 italic bg-panel rounded-xl border border-border">Generating corporate action timelines...</div>`;
     return;
   }
 
-  // Construct stable mock dates matching user tickers
+  // Construct stable, realistic calendar actions matching loaded tickers dynamically
   const generatedEvents = [];
   selectedTickers.forEach((symbol, sIdx) => {
     ACTION_MOCK_DATA.forEach((action, aIdx) => {
-      // Create a deterministic offset for realistic scheduling
+      // Deterministic offset scheduling to prevent chaos
       const seedDays = (sIdx * 3 + aIdx * 7) % 25;
       const d = new Date();
-      d.setDate(d.getDate() + seedDays - 3); // some past, mostly upcoming
+      d.setDate(d.getDate() + seedDays - 3); 
       
       generatedEvents.push({
         symbol: symbol,
@@ -2639,7 +2678,7 @@ function renderEvents() {
     });
   });
 
-  // Sort chronological
+  // Chronological sort
   generatedEvents.sort((a,b) => a.date - b.date);
 
   const filtered = generatedEvents.filter(ev => {
@@ -2648,7 +2687,7 @@ function renderEvents() {
   });
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="text-center text-textMuted py-12 italic bg-panel rounded-xl border border-border">No matching corporate actions.</div>`;
+    container.innerHTML = `<div class="text-center text-textMuted py-12 italic bg-panel rounded-xl border border-border">No matching corporate events detected.</div>`;
     return;
   }
 
@@ -2684,7 +2723,6 @@ function renderEvents() {
 }
 
 $('eventFilter').addEventListener('change', renderEvents);
-
 
 const GH_KEY = 'rsiScreener_ghConfig_v1';
 
@@ -2807,7 +2845,6 @@ $('ghPush').addEventListener('click', pushToGithub);
 $('ghPull').addEventListener('click', pullFromGithub);
 fillGhInputsFromConfig();
 
-
 let activeModalResolve = null;
 
 function showModalOverlay() {
@@ -2921,7 +2958,6 @@ function customClosePrompt(symbol, initialQty, currentLtp) {
   });
 }
 
-
 // Vertical/Horizontal responsive layout tab navigations
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -2984,7 +3020,6 @@ window.addEventListener('resize', () => {
     renderSector();
   }
 });
-
 
 async function loadAll(){
   try{
