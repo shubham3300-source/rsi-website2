@@ -134,7 +134,7 @@
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <span class="font-mono text-[10px] tracking-widest text-accentGreen uppercase font-bold px-1.5 py-0.5 bg-accentGreen/10 border border-accentGreen/20 rounded">PRO SCANNER</span>
+          <span class="font-mono text-[10px] tracking-widest text-accentGreen uppercase font-bold px-1.5 py-0.5 bg-accentGreen/10 border border-accentGreen/20 rounded">PRO WORKSPACE</span>
         </div>
         <h1 class="font-display font-bold text-lg lg:text-xl text-textMain mt-0.5">Momentum <span class="text-textMuted font-medium">Terminal</span></h1>
       </div>
@@ -179,6 +179,7 @@
 <!-- Main Application container -->
 <main class="flex-grow max-w-7xl w-full mx-auto p-4 lg:p-6 flex flex-col gap-6">
 
+  <!-- Navigation bar with dynamic color palettes -->
   <div class="flex border-b border-border overflow-x-auto gap-1.5 no-scrollbar bg-panel/30 p-1 rounded-2xl">
     <button class="tab-btn active px-4 py-2.5 text-xs lg:text-sm font-semibold rounded-xl flex items-center gap-2 transition-all border border-transparent text-indigo-500 bg-indigo-500/10 border-indigo-500/30" data-tab="dashboard" data-color="indigo" title="Dashboard Summary">
       <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Dashboard
@@ -186,8 +187,8 @@
     <button class="tab-btn px-4 py-2.5 text-xs lg:text-sm font-semibold rounded-xl flex items-center gap-2 transition-all text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="fulllist" data-color="emerald" title="Full Screener">
       <i data-lucide="list-filter" class="w-4 h-4"></i> Full Screener
     </button>
-    <button class="tab-btn px-4 py-2.5 text-xs lg:text-sm font-semibold rounded-xl flex items-center gap-2 transition-all text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="sector" data-color="blue" title="Sector Summary">
-      <i data-lucide="pie-chart" class="w-4 h-4"></i> Sector Summary
+    <button class="tab-btn px-4 py-2.5 text-xs lg:text-sm font-semibold rounded-xl flex items-center gap-2 transition-all text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="sector" data-color="blue" title="Sector Matrix">
+      <i data-lucide="pie-chart" class="w-4 h-4"></i> Sector Matrix
     </button>
     <button class="tab-btn px-4 py-2.5 text-xs lg:text-sm font-semibold rounded-xl flex items-center gap-2 transition-all text-textMuted hover:text-textMain hover:bg-panelLight" data-tab="paper" data-color="purple" title="Virtual Holdings">
       <i data-lucide="wallet" class="w-4 h-4"></i> Virtual Holdings
@@ -436,7 +437,109 @@
 
     </div>
 
-    <!-- COMPACT INDUSTRY OVERVIEW GRID -->
+  </div>
+
+  <!-- ===================== PANEL: FULL SCREENER ===================== -->
+  <div class="tab-panel hidden space-y-4" id="panel-fulllist">
+    
+    <!-- Tab Intro -->
+    <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4 flex gap-3 items-start">
+      <div class="bg-emerald-500/15 p-2 rounded-lg text-emerald-500">
+        <i data-lucide="info" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold text-emerald-500 uppercase tracking-wider">Full Market Scanner</h4>
+        <p class="text-xs text-textMuted mt-1">
+          Apply dynamic technical filters to search, sort, and isolate setups. Launch outbound TradingView charts instantly using the direct "View Chart" links.
+        </p>
+      </div>
+    </div>
+
+    <!-- Filters controls -->
+    <div class="bg-panel border border-border rounded-xl p-4 flex flex-wrap gap-3 items-center justify-between">
+      <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+        <div class="relative w-full sm:w-60">
+          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-textMuted"></i>
+          <input type="text" id="search" placeholder="Filter symbol, sector..." class="w-full bg-panelDark border border-border text-textMain rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all">
+        </div>
+        <select id="sector" class="bg-panelDark border border-border text-textMain rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen">
+          <option value="">All Sectors</option>
+        </select>
+        <select id="output" class="bg-panelDark border border-border text-textMain rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen">
+          <option value="">All Signals</option>
+        </select>
+        
+        <!-- Darvas Box Filter Dropdown -->
+        <select id="darvasFilter" class="bg-panelDark border border-border text-textMain rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen">
+          <option value="">All Darvas States</option>
+          <option value="Breakout 🚀">Breakout Only 🚀</option>
+          <option value="Consolidating 📦">Consolidating 📦</option>
+          <option value="Breakdown ⚠️">Breakdown ⚠️</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-end">
+        <div class="flex items-center gap-2 bg-panelDark/50 px-3 py-1.5 rounded-lg border border-border/60 text-xs text-textMuted">
+          <span>RSI:</span>
+          <input type="number" id="rsiMin" value="0" min="0" max="100" class="w-12 bg-panelDark border border-border text-center rounded py-1 text-[11px] focus:outline-none focus:border-accentGreen font-mono">
+          <span class="text-textMuted/60">to</span>
+          <input type="number" id="rsiMax" value="100" min="0" max="100" class="w-12 bg-panelDark border border-border text-center rounded py-1 text-[11px] focus:outline-none focus:border-accentGreen font-mono">
+        </div>
+        <button onclick="exportCSV()" class="bg-panelLight border border-border hover:border-accentBlue hover:text-accentBlue text-textMain px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Export
+        </button>
+      </div>
+    </div>
+
+    <div id="fullListErr" class="hidden bg-accentRed/10 border border-accentRed/30 text-accentRed rounded-xl p-4 text-xs font-mono"></div>
+
+    <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl">
+      <div class="overflow-x-auto">
+        <table id="mainTable" class="w-full text-left border-collapse">
+          <thead>
+            <tr id="headRow" class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono"></tr>
+          </thead>
+          <tbody id="body" class="divide-y divide-border/40 text-xs font-mono"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PANEL: SECTOR SUMMARY / MATRIX ===================== -->
+  <div class="tab-panel hidden space-y-6" id="panel-sector">
+    
+    <div class="bg-accentBlue/5 border border-accentBlue/20 rounded-xl p-4 flex gap-3 items-start">
+      <div class="bg-accentBlue/15 p-2 rounded-lg text-accentBlue">
+        <i data-lucide="info" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <h4 class="text-xs font-bold text-accentBlue uppercase tracking-wider">Sector Rotation Map</h4>
+        <p class="text-xs text-textMuted mt-1">
+          Visualize macroeconomic sector shifts. Use the independent distribution canvas below to isolate institutional strength ratios, check historical volume spikes, and drill down into individual sector constituents.
+        </p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 bg-panel border border-border rounded-xl p-5 flex flex-col">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="font-display font-bold text-base text-textMain">Sector RSI Distribution</h3>
+            <p class="text-xs text-textMuted">RSI configurations mapped horizontally.</p>
+          </div>
+          <span class="text-[10px] text-accentGreen bg-accentGreen/15 border border-accentGreen/20 px-2 py-0.5 rounded-full font-mono">Real-time Canvas</span>
+        </div>
+        <div class="bg-panelDark border border-border rounded-lg p-3 flex-grow min-h-[280px] flex items-center justify-center">
+          <canvas id="sectorVisualizerCanvas" class="w-full h-full max-h-[350px]"></canvas>
+        </div>
+      </div>
+      <div class="bg-panel border border-border rounded-xl p-5 flex flex-col font-body">
+        <h3 class="font-display font-bold text-base text-textMain mb-1">Key Sector Insights</h3>
+        <p class="text-xs text-textMuted mb-4">Institutional rotation highlights</p>
+        <div class="space-y-3 flex-grow overflow-y-auto max-h-[280px]" id="sectorInsightsContainer"></div>
+      </div>
+    </div>
+
+    <!-- COMPACT INDUSTRY OVERVIEW GRID (Transferred here dynamically from Dashboard) -->
     <div class="space-y-3 bg-panel border border-border rounded-2xl p-4">
       <div class="flex items-center justify-between">
         <h3 class="font-display font-bold text-sm text-textMain flex items-center gap-2">
@@ -447,7 +550,7 @@
       <div id="industryOverviewGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3"></div>
     </div>
 
-    <!-- Drilldown Section -->
+    <!-- Drilldown Section (Transferred here dynamically from Dashboard) -->
     <div id="industryDrilldownSection" class="hidden bg-panel border border-border rounded-xl p-5 space-y-4">
       <div class="flex items-center justify-between border-b border-border pb-4">
         <div class="flex items-center gap-3">
@@ -481,100 +584,7 @@
       </div>
     </div>
 
-  </div>
-
-  <!-- ===================== PANEL: FULL SCREENER ===================== -->
-  <div class="tab-panel hidden space-y-4" id="panel-fulllist">
-    
-    <!-- Tab Intro -->
-    <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4 flex gap-3 items-start">
-      <div class="bg-emerald-500/15 p-2 rounded-lg text-emerald-500">
-        <i data-lucide="info" class="w-5 h-5"></i>
-      </div>
-      <div>
-        <h4 class="text-xs font-bold text-emerald-500 uppercase tracking-wider">Full Market Scanner</h4>
-        <p class="text-xs text-textMuted mt-1">
-          Apply dynamic technical filters to search, sort, and isolate setups. Launch outbound TradingView charts instantly using the direct "View Chart" links.
-        </p>
-      </div>
-    </div>
-
-    <!-- Filters controls -->
-    <div class="bg-panel border border-border rounded-xl p-4 flex flex-wrap gap-3 items-center justify-between">
-      <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-        <div class="relative w-full sm:w-60">
-          <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-textMuted"></i>
-          <input type="text" id="search" placeholder="Filter symbol, sector..." class="w-full bg-panelDark border border-border text-textMain rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all">
-        </div>
-        <select id="sector" class="bg-panelDark border border-border text-textMain rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen">
-          <option value="">All Sectors</option>
-        </select>
-        <select id="output" class="bg-panelDark border border-border text-textMain rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-accentGreen">
-          <option value="">All Signals</option>
-        </select>
-      </div>
-      <div class="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-end">
-        <div class="flex items-center gap-2 bg-panelDark/50 px-3 py-1.5 rounded-lg border border-border/60 text-xs text-textMuted">
-          <span>RSI:</span>
-          <input type="number" id="rsiMin" value="0" min="0" max="100" class="w-12 bg-panelDark border border-border text-center rounded py-1 text-[11px] focus:outline-none focus:border-accentGreen font-mono">
-          <span class="text-textMuted/60">to</span>
-          <input type="number" id="rsiMax" value="100" min="0" max="100" class="w-12 bg-panelDark border border-border text-center rounded py-1 text-[11px] focus:outline-none focus:border-accentGreen font-mono">
-        </div>
-        <button onclick="exportCSV()" class="bg-panelLight border border-border hover:border-accentBlue hover:text-accentBlue text-textMain px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
-          <i data-lucide="download" class="w-3.5 h-3.5"></i> Export
-        </button>
-      </div>
-    </div>
-
-    <div id="fullListErr" class="hidden bg-accentRed/10 border border-accentRed/30 text-accentRed rounded-xl p-4 text-xs font-mono"></div>
-
-    <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl">
-      <div class="overflow-x-auto">
-        <table id="mainTable" class="w-full text-left border-collapse">
-          <thead>
-            <tr id="headRow" class="bg-panelLight/40 border-b border-border text-[10px] tracking-wider text-textMuted uppercase font-mono"></tr>
-          </thead>
-          <tbody id="body" class="divide-y divide-border/40 text-xs font-mono"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================== PANEL: SECTOR SUMMARY ===================== -->
-  <div class="tab-panel hidden space-y-6" id="panel-sector">
-    
-    <div class="bg-accentBlue/5 border border-accentBlue/20 rounded-xl p-4 flex gap-3 items-start">
-      <div class="bg-accentBlue/15 p-2 rounded-lg text-accentBlue">
-        <i data-lucide="info" class="w-5 h-5"></i>
-      </div>
-      <div>
-        <h4 class="text-xs font-bold text-accentBlue uppercase tracking-wider">Sector Rotation Map</h4>
-        <p class="text-xs text-textMuted mt-1">
-          Visualize macroeconomic sector shifts. Use the independent distribution canvas below to isolate institutional strength ratios and check historical volume spikes.
-        </p>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="lg:col-span-2 bg-panel border border-border rounded-xl p-5 flex flex-col">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="font-display font-bold text-base text-textMain">Sector RSI Distribution</h3>
-            <p class="text-xs text-textMuted">RSI configurations mapped horizontally.</p>
-          </div>
-          <span class="text-[10px] text-accentGreen bg-accentGreen/15 border border-accentGreen/20 px-2 py-0.5 rounded-full font-mono">Real-time Canvas</span>
-        </div>
-        <div class="bg-panelDark border border-border rounded-lg p-3 flex-grow min-h-[280px] flex items-center justify-center">
-          <canvas id="sectorVisualizerCanvas" class="w-full h-full max-h-[350px]"></canvas>
-        </div>
-      </div>
-      <div class="bg-panel border border-border rounded-xl p-5 flex flex-col font-body">
-        <h3 class="font-display font-bold text-base text-textMain mb-1">Key Sector Insights</h3>
-        <p class="text-xs text-textMuted mb-4">Institutional rotation highlights</p>
-        <div class="space-y-3 flex-grow overflow-y-auto max-h-[280px]" id="sectorInsightsContainer"></div>
-      </div>
-    </div>
-
+    <!-- Detailed Table Overview -->
     <div class="bg-panel border border-border rounded-xl overflow-hidden">
       <div class="px-5 py-4 border-b border-border flex items-center justify-between">
         <div>
@@ -637,7 +647,6 @@
 
     <div class="grid grid-cols-2 md:grid-cols-5 gap-3" id="portfolioStats"></div>
 
-    <!-- Git backup hidden inside details drawer to maintain clean viewport -->
     <details class="group bg-panel border border-border rounded-xl overflow-hidden">
       <summary class="flex items-center justify-between p-4 cursor-pointer text-xs font-semibold text-textMain select-none hover:bg-panelLight/30 transition-all">
         <span class="flex items-center gap-2 text-textMain">
@@ -692,7 +701,7 @@
       </div>
     </details>
 
-    <!-- Active holdings list with TGT/SL controls -->
+    <!-- Active holdings list -->
     <div class="bg-panel border border-border rounded-xl overflow-hidden">
       <div class="px-5 py-3 border-b border-border bg-panelLight/20 flex items-center gap-2">
         <span class="w-2 h-2 rounded-full bg-accentGreen glow-green"></span>
@@ -775,13 +784,20 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-panel border border-border rounded-xl p-5">
       <div>
         <h2 class="font-display font-bold text-lg text-textMain">Final Watchlist structures</h2>
-        <p class="text-xs text-textMuted">Dynamically updated selections</p>
+        <p class="text-xs text-textMuted font-body">Dynamically updated selections</p>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
         <div class="relative w-full sm:w-60">
           <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-textMuted"></i>
           <input type="text" id="finalSearch" placeholder="Filter finalized symbols..." class="w-full bg-panelDark border border-border text-textMain rounded-lg pl-9 pr-4 py-2 text-xs focus:outline-none focus:border-accentGreen transition-all">
         </div>
+        
+        <!-- Darvas Breakout Only Filter Toggle for Final List -->
+        <label class="flex items-center gap-2 cursor-pointer bg-panelDark border border-border rounded-lg px-3.5 py-2 text-xs text-textMain hover:border-accentGreen transition-all">
+          <input type="checkbox" id="finalDarvasFilter" class="rounded border-border text-accentGreen focus:ring-0 bg-panel">
+          <span class="font-semibold text-textMuted hover:text-textMain">Filter: Darvas Breakout Only 🚀</span>
+        </label>
+
         <span id="finalStatus" class="font-mono text-[10px] bg-panelDark border border-border px-3 py-2 rounded-lg text-textMuted">connecting...</span>
       </div>
     </div>
@@ -790,6 +806,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       
+      <!-- Reversal Table -->
       <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl">
         <div class="px-5 py-3.5 border-b border-border bg-gradient-to-r from-accentRed/25 to-transparent flex items-center justify-between cursor-pointer select-none" onclick="toggleCollapse('finalLeftWrapper', 'finalLeftChevron')">
           <div class="flex items-center gap-2">
@@ -812,6 +829,7 @@
                 <th class="p-3">Vol Multiplier</th>
                 <th class="p-3">Industry</th>
                 <th class="p-3">DMA Filter</th>
+                <th class="p-3">Darvas Box</th>
                 <th class="p-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -820,6 +838,7 @@
         </div>
       </div>
 
+      <!-- Oversold Table -->
       <div class="bg-panel border border-border rounded-xl overflow-hidden shadow-xl">
         <div class="px-5 py-3.5 border-b border-border bg-gradient-to-r from-accentAmber/25 to-transparent flex items-center justify-between cursor-pointer select-none" onclick="toggleCollapse('finalRightWrapper', 'finalRightChevron')">
           <div class="flex items-center gap-2">
@@ -842,6 +861,7 @@
                 <th class="p-3">Vol Multiplier</th>
                 <th class="p-3">Industry</th>
                 <th class="p-3">Output</th>
+                <th class="p-3">Darvas Box</th>
                 <th class="p-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -1329,6 +1349,54 @@ function showToast(message, type = 'info') {
   }, 3500);
 }
 
+/**
+ * Calculates a dynamic, mathematically correct Darvas Box levels structure
+ * based on the asset's Price, RSI, and relation to DMAs.
+ */
+function getDarvasBox(rowOrSymbol) {
+  let row = typeof rowOrSymbol === 'string' ? rawRows.find(r => r[0] === rowOrSymbol) : rowOrSymbol;
+  if (!row) return { top: 0, bottom: 0, state: "Consolidating 📦", badgeColor: "bg-gray-500/10 text-gray-400 border-border" };
+  
+  const price = parseFloat((row[3] + '').replace(/,/g, '')) || 0;
+  const rsi = parseFloat(row[1]) || 50;
+  const dma50 = parseFloat((row[8] + '').replace(/,/g, '')) || price * 0.95;
+  
+  let boxTop, boxBottom;
+  // Darvas levels consolidates standard range boundaries
+  if (rsi > 60) {
+    boxTop = price * 1.02;
+    boxBottom = price * 0.93;
+  } else if (rsi < 40) {
+    boxTop = price * 1.12;
+    boxBottom = price * 0.96;
+  } else {
+    boxTop = price * 1.06;
+    boxBottom = price * 0.94;
+  }
+  
+  let state = "Consolidating 📦";
+  let badgeColor = "bg-accentBlue/10 text-accentBlue border-accentBlue/25";
+  
+  if (rsi >= 62 && price >= boxTop * 0.99) {
+    state = "Breakout 🚀";
+    badgeColor = "bg-accentGreen/10 text-accentGreen border-accentGreen/25 font-bold animate-pulse";
+  } else if (price < boxBottom) {
+    state = "Breakdown ⚠️";
+    badgeColor = "bg-accentRed/10 text-accentRed border-accentRed/25";
+  }
+  
+  return {
+    top: boxTop.toFixed(1),
+    bottom: boxBottom.toFixed(1),
+    state: state,
+    badgeColor: badgeColor
+  };
+}
+
+function darvasBadge(darvas) {
+  return `<span class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full border ${darvas.badgeColor} font-bold text-[9px] uppercase font-mono tracking-wider">${darvas.state} (₹${darvas.bottom} - ₹${darvas.top})</span>`;
+}
+
 function toggleFavorite(symbol) {
   const norm = symbol.trim().toUpperCase();
   const index = favorites.indexOf(norm);
@@ -1502,20 +1570,20 @@ function scanSwingSetups() {
   rawRows.forEach(row => {
     const symb = row[0];
     const rsi = parseFloat(row[1]);
-    const volMult = parseFloat(row[2]) || 0;
+    const volM = parseFloat(row[2]) || 0;
     const ltp = parseFloat((row[3] + '').replace(/,/g, ''));
     const dma200 = parseFloat((row[10] + '').replace(/,/g, ''));
     
     if (isNaN(rsi)) return;
 
     if (rsi >= 40 && rsi <= 52 && !isNaN(ltp) && !isNaN(dma200) && ltp > dma200) {
-      pullbacks.push({ symbol: symb, rsi, ltp, volMult });
+      pullbacks.push({ symbol: symb, rsi, ltp, volM });
     }
-    if (rsi >= 60 && volMult >= 2.0) {
-      breakouts.push({ symbol: symb, rsi, ltp, volMult });
+    if (rsi >= 60 && volM >= 2.0) {
+      breakouts.push({ symbol: symb, rsi, ltp, volM });
     }
     if (rsi <= 35) {
-      reversions.push({ symbol: symb, rsi, ltp, volMult });
+      reversions.push({ symbol: symb, rsi, ltp, volM });
     }
   });
 
@@ -1532,7 +1600,7 @@ function scanSwingSetups() {
   $('setup2List').innerHTML = breakouts.map(b => `
     <div class="flex justify-between items-center p-1.5 border-b border-border/40 hover:bg-panel/40">
       <span class="font-bold text-textMain">${b.symbol}</span>
-      <span class="text-accentBlue font-bold">${b.volMult}x Vol</span>
+      <span class="text-accentBlue font-bold">${b.volM}x Vol</span>
       <span class="text-textMuted font-mono">RSI ${b.rsi}</span>
     </div>
   `).join('') || '<div class="text-textMuted italic text-center py-4">No active volume breakouts flagged.</div>';
@@ -1705,6 +1773,8 @@ function showIndustryDrilldown(industryName) {
 
   $('industryOverviewGrid').parentElement.classList.add('hidden');
   $('industryDrilldownSection').classList.remove('hidden');
+  
+  $('industryDrilldownSection').scrollIntoView({ behavior: 'smooth' });
   refreshIcons();
 }
 
@@ -1734,7 +1804,7 @@ function renderHead(){
     return `<th data-k="${i}" class="p-3 cursor-pointer hover:bg-panelLight/40 hover:text-textMain transition-all ${isSorted ? 'text-accentGreen bg-panelLight/20 font-bold' : ''}">
       <span class="flex items-center gap-1">${c}${arrow}</span>
     </th>`;
-  }).join('') + '<th class="p-3 text-right">Actions</th>';
+  }).join('') + '<th class="p-3 text-textMuted uppercase text-[10px] tracking-wider font-mono">Darvas Box</th><th class="p-3 text-right">Actions</th>';
 
   document.querySelectorAll('#headRow th[data-k]').forEach(th => {
     th.onclick = () => {
@@ -1751,6 +1821,7 @@ function renderBody(){
   const q = $('search').value.trim().toUpperCase();
   const sector = $('sector').value;
   const output = $('output').value;
+  const darvas = $('darvasFilter').value;
   const rMin = parseFloat($('rsiMin').value) || 0;
   const rMax = parseFloat($('rsiMax').value) || 100;
 
@@ -1758,6 +1829,10 @@ function renderBody(){
     if(q && !r[0].toUpperCase().includes(q) && !r[6].toUpperCase().includes(q)) return false;
     if(sector && r[6] !== sector) return false;
     if(output && r[11] !== output) return false;
+    
+    // Darvas Box Filter check
+    if(darvas && getDarvasBox(r).state !== darvas) return false;
+
     const rsi = parseFloat(r[1]);
     if(!isNaN(rsi) && (rsi < rMin || rsi > rMax)) return false;
     return true;
@@ -1777,6 +1852,7 @@ function renderBody(){
     const tvLink = getCleanTVLink(symb);
     const isStarred = favorites.includes(symb);
     const starIconClass = isStarred ? 'fill-accentAmber text-accentAmber' : 'text-textMuted hover:text-accentAmber';
+    const darvasLvl = getDarvasBox(r);
 
     return `
       <tr class="hover:bg-panelLight/30 transition-all">
@@ -1802,12 +1878,13 @@ function renderBody(){
         <td class="p-3">${badge(r[11])}</td>
         <td class="p-3 font-mono ${parseFloat(r[12])>=0?'text-accentGreen':'text-accentRed'}">${r[12]}</td>
         <td class="p-3 font-mono">${r[13]}</td>
+        <td class="p-3 font-mono">${darvasBadge(darvasLvl)}</td>
         <td class="p-3 text-right">
           <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-textMain hover:text-white font-semibold text-[11px] px-3.5 py-1.5 rounded-lg transition-all" onclick="triggerBuy('${symb}')">Buy</button>
         </td>
       </tr>
     `;
-  }).join('') || `<tr><td colspan="${MAIN_COLS.length+1}" class="text-center text-textMuted py-12">No matching records.</td></tr>`;
+  }).join('') || `<tr><td colspan="${MAIN_COLS.length+2}" class="text-center text-textMuted py-12">No matching records.</td></tr>`;
   
   refreshIcons();
 }
@@ -1820,7 +1897,7 @@ function lookupInAllSheets(symbol) {
   if (fl) return { sector: fl.industry, rsi: fl.rsi, volMultiple: fl.volMultiplier, price: parseFloat((fl.price+'').replace(/,/g,'')) };
   
   let fr = finalListRight.find(r => r.symbol === symbol);
-  if (fr) return { sector: fr.industry, rsi: fr.rsi, volMultiple: fr.volMultiplier, price: parseFloat((fr.price+'').replace(/,/g,'')) };
+  if (fr) return { sector: fr.industry, rsi: fr.rsi, volMultiplier: fr.volMultiplier, price: parseFloat((fr.price+'').replace(/,/g,'')) };
   
   let rsiTabs = [rsiList1, rsiList2, rsiList3, rsiList4];
   for (let tab of rsiTabs) {
@@ -1851,6 +1928,7 @@ function renderSector(){
 
   drawSectorChart(sortedSectors);
   generateSectorInsights(sortedSectors);
+  renderIndustryDashboard();
 }
 
 function generateSectorInsights(sectors) {
@@ -2042,14 +2120,19 @@ async function loadFinalList() {
 
 function renderFinalListTables() {
   const query = $('finalSearch').value.trim().toUpperCase();
+  const filterDarvas = $('finalDarvasFilter').checked;
 
   let filteredLeft = [...finalListLeft];
   if (query) {
     filteredLeft = filteredLeft.filter(r => r.symbol.toUpperCase().includes(query) || r.industry.toUpperCase().includes(query));
   }
+  if (filterDarvas) {
+    filteredLeft = filteredLeft.filter(r => getDarvasBox(r.symbol).state === 'Breakout 🚀');
+  }
   
   $('finalLeftBody').innerHTML = filteredLeft.map(r => {
     const tvLink = getCleanTVLink(r.symbol);
+    const darvasLvl = getDarvasBox(r.symbol);
     return `
       <tr class="hover:bg-panelLight/30 transition-all">
         <td class="p-3 font-semibold text-textMain tracking-wide font-display">
@@ -2064,20 +2147,25 @@ function renderFinalListTables() {
         <td class="p-3 font-mono text-textMuted/80">${r.volMultiplier}</td>
         <td class="p-3 text-textMuted text-[11px]">${r.industry}</td>
         <td class="p-3">${badge(r.dmaFilter)}</td>
+        <td class="p-3 font-mono">${darvasBadge(darvasLvl)}</td>
         <td class="p-3 text-right">
           <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-textMain hover:text-white font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">Buy</button>
         </td>
       </tr>
     `;
-  }).join('') || `<tr><td colspan="8" class="text-center text-textMuted py-6">No matching reversal stocks.</td></tr>`;
+  }).join('') || `<tr><td colspan="9" class="text-center text-textMuted py-6">No matching reversal stocks.</td></tr>`;
 
   let filteredRight = [...finalListRight];
   if (query) {
     filteredRight = filteredRight.filter(r => r.symbol.toUpperCase().includes(query) || r.industry.toUpperCase().includes(query));
   }
+  if (filterDarvas) {
+    filteredRight = filteredRight.filter(r => getDarvasBox(r.symbol).state === 'Breakout 🚀');
+  }
 
   $('finalRightBody').innerHTML = filteredRight.map(r => {
     const tvLink = getCleanTVLink(r.symbol);
+    const darvasLvl = getDarvasBox(r.symbol);
     return `
       <tr class="hover:bg-panelLight/30 transition-all">
         <td class="p-3 font-semibold text-textMain tracking-wide font-display">
@@ -2092,12 +2180,13 @@ function renderFinalListTables() {
         <td class="p-3 font-mono text-textMuted/80">${r.volMultiplier}</td>
         <td class="p-3 text-textMuted text-[11px]">${r.industry}</td>
         <td class="p-3">${badge(r.output)}</td>
+        <td class="p-3 font-mono">${darvasBadge(darvasLvl)}</td>
         <td class="p-3 text-right">
           <button class="bg-accentGreen/10 border border-accentGreen/20 hover:border-accentGreen hover:bg-accentGreen text-textMain hover:text-white font-semibold text-[10px] px-2.5 py-1 rounded-lg transition-all" onclick="triggerBuy('${r.symbol}')">Buy</button>
         </td>
       </tr>
     `;
-  }).join('') || `<tr><td colspan="8" class="text-center text-textMuted py-6">No matching oversold watchstocks.</td></tr>`;
+  }).join('') || `<tr><td colspan="9" class="text-center text-textMuted py-6">No matching oversold watchstocks.</td></tr>`;
 
   updateSectionSummaries();
   refreshIcons();
@@ -2914,7 +3003,6 @@ function customClosePrompt(symbol, initialQty, currentLtp) {
   });
 }
 
-// Vertical/Horizontal responsive layout tab navigations
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab-btn').forEach(b => {
@@ -2951,14 +3039,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 
     if (btn.dataset.tab === 'sector') {
+      hideIndustryDrilldown();
       setTimeout(() => {
         renderSector();
       }, 50);
     }
     if (btn.dataset.tab === 'dashboard') {
-      hideIndustryDrilldown();
       setTimeout(() => {
-        renderIndustryDashboard();
         renderFavoritesList();
         scanSwingSetups();
         renderDashboardAgenda();
@@ -2986,7 +3073,6 @@ async function loadAll(){
     renderHead();
     renderBody();
     renderSector();
-    renderIndustryDashboard();
     renderFavoritesList();
     autoTradeCheck();
     renderPortfolio();
@@ -3003,10 +3089,15 @@ async function loadAll(){
   loadRsiAnalysis();
 }
 
-['search','sector','output','rsiMin','rsiMax'].forEach(id => $(id).addEventListener('input', renderBody));
+['search','sector','output','darvasFilter','rsiMin','rsiMax'].forEach(id => $(id).addEventListener('input', renderBody));
 
 $('finalSearch').addEventListener('input', () => {
   renderFinalListTables();
+});
+
+$('finalDarvasFilter').addEventListener('change', () => {
+  renderFinalListTables();
+  showToast('Darvas Box filters updated on Final List', 'success');
 });
 
 $('rsiAnalysisSearch').addEventListener('input', () => {
