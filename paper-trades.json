@@ -114,5 +114,16 @@
     "stopLoss": "1500",
     "entryDate": "2026-07-17T05:00:36.448Z",
     "status": "open"
+  },
+  {
+    "id": "1784265409225-TRIVENI",
+    "symbol": "TRIVENI",
+    "qty": 42,
+    "entryPrice": 472,
+    "entryRSI": "71.4",
+    "target": "",
+    "stopLoss": "",
+    "entryDate": "2026-07-17T05:16:49.225Z",
+    "status": "open"
   }
 ]
