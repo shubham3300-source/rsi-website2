@@ -71,9 +71,11 @@
     "entryPrice": 166.03,
     "entryRSI": "50.9",
     "entryDate": "2026-07-16T04:00:42.319Z",
-    "status": "open",
+    "status": "closed",
     "target": "180",
-    "stopLoss": ""
+    "stopLoss": "",
+    "exitPrice": 173,
+    "exitDate": "2026-07-17T03:53:14.549Z"
   },
   {
     "id": "1784174445064-JSFB",
