@@ -84,7 +84,9 @@
     "entryPrice": 503.15,
     "entryRSI": "66.8",
     "entryDate": "2026-07-16T04:00:45.064Z",
-    "status": "open"
+    "status": "closed",
+    "exitPrice": 530,
+    "exitDate": "2026-07-21T03:55:24.714Z"
   },
   {
     "id": "1784174450060-TEJASNET",
