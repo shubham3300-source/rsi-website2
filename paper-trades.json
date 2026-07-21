@@ -6,9 +6,11 @@
     "entryPrice": 1362.4,
     "entryRSI": "51.4",
     "entryDate": "2026-07-16T02:10:21.435Z",
-    "status": "open",
+    "status": "closed",
     "target": "1400",
-    "stopLoss": "1300"
+    "stopLoss": "1300",
+    "exitPrice": 1439.9,
+    "exitDate": "2026-07-21T03:56:37.172Z"
   },
   {
     "id": "1784170463358-KRN",
