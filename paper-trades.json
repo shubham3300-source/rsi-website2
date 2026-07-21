@@ -140,5 +140,16 @@
     "stopLoss": "",
     "entryDate": "2026-07-21T03:57:16.254Z",
     "status": "open"
+  },
+  {
+    "id": "1784606314803-JBCHEPHARM",
+    "symbol": "JBCHEPHARM",
+    "qty": 8,
+    "entryPrice": 2416.1,
+    "entryRSI": "65.9",
+    "target": "",
+    "stopLoss": "",
+    "entryDate": "2026-07-21T03:58:34.803Z",
+    "status": "open"
   }
 ]
