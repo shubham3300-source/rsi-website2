@@ -129,5 +129,16 @@
     "stopLoss": "",
     "entryDate": "2026-07-17T05:16:49.225Z",
     "status": "open"
+  },
+  {
+    "id": "1784606236254-KARURVYSYA",
+    "symbol": "KARURVYSYA",
+    "qty": 100,
+    "entryPrice": 328.5,
+    "entryRSI": "67.9",
+    "target": "",
+    "stopLoss": "",
+    "entryDate": "2026-07-21T03:57:16.254Z",
+    "status": "open"
   }
 ]
