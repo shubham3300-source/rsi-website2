@@ -140,5 +140,16 @@
     "stopLoss": "",
     "entryDate": "2026-07-21T03:58:34.803Z",
     "status": "open"
+  },
+  {
+    "id": "1784697088354-SDBL",
+    "symbol": "SDBL",
+    "qty": 300,
+    "entryPrice": 74.92,
+    "entryRSI": "59.9",
+    "target": "",
+    "stopLoss": "",
+    "entryDate": "2026-07-22T05:11:28.354Z",
+    "status": "open"
   }
 ]
